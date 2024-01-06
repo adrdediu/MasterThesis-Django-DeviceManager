@@ -1,0 +1,79 @@
+{% extends 'devices/home.html' %}
+
+{% block content %}
+
+<div class="container my-2">
+
+  <h1 class="text-light">{{ device.id}} - {{ device.name }}</h1>
+  
+  <div class="accordion" id="deviceDetails">
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#basicInfo">
+          Basic Information
+        </button>
+      </h2>
+      <div id="basicInfo" class="accordion-collapse collapse show" data-bs-parent="#deviceDetails">
+        <div class="accordion-body">
+          <p><strong>Description:</strong> {{ device.description }}</p>
+          <p><strong>Serial Number:</strong> {{ device.serial_number }}</p>
+          <p><strong>Category:</strong> {{ device.category.name }}</p>
+          <p><strong>Subcategory:</strong> {{ device.subcategory.name }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#location">
+          Location
+        </button>
+      </h2>
+      <div id="location" class="accordion-collapse collapse" data-bs-parent="#deviceDetails">
+        <div class="accordion-body">
+          <p>
+            <strong>Building:</strong> {{ device.building.name }}
+          </p>
+          <p>
+            <strong>Floor:</strong> {{ device.floor.name }}  
+          </p>
+          <p>
+            <strong>Room:</strong> {{ device.room.name }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#qrCode">
+            QR Code
+          </button>
+        </h2>
+        <div id="qrCode" class="accordion-collapse collapse" data-bs-parent="#deviceDetails">
+          <div class="accordion-body">
+              <div class="text-center">
+                  <img src="{{ device.qrcode_url }}" class="img-fluid" alt="QR Code">
+                  <a href="{% url 'download_qrcode' device.id %}" class="btn btn-primary mt-3">Download QR Code</a>
+                </div>
+          </div>
+        </div>
+      </div>
+
+  </div>
+
+  <a href="{% url 'device_list' %}" class="btn btn-primary mt-3">Back to Devices</a>
+
+</div>
+
+<script>
+  var accordion = document.getElementById('deviceDetails');
+  accordion.addEventListener('show.bs.collapse', function (e) {
+    e.target.previousElementSibling.classList.add('active');
+  })
+  accordion.addEventListener('hide.bs.collapse', function (e) {
+    e.target.previousElementSibling.classList.remove('active');
+  })
+</script>
+
+{% endblock %}

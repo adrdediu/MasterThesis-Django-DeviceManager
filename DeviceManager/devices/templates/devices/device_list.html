@@ -1,0 +1,570 @@
+{% extends 'devices/home.html' %}
+
+{% block content %}
+<div class="scrollable-container" style="min-height: 100vh; background-color: black; overflow-y: auto; padding: 10px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="text-light">Device List</h1>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
+           <i class="bi bi-plugin me-2"></i> Add Device
+        </button>
+    </div>
+<div class="table-responsive">
+<!-- Your modified table code with permanent sorting arrows -->
+<table class="table table-striped table-bordered  table-dark table-hover align-middle " id="deviceTable">
+    <thead>
+        <tr >
+            <th onclick="sortColumn(0)" class="tableIDCol">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>ID</span>
+                        <span class="ms-1">
+                            <i class="bi bi-arrow-down"></i>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                        <div class="input-group">
+                            <input id="deviceID" type="text" class="form-control form-control-sm tableInput" placeholder="Search"  onclick="preventSorting(event)" />
+                        </div>
+                    </div>
+                </div>
+            </th>
+            <th onclick="sortColumn(1)" class="tableNameCol">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>Name</span>
+                        <span class="ms-1">
+                            <i class="bi bi-arrow-down"></i>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                        <div class="input-group">
+                            <input id="deviceName" type="text" class="form-control form-control-sm tableInput" placeholder="Search"  onclick="preventSorting(event)" />
+                        </div>
+                    </div>
+                </div>
+            </th>
+            <th onclick="sortColumn(2)" class="tableSNCol">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>S/N</span>
+                        <span class="ms-1">
+                            <i class="bi bi-arrow-down"></i>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                        <div class="input-group">
+                            <input id="deviceSN" type="text" class="form-control form-control-sm tableInput" placeholder="Search" onclick="preventSorting(event)" />
+                        </div>
+                    </div>
+                </div>
+            </th>
+            <th data-sort-method="none" class="tableCategoryCol">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>Category</span>
+                        <span class="ms-1">
+                            <i class="bi bi-tag"></i>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                        <select id="deviceCategory" class="form-select form-select-sm">
+                            <option value="" {% if not selected_category %}selected{% endif %}>All</option>
+                            <!-- Add options dynamically based on your data -->
+                            {% for category in categories %}
+                            
+                                <option value="{{ category.id }}" {% if selected_category == category.name %}selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </th>
+            <th data-sort-method="none" class="tableSubcategoryCol">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>Subcategory</span>
+                        <span class="ms-1">
+                            <i class="bi bi-tags"></i>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                    <select id="deviceSubcategory" class="form-select form-select-sm">
+                        <option value="" selected>All</option>
+
+                        {% if selected_category %}
+                        {% for subcategory in subcategories %}
+                            {% if subcategory.category.name == selected_category %}
+                                <option value="{{ subcategory.id }}" {% if selected_subcategory == subcategory.name %}selected{% endif %}>{{ subcategory.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    </select>
+                </div>
+            </th>
+            <th data-sort-method="none" class="tableBuildingCol">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>Building</span>
+                        <span class="ms-1">
+                            <i class="bi bi-buildings"></i>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                    <select id="deviceBuilding" class="form-select form-select-sm">
+                        <option value="" {% if not selected_building %}selected{% endif %}>All</option>
+                        <!-- Add options dynamically based on your data -->
+                        {% for building in buildings %}
+                            <option value="{{ building.id }}" {% if selected_building == building.name %}selected{% endif %}>{{ building.acronym }}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+            </th>
+            <th data-sort-method="none" class="tableFloorCol">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>Floor</span>
+                        <span class="ms-1">
+                            <i class="bi bi-bar-chart-steps"></i>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                    <select id="deviceFloor" class="form-select form-select-sm">
+                        <option value="" selected>All</option>
+                        <!-- Add options dynamically based on your data -->
+                    </select>
+                </div>
+            </th>
+            <th data-sort-method="none" class="tableRoomCol">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>Room</span>
+                        <span class="ms-1">
+                            <i class="bi bi-door-open"></i>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                    <select id="deviceRoom" class="form-select form-select-sm">
+                        <option value="" selected>All</option>
+                        <!-- Add options dynamically based on your data -->
+                    </select>
+                </div>
+            </th>
+            
+            <!-- Add more input fields and sorting arrows for other columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for device in devices %}
+            <tr >
+                <td class="tableIDCol align-middle text-center">{{ device.id }}</td>
+                <td class="tableNameCol align-middle text-center"><a href="{% url 'device_detail' device.id %}" class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{{ device.name }}</a></td>
+                <td class="tableSNCol align-middle text-center">{{ device.serial_number }}</td>
+                <td class="tableCategoryCol align-middle text-center">{{ device.category.name}}</td>
+                <td class="tableSubcategoryCol align-middle text-center">{{ device.subcategory.name}}</td>
+                <td>{{ device.building.acronym}}</td>
+                <td>{{ device.floor.name}}</td>
+                <td>{{ device.room.name}}</td>
+                <!-- Add more cells for other fields -->
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+<style>
+    .tableIDCol, .tableFloorCol, .tableRoomCol {
+        min-width:90px;
+        max-width:90px;
+    }
+    .tableNameCol,  
+    .tableSNCol {
+        min-width:90px;
+        max-width:100px;
+        text-wrap:wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    .tableCategoryCol  {
+        min-width: 140px;
+        max-width: 140px;
+    }
+    .tableSubcategoryCol {
+        min-width: 150px;
+        max-width: 150px;
+    }
+    .tableBuildingCol {
+        min-width: 109px;
+        max-width: 110px;
+    }
+
+    .tableInput {
+        background-color: black;
+        color:white;
+    }
+    .tableInput::placeholder {
+        color:white;
+    }
+    .tableInput:focus {
+        background-color: black;
+        color:white;
+    }
+</style>
+
+<!-- Include Tablesort library from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/tablesort@5.3.0/dist/tablesort.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var table = document.getElementById('deviceTable');
+        var headerIcons = table.querySelectorAll('.input-group-text i');
+        new Tablesort(table, {
+            descending: true,  // Set to true if you want to initially sort in descending order
+        });
+    });
+
+    function searchColumn(inputs, columnIndices) {
+    console.log("hi - searchColumn");
+    var table, tr, td, i, txtValue;
+
+    table = document.getElementById('deviceTable');
+    tr = table.getElementsByTagName('tr');
+
+    for (i = 0; i < tr.length; i++) {
+        var showRow = true;
+
+        for (var j = 0; j < inputs.length; j++) {
+            var input = inputs[j];
+            var columnIndex = columnIndices[j];
+            var filter;
+
+            if (input.tagName === 'SELECT') {
+                filter = input.options[input.selectedIndex].text.toUpperCase();
+            } else {
+                filter = input.value.toUpperCase();
+            }
+
+            // Check if "ALL" is selected in the dropdown
+            if (filter.startsWith("ALL")) {
+                continue; // Skip filtering for this column
+            }
+
+            td = tr[i].getElementsByTagName('td')[columnIndex];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+
+                if (!((txtValue.toUpperCase().indexOf(filter) > -1))) {
+                    showRow = false;
+                    break; // Exit the loop if any condition is not met
+                }
+            }
+        }
+
+        // Set the display style based on showRow
+        tr[i].style.display = showRow ? '' : 'none';
+    }
+}
+
+    function sortColumn(columnIndex) {
+        var table = document.getElementById('deviceTable');
+        var arrow = table.getElementsByTagName('th')[columnIndex].querySelector('i');
+        
+        // Toggle sorting direction arrow
+        arrow.classList.toggle('bi-arrow-up');
+        arrow.classList.toggle('bi-arrow-down');
+
+    }
+
+    // Prevent click event on input fields
+    function preventSorting(event) {
+        event.stopPropagation();
+    }
+</script>
+
+
+</div>
+<!-- Add Category Modal-->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Device Modal -->
+<div class="modal fade" id="addDeviceModal" tabindex="-1" aria-labelledby="addDeviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDeviceModalLabel">Add Device</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for adding a device -->
+            <form id="addDeviceForm" method="post" action="{% url 'add_device' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="deviceName" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="deviceName" name="name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="deviceDescription" class="form-label">Description</label>
+                    <textarea class="form-control" id="deviceDescription" name="description" rows="3" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="deviceSerialNumber" class="form-label">Serial Number</label>
+                    <input type="text" class="form-control" id="deviceSerialNumber" name="serial_number" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="deviceCategoryModal" class="form-label">Category</label>
+                    <select class="form-select" id="deviceCategoryModal" name="category" required>
+                        {% if categories %}
+                        <option value="">Select a category.</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="">Please add a category first.</option>
+                        {% endif %}
+
+                        <!-- Add more options if needed -->
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="deviceSubcategoryModal" class="form-label">Subcategory</label>
+                    <select class="form-select" id="deviceSubcategoryModal" name="subcategory" required>
+                            <option value="">Select a Category first</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="deviceBuildingModal" class="form-label">Building</label>
+                    <select class="form-select" id="deviceBuildingModal" name="building" required>
+                        <!-- Add options for existing buildings or an option to add a new building -->
+                        {% if buildings %}
+                        <option value="">Select a building.</option>
+                            {% for building in buildings %}
+                                <option value="{{ building.id }}">{{ building.acronym }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="">Please add a building first.</option>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="deviceFloorModal" class="form-label">Floor</label>
+                    <select class="form-select" id="deviceFloorModal" name="floor" required>
+                        <option value="">Select a Building first</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="deviceRoomModal" class="form-label">Room</label>
+                    <select class="form-select" id="deviceRoomModal" name="room" required>
+                        <option value="">Select a Building and a Floor first</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Selectors
+    function selectorHandler(selectors,url,modelNames,detailed_options) {
+        console.log("hi - selectorHandler")
+        var id = selectors[0].value;
+        for (i = 1; i < selectors.length; i++ ) {
+            if(detailed_options)
+                selectors[i].innerHTML = `<option value="">Select a ${modelNames[0]} first</option>`;
+            else
+                selectors[i].innerHTML = `<option value="">All`;
+        }
+        fetch( `${url}=${id}`)
+            .then (response => response.json())
+            .then(data => {
+                    if (!(Array.isArray(data) && data.length === 0)) {
+
+                        if(detailed_options)
+                            selectors[1].innerHTML =`<option value="">Select a ${modelNames[1]}</option>`;
+                        else 
+                            selectors[1].innerHTML =`<option value="">All</option>`
+
+                        for (i = 2; i < selectors.length; i++) {
+                            if(detailed_options) 
+                                selectors[i].innerHTML = `<option value="">Please select a ${modelNames[i-1]} first.</option>`;
+                            else
+                                selectors[i].innerHTML = `<option value="">All</option>`
+                        }
+                        data.forEach(model => {
+                            selectors[1].innerHTML += `<option value="${model.id}">${model.name}</option>`;
+                        });
+        
+                    } else {
+                        if(detailed_options)
+                            selectors[1].innerHTML = `<option value="">Please add a ${modelNames[1]} first</option>`;
+
+                    }
+                })
+        
+    }
+     // Add Device Modal
+     document.addEventListener('DOMContentLoaded', function () {
+        
+        // Device List Inputs
+        var idInput = document.getElementById('deviceID');
+        var nameInput = document.getElementById('deviceName');
+        var snInput = document.getElementById('deviceSN');
+
+        // Device List Selects
+        var categorySelect = document.getElementById('deviceCategory');
+        var subcategorySelect = document.getElementById('deviceSubcategory');
+        var buildingSelect = document.getElementById('deviceBuilding');
+        var floorSelect = document.getElementById('deviceFloor');
+        var roomSelect = document.getElementById('deviceRoom');
+
+        var inputs =[idInput,nameInput,snInput,categorySelect,subcategorySelect,buildingSelect,floorSelect,roomSelect];
+        var columnindices =[0,1,2,3,4,5,6,7]
+
+        function handleInputChange(){
+            searchColumn(inputs,columnindices)
+        }
+
+
+        idInput.addEventListener('input',function() {
+            handleInputChange();
+        })
+        nameInput.addEventListener('input',function() {
+            handleInputChange();
+        })
+        snInput.addEventListener('input',function() {
+            handleInputChange();
+        })
+
+        categorySelect.addEventListener('change', function() {
+            selectorHandler([categorySelect,subcategorySelect],"/get_subcategories/?category_id",["Categories","Subcategories"],detailed_options=0)
+            handleInputChange();
+        });
+
+        subcategorySelect.addEventListener('change', function() {
+            handleInputChange();
+        })
+        
+        buildingSelect.addEventListener('change', function() {
+            selectorHandler([buildingSelect,floorSelect,roomSelect],"/get_floors/?building_id",["Buildings","Floors","Rooms"],detailed_options=0)
+            handleInputChange();
+        });
+
+        floorSelect.addEventListener('change',function() {
+            selectorHandler([floorSelect,roomSelect],"/get_rooms/?floor_id",["Floors","Rooms"],detailed_options=0)
+            handleInputChange();
+        });
+        
+        roomSelect.addEventListener('change',function() {
+            handleInputChange();
+        })
+
+                // Check if a link with category is selected
+
+        {% if selected_category or selected_building %}
+            handleInputChange();
+        {% endif %}
+
+        // Modal Selects
+        var buildingSelectModal = document.getElementById('deviceBuildingModal');
+        var floorSelectModal = document.getElementById('deviceFloorModal');
+        var roomSelectModal = document.getElementById('deviceRoomModal');
+        var categorySelectModal = document.getElementById('deviceCategoryModal');
+        var subcategorySelectModal = document.getElementById('deviceSubcategoryModal');
+
+        categorySelectModal.addEventListener('change', function() {
+            selectorHandler([categorySelectModal,subcategorySelectModal],"/get_subcategories/?category_id",["Category","Subcategory"],detailed_options=1)
+        });
+        
+        buildingSelectModal.addEventListener('change', function() {
+            selectorHandler([buildingSelectModal,floorSelectModal,roomSelectModal],"/get_floors/?building_id",["Building","Floor","Room"],detailed_options=1)
+        });
+
+        floorSelectModal.addEventListener('change',function() {
+            selectorHandler([floorSelectModal,roomSelectModal],"/get_rooms/?floor_id",["Floor","Room"],detailed_options=1)
+        });
+    
+    });
+
+    // Add device override
+    document.getElementById('addDeviceForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent the default form submission
+
+    // Serialize form data
+    const formData = new FormData(event.target);
+
+    // Send an asynchronous POST request
+    fetch('/add_device/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),  // Include your CSRF token
+        },
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        const errorContainer = document.getElementById('errorContainer');
+        if (data.error) {
+            Toastify({
+                    text: data.error,
+                    position:'center',
+                    backgroundColor: 'red',
+                    className: 'error-toast',
+                }).showToast();
+        } else if (data.success) {
+
+            document.getElementById('addDeviceModal').style.display = '';
+
+            function showModal() {
+
+                var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+                    confirmationModal.show();
+            }
+            Toastify({
+                    text: data.success,
+                    position: 'center',
+                    backgroundColor: 'green',
+                    className: 'success-toast',
+                    duration: 1000,
+                    onClick: showModal,
+                    callback: showModal,
+                }).showToast();
+
+                // Handle the click event on the "Yes" button in the confirmation modal
+            document.getElementById('cancelRedirect').addEventListener('click', function() {
+                // Check if the user wants to be redirected to device_detail or device_list
+                window.location.href = `/devices/`;
+            });
+            // Handle the click event on the "Yes" button in the confirmation modal
+            document.getElementById('confirmRedirect').addEventListener('click', function() {
+                // Check if the user wants to be redirected to device_detail or device_list
+                window.location.href = `/device/${data.device_pk}/`;
+            });
+        } else {
+            // Clear any previous messages and styling
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+</script>
+{% endblock %}
+
