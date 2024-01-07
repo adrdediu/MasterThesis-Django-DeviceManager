@@ -84,10 +84,21 @@ WSGI_APPLICATION = 'DeviceManager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'device_manager.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'device_manager',     # Replace with your desired database name
+        'USER': 'device_manager_admin',        # Replace with your MySQL username
+        'PASSWORD': '!"12QWasZX',  # Replace with your MySQL password
+        'HOST': 'localhost',              # Replace with your MySQL host, usually 'localhost' for local development
+        'PORT': '3306',                   # Replace with your MySQL port, usually '3306'
     }
 }
 

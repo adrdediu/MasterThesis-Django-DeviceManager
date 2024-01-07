@@ -13,7 +13,7 @@ from django.utils import timezone
 
 
 class Building(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     address = models.TextField()
     acronym = models.CharField(max_length=10, unique=True)
     
@@ -62,7 +62,7 @@ class Subcategory(models.Model):
 
 class Device(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.CharField(max_length=255)
     serial_number = models.CharField(max_length=50,unique=True)
     category = models.ForeignKey(Category,on_delete=models.CASCADE)  # Choices: laptop, pc, router, server
     subcategory = models.ForeignKey(Subcategory,on_delete=models.CASCADE)
