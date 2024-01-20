@@ -96,7 +96,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'device_manager',     # Replace with your desired database name
         'USER': 'device_manager_admin',        # Replace with your MySQL username
-        'PASSWORD': '!"12QWasZX',  # Replace with your MySQL password
+        'PASSWORD': 'i9@6W^j1',  # Replace with your MySQL password
         'HOST': 'localhost',              # Replace with your MySQL host, usually 'localhost' for local development
         'PORT': '3306',                   # Replace with your MySQL port, usually '3306'
     }
