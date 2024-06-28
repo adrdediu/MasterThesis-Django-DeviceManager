@@ -1,0 +1,156 @@
+/* -- Body -- */
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    overflow-y: hidden;
+}
+  
+/* -- Sidebar -- */
+.sidebar {
+    background-color: #343a40;
+    color: #ffffff;
+    padding: 10px;
+}
+#userProfileButton {
+    background: linear-gradient(to right, #00d2ff, #3a47d5);
+    border: none;
+    padding: 10px 0;
+}
+#userProfileButton:hover {
+    background: linear-gradient(to right, #4b6cb7, #182848);
+}
+
+#sidebarLogo {
+    background: linear-gradient(to right, #00d2ff, #3a47d5);
+}
+
+#sidebarLogo:hover {
+background: linear-gradient(to right, #4b6cb7, #182848);
+}
+  
+/* -- Display area -- */
+.display-area {
+    min-height: 90vh;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+  
+/* -- Top bar -- */
+.top-bar {
+    background-color: #333; /* Adjust the background color */
+    color: #fff; /* Adjust the text color */
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100; /* Adjust the z-index as needed */
+}
+#topbarLogo {
+background: linear-gradient(to right, #00d2ff, #3a47d5);
+}
+
+#topbarLogo:hover {
+background: linear-gradient(to right, #4b6cb7, #182848);
+}
+
+/* -- Media Queries -- Top Bar, Side Bar, Display Area --*/  
+@media (min-width: 768px) and (min-height:600px) {
+    .top-bar {
+        display: none !important; 
+    }
+
+    .sidebar {
+        flex: 0 0 25%; 
+    }
+
+    .display-area {
+        flex: 0 0 75%;
+        max-height: 100vh;
+    }
+}
+
+@media (max-height: 599px) {
+    .top-bar {
+        flex: 0 0 100%;
+    }
+    .sidebar {
+        display: none !important; 
+    }
+
+    .display-area {
+        flex: 0 0 100%;
+    }
+}
+  
+
+/* -- Display Area -- */
+#homepageDisplayArea {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+#starrySky {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+}
+
+#overlay h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+#overlay p {
+  font-size: 1.2em;
+}
+
+/* -- CSS Effects - Generic Hover */
+.hover-red:hover {
+    color: red !important; /* Use !important to override other styles if needed */
+    text-decoration: none; /* Optional: Remove underline on hover */
+}
+
+
+/* -- CSS Effects - Keyframes -- */
+@keyframes pulse {
+0% {
+    transform: scale(1);
+}
+50% {
+    transform: scale(1.2);
+}
+100% {
+    transform: scale(1);
+}
+}
+
+/* -- Scrollbars -- */
+::-webkit-scrollbar {
+    width: 8px; /* width of the scrollbar */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #6c757d; /* color of the thumb */
+    border-radius: 4px; /* roundness of the thumb */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background-color: transparent; /* color of the track */
+  }
+  
+  /* Optional: Handle on hover state */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #495057;
+  }

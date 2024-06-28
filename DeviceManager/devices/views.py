@@ -6,7 +6,7 @@ from django.views import View
 from django.contrib.auth.views import LoginView,LogoutView
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
-from django.views.generic import DetailView
+from django.views.generic import DetailView, TemplateView
 from .models import Device,Floor,Room,Building,Subcategory,Category
 from django.contrib import messages
 from PIL import Image, ImageDraw, ImageFont
@@ -205,6 +205,21 @@ def add_device(request):
 
     return render(request, 'devices/device_list.html', context)
 
+
+
+class ActionsView(LoginRequiredMixin, TemplateView):
+    login_url = 'login'
+
+    template_name = 'devices/actions.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['subcategories'] = Subcategory.objects.all()
+        # Add any other context data you need for the actions page
+        return context
+
+    
 
 class DeviceDetailView(LoginRequiredMixin,DetailView):
     login_url = 'login'

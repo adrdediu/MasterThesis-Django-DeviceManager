@@ -120,9 +120,9 @@
     
 
     <!-- Three.js Library -->
-    <script src="https://threejs.org/build/three.min.js"></script>
-    <!-- Custom Three.js Script -->
-    <script>
+    <script type="module">
+        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r127/build/three.module.js';
+
         // Set up Three.js scene
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);

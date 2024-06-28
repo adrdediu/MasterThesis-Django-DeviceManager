@@ -4,738 +4,501 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Home</title>
-    <!-- Include Toastify library from CDN -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <title>Device Manager</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
-	{% load static %}  <!-- Add this line to load the static tag -->
-	
-	<style>
-body {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-      margin: 0;
-    padding: 0;
-  overflow-y: hidden;
-}
+    {% load static %}
 
-/* Sidebar styles */
-.sidebar {
-  background-color: #343a40;
-  color: #ffffff;
-  padding: 10px;
-  /* Additional styles for the sidebar go here */
-}
-
-/* Display area styles */
-.display-area {
-  min-height: 90vh;
-  max-height: 90vh;
-  /* Additional styles for the display area go here */
-  overflow-y: auto;
-  background-color: black;
-}
-
-/* Placeholder for the top bar styles */
-.top-bar {
-  background-color: #333; /* Adjust the background color */
-  color: #fff; /* Adjust the text color */
-  padding: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 100; /* Adjust the z-index as needed */
-}
-
-@media (min-width: 768px) and (min-height:600px) {
-  /* Styles for medium and larger screens */
-  .top-bar {
-    display: none !important; /* Hide the top bar on medium and larger screens */
-  }
-
-  .sidebar {
-    flex: 0 0 25%; /* Adjust the width of the sidebar as needed */
-  }
-
-  .display-area {
-    flex: 0 0 75%; /* Adjust the width of the display area as needed */
-    max-height: 100vh;
-  }
-}
-
-/* Additional styles for smaller screens with a maximum height smaller than 600px */
-@media (max-height: 599px) {
-  .top-bar {
-	flex: 0 0 100%;
-  }
-  .sidebar {
-    display: none !important; /* Hide the sidebar when the maximum height is smaller than 600px */
-  }
-
-  .display-area {
-    flex: 0 0 100%; /* Adjust the width of the display area as needed when the sidebar is hidden */
-  }
-}
-
-
-  </style>
+    <!-- Include CSS Styles-->
+      <!-- Bootstrap 5.3.2 -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+      <!-- Bootstrap Icons-->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+      <!-- Toastify library from CDN -->
+      <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+      <!-- Global CSS-->
+      <link rel="stylesheet" type="text/css" href="{% static 'css/global_styles.css' %}">
+      {% block extra_css %}
+      {% endblock %}
 </head>
 <body class="d-flex">
+  <!-- Main Area-->
   <div class="container-fluid">
     <div class="row">
 
-<!-- Top bar for small screens -->
-<div class="col-12  bg-dark vh-20 d-flex  justify-content-between align-items-center top-bar">
-  <!-- Hamburger button for the left -->
-  <div class="d-flex align-items-center p-2">
-    <button class="btn btn-dark text-light" style="width: 40px; height: 40px; padding: 5px;" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
-      <i class="bi bi-list"></i>
-    </button>
-  </div>
-
-  <!-- Logo Row (centered) -->
-  <div id="topbarLogo" class="d-flex justify-content-center align-items-center p-2 mt-2 mb-2" style="border-radius: 10px; overflow: hidden;">
-    <!-- Text with Animation -->
-    <a href="{% url 'homepage' %}" style="text-decoration: none;">
-    <div style="color: #fff; font-size: 16px; font-weight: bold; animation: pulse 2s infinite; text-align: center; padding: 0px 20px;">
-      Device Manager
-    </div>
-   </a>
-  </div>
-
-  <!-- Profile pic button on the right -->
-  <div class="d-flex align-items-center p-2">
-    <button class="btn btn-dark" data-bs-toggle="offcanvas" data-bs-target="#profileOffcanvas" aria-controls="profileOffcanvas" style="width: 40px; height: 40px; padding: 0px;">
-      <img src="{% static 'devices/cat.png' %}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%;">
-    </button>
-  </div>
-</div>
-
-      <!-- Sidebar (visible on larger screens) -->
-	<div class="col-md-3 bg-dark text-light vh-100 d-none d-md-flex flex-column sidebar">
-		
-		<!-- Logo Row (20%) -->
-		<div id="sidebarLogo" class="d-flex justify-content-center align-items-center p-2 mt-2 mb-2" style="height: 15%;  border-radius: 10px; overflow: hidden;">
-		  <!-- Text with Animation -->
-      <a href="{% url 'homepage' %}" style="text-decoration: none;">
-        <div  style="color: #fff; font-size: 25px; font-weight: bold; animation: pulse 2s infinite; text-align: center; padding: 0 20px 0 20px;">
-        Device Manager
+      <!-- Top bar for small screens -->
+      <div class="col-12  bg-dark vh-20 d-flex  justify-content-between align-items-center top-bar">
+        <!-- Hamburger button for the left -->
+        <div class="d-flex align-items-center p-2">
+          <button class="btn btn-dark text-light" style="width: 40px; height: 40px; padding: 5px;" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+            <i class="bi bi-list"></i>
+          </button>
         </div>
-      </a>
-		</div>
 
-
-		<!-- Content Row (60%) -->
-		<div class="d-flex flex-grow-1 flex-shrink-1 p-2" style="overflow-y: auto; background-color: black; border-radius: 10px;">
-			<!-- List of Linked Items with Collapsible Structure -->
-			<ul class="list-group bg-transparent border-0">
-				<li class="list-group-item bg-transparent border-0">
-					<a href="#devices" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse" >
-						<i class="bi bi-lightning-charge me-2"></i>Devices
-					</a>
-					<ul class="collapse ps-2" id="devices" style="list-style: none;">
-						<li class="list-group-item bg-transparent border-0 ">
-							<a href="{% url 'device_list' %}" class="text-white text-decoration-none hover-red">
-							<i class="bi bi-plugin me-2"></i>
-							All Devices
-							</a>
-						</li>
-				
-            <ul class="list-group">
-              {% for category in categories %}
-                  <li class="list-group-item bg-transparent border-0">
-                      <a href="#" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse" data-bs-target="#{{ category.name }}">
-                          {% if category.name == "Computers" %}
-                            <i class="bi bi-pc-display me-2"></i>
-                          {% elif category.name == "Labware" %}
-                            <i class="bi bi-motherboard-fill  me-2"></i>
-                          {% elif category.name == "Network" %}
-                            <i class="bi bi-ethernet me-2"></i>
-                          {% elif category.name == "Peripherals" %}
-                            <i class="bi bi-usb-symbol me-2"></i>
-                          {% elif category.name == "Storage" %}
-                            <i class="bi bi-hdd-rack me-2"></i>
-                          {% endif %}
-                          {{ category.name }}
-                      </a>
-                      <div class="collapse" id="{{ category.name }}">
-                          <ul class="list-group">
-                            <li class="list-group-item bg-transparent border-0">
-                              <a href="{% url 'device_list_with_category' category=category.name %}" class="text-white text-decoration-none hover-red">
-                                All
-                              </a>
-                          </li>
-                              {% for subcategory in subcategories %}
-                                  {% if subcategory.category == category %}
-                                      <li class="list-group-item bg-transparent border-0">
-                                          <a href="{% url 'device_list_with_subcategory' category=category.name subcategory=subcategory.name %}" class="text-white text-decoration-none hover-red">
-                                              {{ subcategory.name }}
-                                          </a>
-                                      </li>
-                                  {% endif %}
-                              {% endfor %}
-                          </ul>
-                      </div>
-                  </li>
-              {% endfor %}
-          </ul>
-          
-					</ul>
-				</li>
-				<li class="list-group-item bg-transparent border-0">
-					<a href="#locations" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
-						<i class="bi bi-geo-alt me-2"></i>Locations
-					</a>
-					<ul class="collapse ps-2" id="locations" style="list-style: none;">
-						<li class="list-group-item bg-transparent border-0">
-							
-							<a href="#etti" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
-							<i class="bi bi-buildings  me-2"></i>
-								ETTI
-							</a>
-							<ul class="collapse ps-2" id="etti" style="list-style: none;">
-								<li class="list-group-item bg-transparent border-0">
-									
-									<a href="#floor1" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
-										<i class="bi bi-bar-chart-steps me-2"></i>Floor 1
-									</a>
-									<ul class="collapse ps-2" id="floor1" style="list-style: none;">
-										<li class="list-group-item bg-transparent border-0">
-											
-											<a href="#" class="text-white text-decoration-none hover-red">
-											<i class="bi bi-door-open  me-2"></i>Room 1.01</a>
-										</li>
-									</ul>
-								</li>
-								<li class="list-group-item bg-transparent border-0">
-									
-									<a href="#floor2" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
-									<i class="bi bi-bar-chart-steps  me-2"></i>Floor 2
-									</a>
-									<ul class="collapse ps-2" id="floor2" style="list-style: none;">
-										<li class="list-group-item bg-transparent border-0">
-											
-											<a href="#" class="text-white text-decoration-none hover-red">
-											<i class="bi bi-door-open  me-2"></i>Room 2.01</a>
-										</li>
-									</ul>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-			</ul>
-			<!-- ... (additional content) ... -->
-			
-		</div>
-
-
-		<!-- User Profile Row (20%) as a Button with Dropdown Menu -->
-		<div class="d-flex justify-content-center align-items-center p-2 mt-2 mb-2" style=" background-color: black; border-radius: 10px;">
-
-		<!-- User Profile Button with Dropdown -->
-		<div class="dropup-center" style="width: 100%; padding: 0px 0px;">
-			<div class="dropdown w-100">
-
-				<!-- User Profile Button with Dropdown -->
-				<button class="btn text-white w-100" type="button" id="userProfileButton" data-bs-toggle="offcanvas" data-bs-target="#profileOffcanvas" aria-controls="profileOffcanvas">
-				  <img src="{% static 'devices/cat.png' %}" alt="Profile" style="max-width: 40px; border-radius: 50%; margin-right: 10px;">
-				  <span class="text-white"> {{user.username}}</span>
-				</button>
-				
-				
-			</div>
-		</div>
-
-
-
-
-		</div>
-	</div>
-
-	<!-- Display Area -->
-	<div class="col-md-9 display-area p-0">
-	    {% block content %}
-        <!-- Homepage Display Area -->
-        <div id="homepageDisplayArea">
-            <!-- Three.js Canvas for Starry Sky Background -->
-            <canvas id="starrySky"></canvas>
-
-            <!-- Overlay with Greeting and Presentation -->
-            <div id="overlay">
-                <h1>Welcome to Device Manager !</h1>
-                <p>Explore the features and functionalities that the app offers. Manage your devices and locations effortlessly.</p>
-				<i>Head to the menu on the left to find out more.</i>
+        <!-- Logo Row (centered) -->
+        <div id="topbarLogo" class="d-flex justify-content-center align-items-center p-2 mt-2 mb-2" style="border-radius: 10px; overflow: hidden;">
+          <!-- Text with Animation -->
+          <a href="{% url 'homepage' %}" style="text-decoration: none;">
+            <div style="color: #fff; font-size: 16px; font-weight: bold; animation: pulse 2s infinite; text-align: center; padding: 0px 20px;">
+              Device Manager
             </div>
+          </a>
         </div>
-		{% endblock %}
-	</div>
-  </div>
+
+        <!-- Profile pic button on the right -->
+        <div class="d-flex align-items-center p-2">
+          <button class="btn btn-dark" data-bs-toggle="offcanvas" data-bs-target="#profileOffcanvas" aria-controls="profileOffcanvas" style="width: 40px; height: 40px; padding: 0px;">
+            <img src="{% static 'devices/cat.png' %}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%;">
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-md-3 bg-dark text-light vh-100 d-none d-md-flex flex-column sidebar">
+      
+        <!-- Logo -->
+        <div id="sidebarLogo" class="d-flex justify-content-center align-items-center p-2 mt-2 mb-2" style="height: 15%;  border-radius: 10px; overflow: hidden;">
+          <a href="{% url 'homepage' %}" style="text-decoration: none;">
+            <div  style="color: #fff; font-size: 25px; font-weight: bold; animation: pulse 2s infinite; text-align: center; padding: 0 20px 0 20px;">
+            Device Manager
+            </div>
+          </a>
+        </div>
+
+
+        <!-- Content -->
+        <div class="d-flex flex-grow-1 flex-shrink-1 p-2" style="overflow-y: auto; background-color: black; border-radius: 10px;">
+          <!-- List of Linked Items with Collapsible Structure -->
+          <ul class="list-group bg-transparent border-0">
+            <li class="list-group-item bg-transparent border-0">
+              <a href="#devices" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse" >
+                <i class="bi bi-lightning-charge me-2"></i>Devices
+              </a>
+              <ul class="collapse ps-2" id="devices" style="list-style: none;">
+                <li class="list-group-item bg-transparent border-0 ">
+                  <a href="{% url 'device_list' %}" class="text-white text-decoration-none hover-red">
+                  <i class="bi bi-plugin me-2"></i>
+                  All Devices
+                  </a>
+                </li>
+            
+                <ul class="list-group">
+                  {% for category in categories %}
+                      <li class="list-group-item bg-transparent border-0">
+                          <a href="#" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse" data-bs-target="#{{ category.name }}">
+                              {% if category.name == "Computers" %}
+                                <i class="bi bi-pc-display me-2"></i>
+                              {% elif category.name == "Labware" %}
+                                <i class="bi bi-motherboard-fill  me-2"></i>
+                              {% elif category.name == "Network" %}
+                                <i class="bi bi-ethernet me-2"></i>
+                              {% elif category.name == "Peripherals" %}
+                                <i class="bi bi-usb-symbol me-2"></i>
+                              {% elif category.name == "Storage" %}
+                                <i class="bi bi-hdd-rack me-2"></i>
+                              {% endif %}
+                              {{ category.name }}
+                          </a>
+                          <div class="collapse" id="{{ category.name }}">
+                              <ul class="list-group">
+                                <li class="list-group-item bg-transparent border-0">
+                                  <a href="{% url 'device_list_with_category' category=category.name %}" class="text-white text-decoration-none hover-red">
+                                    All
+                                  </a>
+                              </li>
+                                  {% for subcategory in subcategories %}
+                                      {% if subcategory.category == category %}
+                                          <li class="list-group-item bg-transparent border-0">
+                                              <a href="{% url 'device_list_with_subcategory' category=category.name subcategory=subcategory.name %}" class="text-white text-decoration-none hover-red">
+                                                  {{ subcategory.name }}
+                                              </a>
+                                          </li>
+                                      {% endif %}
+                                  {% endfor %}
+                              </ul>
+                          </div>
+                      </li>
+                  {% endfor %}
+              </ul>
+              
+              </ul>
+            </li>
+            <li class="list-group-item bg-transparent border-0">
+              <a href="#locations" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                <i class="bi bi-geo-alt me-2"></i>Locations
+              </a>
+              <ul class="collapse ps-2" id="locations" style="list-style: none;">
+                <li class="list-group-item bg-transparent border-0">
+                  
+                  <a href="#etti" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                  <i class="bi bi-buildings  me-2"></i>
+                    ETTI
+                  </a>
+                  <ul class="collapse ps-2" id="etti" style="list-style: none;">
+                    <li class="list-group-item bg-transparent border-0">
+                      
+                      <a href="#floor1" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                        <i class="bi bi-bar-chart-steps me-2"></i>Floor 1
+                      </a>
+                      <ul class="collapse ps-2" id="floor1" style="list-style: none;">
+                        <li class="list-group-item bg-transparent border-0">
+                          
+                          <a href="#" class="text-white text-decoration-none hover-red">
+                          <i class="bi bi-door-open  me-2"></i>Room 1.01</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li class="list-group-item bg-transparent border-0">
+                      
+                      <a href="#floor2" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                      <i class="bi bi-bar-chart-steps  me-2"></i>Floor 2
+                      </a>
+                      <ul class="collapse ps-2" id="floor2" style="list-style: none;">
+                        <li class="list-group-item bg-transparent border-0">
+                          
+                          <a href="#" class="text-white text-decoration-none hover-red">
+                          <i class="bi bi-door-open  me-2"></i>Room 2.01</a>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="list-group-item bg-transparent border-0">
+              <a href="{% url 'actions' %}" class="text-light text-decoration-none hover-red">
+                <i class="bi bi-gear-fill me-2"></i>Actions
+              </a>
+            </li>
+          </ul>
+          <!-- ... (additional content) ... -->
+          
+        </div>
+
+        <!-- User Profile -->
+        <div class="d-flex justify-content-center align-items-center p-2 mt-2 mb-2" style=" background-color: black; border-radius: 10px;">
+
+          <!-- User Profile Button with Dropdown -->
+          <div class="dropup-center" style="width: 100%; padding: 0px 0px;">
+            <div class="dropdown w-100">
+
+              <!-- User Profile Button with Dropdown -->
+              <button class="btn text-white w-100" type="button" id="userProfileButton" data-bs-toggle="offcanvas" data-bs-target="#profileOffcanvas" aria-controls="profileOffcanvas">
+                <img src="{% static 'devices/cat.png' %}" alt="Profile" style="max-width: 40px; border-radius: 50%; margin-right: 10px;">
+                <span class="text-white"> {{user.username}}</span>
+              </button>
+          
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Display Area -->
+      <div class="col-md-9 display-area p-0">
+        {% block content %}
+            <!-- Homepage Display Area -->
+            <div id="homepageDisplayArea">
+                <!-- Three.js Canvas for Starry Sky Background -->
+                <canvas id="starrySky"></canvas>
+
+                <!-- Overlay with Greeting and Presentation -->
+                <div id="overlay">
+                    <h1>Welcome to Device Manager !</h1>
+                    <p>Explore the features and functionalities that the app offers. Manage your devices and locations effortlessly.</p>
+                    <i>Head to the menu on the left to find out more.</i>
+                </div>
+            </div>
+        {% endblock %}
+      </div>
+    </div>
   </div>
   
-  <!-- Offcanvas for the sidebar -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel" style="background: linear-gradient(to right, #00d2ff, #3a47d5); border: none;">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Menu</h5>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    <!-- Sidebar menu content -->
-		<!-- Content Row (60%) -->
-		<div class="d-flex flex-grow-1 flex-shrink-1 p-2" style="overflow-y: auto; background-color: black; border-radius: 10px;">
-			<!-- List of Linked Items with Collapsible Structure -->
-			<ul class="list-group bg-transparent border-0">
-				<li class="list-group-item bg-transparent border-0">
-					<a href="#devices" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse" >
-						<i class="bi bi-lightning-charge me-2"></i>Devices
-					</a>
-					<ul class="collapse ps-2" id="devices" style="list-style: none;">
-						<li class="list-group-item bg-transparent border-0 ">
-							<a href="{% url 'device_list' %}" class="text-white text-decoration-none hover-red">
-							<i class="bi bi-plugin me-2"></i>
-							All Devices
-							</a>
-						</li>
-				
-            <ul class="list-group">
-              {% for category in categories %}
-                  <li class="list-group-item bg-transparent border-0">
-                      <a href="#" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse" data-bs-target="#{{ category.name }}">
-                          {% if category.name == "Computers" %}
-                            <i class="bi bi-pc-display me-2"></i>
-                          {% elif category.name == "Labware" %}
-                            <i class="bi bi-motherboard-fill  me-2"></i>
-                          {% elif category.name == "Network" %}
-                            <i class="bi bi-ethernet me-2"></i>
-                          {% elif category.name == "Peripherals" %}
-                            <i class="bi bi-usb-symbol me-2"></i>
-                          {% elif category.name == "Storage" %}
-                            <i class="bi bi-hdd-rack me-2"></i>
-                          {% endif %}
-                          {{ category.name }}
-                      </a>
-                      <div class="collapse" id="{{ category.name }}">
-                          <ul class="list-group">
-                            <li class="list-group-item bg-transparent border-0">
-                              <a href="{% url 'device_list_with_category' category=category.name %}" class="text-white text-decoration-none hover-red">
-                                All
-                              </a>
-                          </li>
-                              {% for subcategory in subcategories %}
-                                  {% if subcategory.category == category %}
-                                      <li class="list-group-item bg-transparent border-0">
-                                          <a href="{% url 'device_list_with_subcategory' category=category.name subcategory=subcategory.name %}" class="text-white text-decoration-none hover-red">
-                                              {{ subcategory.name }}
-                                          </a>
-                                      </li>
-                                  {% endif %}
-                              {% endfor %}
-                          </ul>
-                      </div>
-                  </li>
-              {% endfor %}
-          </ul>
+  <!-- Offcanvas for the left sidebar menu-->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel" style="background: linear-gradient(to right, #00d2ff, #3a47d5); border: none;">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Menu</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <!-- Sidebar menu content -->
+      <!-- Content Row (60%) -->
+      <div class="d-flex flex-grow-1 flex-shrink-1 p-2" style="overflow-y: auto; background-color: black; border-radius: 10px;">
+        <!-- List of Linked Items with Collapsible Structure -->
+        <ul class="list-group bg-transparent border-0">
+          <li class="list-group-item bg-transparent border-0">
+            <a href="#devices" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse" >
+              <i class="bi bi-lightning-charge me-2"></i>Devices
+            </a>
+            <ul class="collapse ps-2" id="devices" style="list-style: none;">
+              <li class="list-group-item bg-transparent border-0 ">
+                <a href="{% url 'device_list' %}" class="text-white text-decoration-none hover-red">
+                <i class="bi bi-plugin me-2"></i>
+                All Devices
+                </a>
+              </li>
           
-					</ul>
-				</li>
-				<li class="list-group-item bg-transparent border-0">
-					<a href="#locations" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
-						<i class="bi bi-geo-alt me-2"></i>Locations
-					</a>
-					<ul class="collapse ps-2" id="locations" style="list-style: none;">
-						<li class="list-group-item bg-transparent border-0">
-							
-							<a href="#etti" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
-							<i class="bi bi-buildings  me-2"></i>
-								ETTI
-							</a>
-							<ul class="collapse ps-2" id="etti" style="list-style: none;">
-								<li class="list-group-item bg-transparent border-0">
-									
-									<a href="#floor1" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
-										<i class="bi bi-bar-chart-steps me-2"></i>Floor 1
-									</a>
-									<ul class="collapse ps-2" id="floor1" style="list-style: none;">
-										<li class="list-group-item bg-transparent border-0">
-											
-											<a href="#" class="text-white text-decoration-none hover-red">
-											<i class="bi bi-door-open  me-2"></i>Room 1.01</a>
-										</li>
-									</ul>
-								</li>
-								<li class="list-group-item bg-transparent border-0">
-									
-									<a href="#floor2" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
-									<i class="bi bi-bar-chart-steps  me-2"></i>Floor 2
-									</a>
-									<ul class="collapse ps-2" id="floor2" style="list-style: none;">
-										<li class="list-group-item bg-transparent border-0">
-											
-											<a href="#" class="text-white text-decoration-none hover-red">
-											<i class="bi bi-door-open  me-2"></i>Room 2.01</a>
-										</li>
-									</ul>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-			</ul>
-			<!-- ... (additional content) ... -->
-			
-		</div>
+              <ul class="list-group">
+                {% for category in categories %}
+                    <li class="list-group-item bg-transparent border-0">
+                        <a href="#" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse" data-bs-target="#{{ category.name }}">
+                            {% if category.name == "Computers" %}
+                              <i class="bi bi-pc-display me-2"></i>
+                            {% elif category.name == "Labware" %}
+                              <i class="bi bi-motherboard-fill  me-2"></i>
+                            {% elif category.name == "Network" %}
+                              <i class="bi bi-ethernet me-2"></i>
+                            {% elif category.name == "Peripherals" %}
+                              <i class="bi bi-usb-symbol me-2"></i>
+                            {% elif category.name == "Storage" %}
+                              <i class="bi bi-hdd-rack me-2"></i>
+                            {% endif %}
+                            {{ category.name }}
+                        </a>
+                        <div class="collapse" id="{{ category.name }}">
+                            <ul class="list-group">
+                              <li class="list-group-item bg-transparent border-0">
+                                <a href="{% url 'device_list_with_category' category=category.name %}" class="text-white text-decoration-none hover-red">
+                                  All
+                                </a>
+                            </li>
+                                {% for subcategory in subcategories %}
+                                    {% if subcategory.category == category %}
+                                        <li class="list-group-item bg-transparent border-0">
+                                            <a href="{% url 'device_list_with_subcategory' category=category.name subcategory=subcategory.name %}" class="text-white text-decoration-none hover-red">
+                                                {{ subcategory.name }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            
+            </ul>
+          </li>
+          <li class="list-group-item bg-transparent border-0">
+            <a href="#locations" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+              <i class="bi bi-geo-alt me-2"></i>Locations
+            </a>
+            <ul class="collapse ps-2" id="locations" style="list-style: none;">
+              <li class="list-group-item bg-transparent border-0">
+                
+                <a href="#etti" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                <i class="bi bi-buildings  me-2"></i>
+                  ETTI
+                </a>
+                <ul class="collapse ps-2" id="etti" style="list-style: none;">
+                  <li class="list-group-item bg-transparent border-0">
+                    
+                    <a href="#floor1" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                      <i class="bi bi-bar-chart-steps me-2"></i>Floor 1
+                    </a>
+                    <ul class="collapse ps-2" id="floor1" style="list-style: none;">
+                      <li class="list-group-item bg-transparent border-0">
+                        
+                        <a href="#" class="text-white text-decoration-none hover-red">
+                        <i class="bi bi-door-open  me-2"></i>Room 1.01</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="list-group-item bg-transparent border-0">
+                    
+                    <a href="#floor2" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                    <i class="bi bi-bar-chart-steps  me-2"></i>Floor 2
+                    </a>
+                    <ul class="collapse ps-2" id="floor2" style="list-style: none;">
+                      <li class="list-group-item bg-transparent border-0">
+                        
+                        <a href="#" class="text-white text-decoration-none hover-red">
+                        <i class="bi bi-door-open  me-2"></i>Room 2.01</a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <!-- ... (additional content) ... -->
+        
+      </div>
 
+    </div>
   </div>
-</div>
 
-<!-- Offcanvas for the profile -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="profileOffcanvas" aria-labelledby="profileOffcanvasLabel" style="background: linear-gradient(to left, #00d2ff, #3a47d5); border: none;">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="profileOffcanvasLabel">Profile Menu</h5>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  <!-- Offcanvas for the right sidebar profile menu -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="profileOffcanvas" aria-labelledby="profileOffcanvasLabel" style="background: linear-gradient(to left, #00d2ff, #3a47d5); border: none;">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="profileOffcanvasLabel">Profile Menu</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <!-- Profile menu content -->
+      <div class="d-flex flex-column align-items-center">
+  <!-- User Profile Banner with Gradient -->
+  <div class="bg-black p-3 mb-3 w-100 d-flex align-items-center" style="border-radius: 10px;">
+    <!-- User Picture -->
+    <img src="{% static 'devices/cat.png' %}" alt="User Picture" style="max-width: 100px; border-radius: 50%;">
+    <!-- User Name -->
+    <h6 class="text-light ms-3 mb-0"> {{ user.username }} </h6>
   </div>
-  <div class="offcanvas-body">
-    <!-- Profile menu content -->
-    <div class="d-flex flex-column align-items-center">
-<!-- User Profile Banner with Gradient -->
-<div class="bg-black p-3 mb-3 w-100 d-flex align-items-center" style="border-radius: 10px;">
-  <!-- User Picture -->
-  <img src="{% static 'devices/cat.png' %}" alt="User Picture" style="max-width: 100px; border-radius: 50%;">
-  <!-- User Name -->
-  <h6 class="text-light ms-3 mb-0"> {{ user.username }} </h6>
-</div>
 
 
-<!-- Account Links with Styling -->
-<div class="d-flex flex-grow-1 flex-shrink-1 p-2 bg-black w-100" style="overflow-y: auto; border-radius: 10px;">
-  <ul class="list-group bg-transparent border-0 w-100">
-    <li class="list-group-item bg-transparent border-0">
-    <a href="#" class="text-light text-decoration-none hover-red" data-bs-toggle="modal" data-bs-target="#accountSettingsModal">
-      <i class="bi bi-gear me-2"></i>Account Settings
-    </a>
-    </li>
+  <!-- Account Links with Styling -->
+  <div class="d-flex flex-grow-1 flex-shrink-1 p-2 bg-black w-100" style="overflow-y: auto; border-radius: 10px;">
+    <ul class="list-group bg-transparent border-0 w-100">
+      <li class="list-group-item bg-transparent border-0">
+      <a href="#" class="text-light text-decoration-none hover-red" data-bs-toggle="modal" data-bs-target="#accountSettingsModal">
+        <i class="bi bi-gear me-2"></i>Account Settings
+      </a>
+      </li>
+      <li class="list-group-item bg-transparent border-0">
+        <a href="#" class="text-light text-decoration-none hover-red">
+          <i class="bi bi-lock me-2"></i>Change Password
+        </a>
+      </li>
+      <!-- Email Preferences -->
     <li class="list-group-item bg-transparent border-0">
       <a href="#" class="text-light text-decoration-none hover-red">
-        <i class="bi bi-lock me-2"></i>Change Password
+        <i class="bi bi-envelope me-2"></i>Email Preferences
       </a>
     </li>
-	  <!-- Email Preferences -->
-  <li class="list-group-item bg-transparent border-0">
-    <a href="#" class="text-light text-decoration-none hover-red">
-      <i class="bi bi-envelope me-2"></i>Email Preferences
-    </a>
-  </li>
-	  <!-- Profile Information -->
-  <li class="list-group-item bg-transparent border-0">
-    <a href="#" class="text-light text-decoration-none hover-red">
-      <i class="bi bi-person me-2"></i>Profile Information
-    </a>
-  </li>
+      <!-- Profile Information -->
+    <li class="list-group-item bg-transparent border-0">
+      <a href="#" class="text-light text-decoration-none hover-red">
+        <i class="bi bi-person me-2"></i>Profile Information
+      </a>
+    </li>
 
-  <!-- Privacy Policy -->
-  <li class="list-group-item bg-transparent border-0">
-    <a href="#" class="text-light text-decoration-none hover-red">
-      <i class="bi bi-file-earmark-text me-2"></i>Privacy Policy
-    </a>
-  </li>
-    <!-- Add more account links as needed -->
-  </ul>
-</div>
-
-
-      <!-- Logout Button with Styling -->
-      <button class="btn btn-danger mt-3 w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
-        <i class="bi bi-box-arrow-left me-2"></i>Logout
-      </button>
-    </div>
+    <!-- Privacy Policy -->
+    <li class="list-group-item bg-transparent border-0">
+      <a href="#" class="text-light text-decoration-none hover-red">
+        <i class="bi bi-file-earmark-text me-2"></i>Privacy Policy
+      </a>
+    </li>
+      <!-- Add more account links as needed -->
+    </ul>
   </div>
-</div>
 
 
-<!-- Include Bootstrap 5 JavaScript (popper.js and Bootstrap JS) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-         <!-- Include Three.js library -->
-        <script type="module">
-            import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r127/build/three.module.js';
-
-            // Get the homepageDisplayArea and the canvas
-            var homepageDisplayArea = document.getElementById('homepageDisplayArea');
-            var canvas = document.getElementById('starrySky');
-            var renderer;
-
-            // Function to update the canvas size
-            function updateCanvasSize() {
-                canvas.width = homepageDisplayArea.clientWidth;
-                canvas.height = homepageDisplayArea.clientHeight;
-				console.log(canvas.height + " " + canvas.width)
-                // Update Three.js renderer size
-                if (renderer) {
-                    renderer.setSize(canvas.width, canvas.height);
-                }
-
-                // Call your function to redraw/render the starry sky
-                redrawStarrySky();
-            }
-
-            // Initial update
-            updateCanvasSize();
-
-            // Listen for window resize event
-            window.addEventListener('resize', updateCanvasSize);
-
-            // Example Three.js functions (replace with your own logic)
-            function redrawStarrySky() {
-                // Initialize Three.js scene
-                const scene = new THREE.Scene();
-
-                // Create a camera
-                const camera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 1000);
-                camera.position.z = 5;
-
-                // Create a renderer
-                renderer = new THREE.WebGLRenderer({ canvas: canvas });
-                renderer.setSize(canvas.width, canvas.height);
-
-                // Create stars
-                const starsGeometry = new THREE.BufferGeometry();
-                const starsMaterial = new THREE.PointsMaterial({ color: 0xFFFFFF, size: 0.1 });
-
-                const starsVertices = [];
-                for (let i = 0; i < 5000; i++) {
-                    const x = (Math.random() - 0.5) * 2000;
-                    const y = (Math.random() - 0.5) * 2000;
-                    const z = (Math.random() - 0.5) * 2000;
-                    starsVertices.push(x, y, z);
-                }
-
-                starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
-                const stars = new THREE.Points(starsGeometry, starsMaterial);
-
-                // Add stars to the scene
-                scene.add(stars);
-
-                // Function to animate the scene
-                function animate() {
-                    requestAnimationFrame(animate);
-
-                    // Rotate stars
-                    stars.rotation.x += 0.0005;
-                    stars.rotation.y += 0.0005;
-
-                    // Render the scene
-                    renderer.render(scene, camera);
-                }
-
-                // Call the animate function
-                animate();
-            }
-        </script>
- 
-<style>
-  /* Style for WebKit browsers */
-::-webkit-scrollbar {
-  width: 8px; /* width of the scrollbar */
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #6c757d; /* color of the thumb */
-  border-radius: 4px; /* roundness of the thumb */
-}
-
-::-webkit-scrollbar-track {
-  background-color: transparent; /* color of the track */
-}
-
-/* Optional: Handle on hover state */
-::-webkit-scrollbar-thumb:hover {
-  background-color: #495057;
-}
-
-    /* Your existing styles */
-        #homepageDisplayArea {
-            height: 100%;
-            width: 100%;
-            position: relative;
-        }
-
-        #starrySky {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        #overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: white;
-        }
-
-#overlay h1 {
-  font-size: 2em;
-  margin-bottom: 20px;
-}
-
-#overlay p {
-  font-size: 1.2em;
-}
-
-	
-
-    /* Define a class for the hover effect */
-    .hover-red:hover {
-      color: red !important; /* Use !important to override other styles if needed */
-      text-decoration: none; /* Optional: Remove underline on hover */
-    }
-	
-	/* Normal state styles */
-	  #userProfileButton {
-		background: linear-gradient(to right, #00d2ff, #3a47d5);
-		border: none;
-		padding: 10px 0;
-	}
-
-	  /* Hover state styles */
-	  #userProfileButton:hover {
-		background: linear-gradient(to right, #4b6cb7, #182848);
-	  }
-		  #sidebarLogo {
-			background: linear-gradient(to right, #00d2ff, #3a47d5);
-		  }
-		
-		  #sidebarLogo:hover {
-			background: linear-gradient(to right, #4b6cb7, #182848);
-		  }
-		  
-		  #topbarLogo {
-			background: linear-gradient(to right, #00d2ff, #3a47d5);
-		  }
-		  
-		  #topbarLogo:hover {
-			background: linear-gradient(to right, #4b6cb7, #182848);
-		  }
-		  
-		  @keyframes pulse {
-			0% {
-			  transform: scale(1);
-			}
-			50% {
-			  transform: scale(1.2);
-			}
-			100% {
-			  transform: scale(1);
-			}
-		  }
-  </style>
-
-
-<!-- Confirmation Modal -->
-<!-- Add this modal to your HTML -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Do you want to view the added device details? Otherwise you will be redirected to device list.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="cancelRedirect" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirmRedirect">Yes</button>
+        <!-- Logout Button with Styling -->
+        <button class="btn btn-danger mt-3 w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
+          <i class="bi bi-box-arrow-left me-2"></i>Logout
+        </button>
       </div>
     </div>
   </div>
-</div>
-
 
 <!-- Modals for Account Links -->
-
-		<!-- Logout Modal -->
-		<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-		  <div class="modal-content">
-			<div class="modal-header">
-			  <h5 class="modal-title text-black" id="logoutModalLabel">Log Out</h5>
-			  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body text-black">
-			  Are you sure you want to log out?
-			</div>
-			<div class="modal-footer">
-			  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form method="post" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary">Logout</button>
-      </form>
-			</div>
-		  </div>
-		</div>
-		</div>
-
-<!-- Account Settings Modal -->
-<div class="modal fade" id="accountSettingsModal" tabindex="-1" aria-labelledby="accountSettingsModalLabel" aria-hidden="true">
+  <!-- Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="accountSettingsModalLabel">Account Settings</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Account Settings Form -->
-        <form>
-          <!-- Username -->
-          <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" placeholder="Enter your username">
-          </div>
+    <div class="modal-header">
+      <h5 class="modal-title text-black" id="logoutModalLabel">Log Out</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body text-black">
+      Are you sure you want to log out?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Logout</button>
+    </form>
+    </div>
+    </div>
+  </div>
+  </div>
 
-          <!-- Email -->
-          <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter your email">
-          </div>
+  <!-- Account Settings Modal -->
+  <div class="modal fade" id="accountSettingsModal" tabindex="-1" aria-labelledby="accountSettingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="accountSettingsModalLabel">Account Settings</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Account Settings Form -->
+          <form>
+            <!-- Username -->
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="username" placeholder="Enter your username">
+            </div>
 
-          <!-- Profile Picture -->
-          <div class="mb-3">
-            <label for="profilePicture" class="form-label">Profile Picture</label>
-            <input type="file" class="form-control" id="profilePicture">
-          </div>
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" placeholder="Enter your email">
+            </div>
 
-          <!-- Add more fields as needed -->
+            <!-- Profile Picture -->
+            <div class="mb-3">
+              <label for="profilePicture" class="form-label">Profile Picture</label>
+              <input type="file" class="form-control" id="profilePicture">
+            </div>
 
-          <!-- Save Changes Button -->
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-        </form>
+            <!-- Add more fields as needed -->
+
+            <!-- Save Changes Button -->
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Change Password Modal -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Add content and form fields for Change Password here -->
-        <p>Change Password content goes here...</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+  <!-- Change Password Modal -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Add content and form fields for Change Password here -->
+          <p>Change Password content goes here...</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Do you want to view the added device details? Otherwise you will be redirected to device list.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelRedirect" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirmRedirect">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Include JS Scripts-->
+  <!-- Three JS Stars-->
+  <script type="module" src="{% static 'js/stars.js' %}" async></script>
+  <!-- Bootstrap JS 5.3.2 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous" async></script>
+  <!-- Toastify JS-->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js" async></script>
+  {% block extra_js %}
+  {% endblock %}
 </body>
 </html>

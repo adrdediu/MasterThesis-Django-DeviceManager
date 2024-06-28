@@ -7,13 +7,13 @@ from django.contrib import admin
 from django.urls import path,include
 from devices.views import  DeviceDetailView, add_device, GetFloorsView, GetRoomsView, GetSubcategoriesView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView
-from devices.views import LoginView, LogoutView
+from devices.views import LoginView, LogoutView,ActionsView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', LoginView.as_view(), name='login'),
+    path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('home/', HomePageView.as_view(), name='homepage'),
+    path('', HomePageView.as_view(), name='homepage'),
     path('devices/', DeviceListView.as_view(), name='device_list'),
     path('devices/<str:category>/', DeviceListView.as_view(), name='device_list_with_category'),
     path('devices/<str:category>/<str:subcategory>/', DeviceListView.as_view(), name='device_list_with_subcategory'),
@@ -24,6 +24,7 @@ urlpatterns = [
     path('get_subcategories/',GetSubcategoriesView.as_view(),name='get_subcategories'),
     path('download_qrcode/<int:device_id>/', DownloadQRCodeView.as_view(), name='download_qrcode'),
     # Add other URL patterns as needed
+     path('actions/', ActionsView.as_view(), name='actions'),
 ]
 
 
