@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container my-2">
+<div class="container bg-black h-100">
 
   <h1 class="text-light">{{ device.id}} - {{ device.name }}</h1>
   
@@ -52,10 +52,17 @@
         </h2>
         <div id="qrCode" class="accordion-collapse collapse" data-bs-parent="#deviceDetails">
           <div class="accordion-body">
-              <div class="text-center">
-                  <img src="{{ device.qrcode_url }}" class="img-fluid" alt="QR Code">
-                  <a href="{% url 'download_qrcode' device.id %}" class="btn btn-primary mt-3">Download QR Code</a>
+            <div class="text-center">
+              {% if device.qrcode_url %}
+                <img src="{{ device.qrcode_url }}" class="img-fluid mb-3" alt="QR Code">
+                <div class="d-flex justify-content-center gap-2">
+                  <a href="{% url 'download_qrcode' device.id %}" class="btn btn-primary">Download QR Code</a>
+                  <button id="regenerateQRCode" class="btn btn-warning">Regenerate QR Code</button>
                 </div>
+              {% else %}
+                <p>No QR code available.</p>
+                <button id="generateQRCode" class="btn btn-primary">Generate QR Code</button>
+              {% endif %}
           </div>
         </div>
       </div>
@@ -67,13 +74,55 @@
 </div>
 
 <script>
-  var accordion = document.getElementById('deviceDetails');
-  accordion.addEventListener('show.bs.collapse', function (e) {
-    e.target.previousElementSibling.classList.add('active');
-  })
-  accordion.addEventListener('hide.bs.collapse', function (e) {
-    e.target.previousElementSibling.classList.remove('active');
-  })
+ document.addEventListener('DOMContentLoaded', function() {
+    var accordion = document.getElementById('deviceDetails');
+    accordion.addEventListener('show.bs.collapse', function (e) {
+      e.target.previousElementSibling.classList.add('active');
+    })
+    accordion.addEventListener('hide.bs.collapse', function (e) {
+      e.target.previousElementSibling.classList.remove('active');
+    })
+
+    // QR Code regeneration
+    var regenerateButton = document.getElementById('regenerateQRCode');
+    var generateButton = document.getElementById('generateQRCode');
+
+    function handleQRCodeGeneration(action) {
+      fetch(`/api/device/{{ device.id }}/qrcode/${action}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();  // Reload the page to show the new QR code
+        } else {
+          alert('Failed to ' + action + ' QR code: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while ' + action + 'ing the QR code');
+      });
+    }
+
+    if (regenerateButton) {
+      regenerateButton.addEventListener('click', function() {
+        if (confirm('Are you sure you want to regenerate the QR code?')) {
+          handleQRCodeGeneration('regenerate');
+        }
+      });
+    }
+
+    if (generateButton) {
+      generateButton.addEventListener('click', function() {
+        handleQRCodeGeneration('generate');
+      });
+    }
+  });
 </script>
 
 {% endblock %}

@@ -114,7 +114,9 @@ class Command(BaseCommand):
                 {'id': 1334, 'name': '3.34', 'floor': Floor.objects.get(id=13),'building': Building.objects.get(id=1)},
                 {'id': 1337, 'name': '3.37', 'floor': Floor.objects.get(id=13),'building': Building.objects.get(id=1)},
                 {'id': 1338, 'name': '3.38', 'floor': Floor.objects.get(id=13),'building': Building.objects.get(id=1)},
-            # Add more rooms as needed
+           
+            # ETTI - C Levels: 0-1
+                {'id': 2001, 'name': 'C.0.1', 'floor': Floor.objects.get(id=21),'building': Building.objects.get(id=2)},
         ]
 
         self.create_instances(Room, rooms_data)

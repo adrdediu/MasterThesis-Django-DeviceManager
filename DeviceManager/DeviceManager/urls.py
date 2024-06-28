@@ -5,9 +5,10 @@ from django.conf.urls.static import static
 
 from django.contrib import admin
 from django.urls import path,include
-from devices.views import  DeviceDetailView, add_device, GetFloorsView, GetRoomsView, GetSubcategoriesView
+from devices.views import  DeviceDetailView, add_device, GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView
 from devices.views import LoginView, LogoutView,ActionsView
+from devices.api_views import start_inventory, pause_resume_inventory, end_inventory, edit_inventory,get_inventory_status,cancel_inventory,qrcode_action
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,15 @@ urlpatterns = [
     path('download_qrcode/<int:device_id>/', DownloadQRCodeView.as_view(), name='download_qrcode'),
     # Add other URL patterns as needed
      path('actions/', ActionsView.as_view(), name='actions'),
+     path('api/device/<int:device_id>/qrcode/<str:action>/', qrcode_action, name='qrcode_action'),
+    
+    path('inventory/cancel/', cancel_inventory, name='api_cancel_inventory'),
+    path('inventory/start/', start_inventory, name='api_start_inventory'),
+    path('inventory/pause-resume/', pause_resume_inventory, name='api_pause_resume_inventory'),
+    path('inventory/end/', end_inventory, name='api_end_inventory'),
+    path('inventory/edit/', edit_inventory, name='api_edit_inventory'),
+    path('inventory/status/',get_inventory_status, name='api_get_inventory_status'),
+    path('inventory/<int:pk>/', InventorizationListDetailView.as_view(), name='inventory_detail'),
 ]
 
 

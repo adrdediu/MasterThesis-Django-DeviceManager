@@ -9,7 +9,7 @@ from django.conf import settings
 import datetime
 from django.db import models
 from django.utils import timezone
-
+from django.db.models import JSONField
 
 
 class Building(models.Model):
@@ -80,45 +80,115 @@ class Device(models.Model):
     updated_at = models.DateTimeField(default=datetime.datetime.now)
 
     def __str__(self):
-        return self.name 
-
+        return f"{self.name} - {self.serial_number}"
+    
     def save(self, *args, **kwargs):
-        if not self.pk:
-            super().save(*args, **kwargs)
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
 
-            # Generate QR code with the device detail URL
-            qr = qrcode.QRCode(
-                version=1,
-                error_correction=qrcode.constants.ERROR_CORRECT_L,
-                box_size=10,
-                border=4,
-            )
-            device_url = reverse('device_detail', args=[str(self.pk)])
+        if is_new or not self.qrcode_url:
+            self.generate_qr_code()
 
-            # Ensure to use the correct domain
-            current_site = Site.objects.get_current()
-            complete_url = f"http://{current_site.domain}{device_url}"
+    def generate_qr_code(self):
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        
+        # Generate the device URL with the qr_scan parameter
+        device_url = reverse('device_detail', args=[str(self.pk)])
+        current_site = Site.objects.get_current()
+        complete_url = f"http://{current_site.domain}{device_url}?source=qr_scan"
 
-            qr.add_data(complete_url)
-            qr.make(fit=True)
+        qr.add_data(complete_url)
+        qr.make(fit=True)
 
-            # Specify the full path to save the QR code image
-            img_path = os.path.join(settings.MEDIA_ROOT, f'qrcodes/{self.pk}.png')
+        img_path = os.path.join(settings.MEDIA_ROOT, f'qrcodes/{self.pk}.png')
+        os.makedirs(os.path.dirname(img_path), exist_ok=True)
 
-            # Ensure the directory exists before saving the file
-            os.makedirs(os.path.dirname(img_path), exist_ok=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        img.save(img_path)
 
-            img = qr.make_image(fill_color="black", back_color="white")
-            img.save(img_path)
+        self.qrcode_url = settings.MEDIA_URL + f'qrcodes/{self.pk}.png'
+        self.is_qrcode_applied = True
+        self.save(update_fields=['qrcode_url', 'is_qrcode_applied'])
 
-            # Save the complete QR code URL to the model field
-            self.qrcode_url = settings.MEDIA_URL + f'qrcodes/{self.pk}.png'
+    def regenerate_qr_code(self):
+        # Delete the old QR code file if it exists
+        if self.qrcode_url:
+            old_path = os.path.join(settings.MEDIA_ROOT, self.qrcode_url.lstrip('/'))
+            if os.path.exists(old_path):
+                os.remove(old_path)
 
-            self.updated_at = timezone.now()
-            print(self.updated_at,timezone.now())
-            super().save(update_fields=['qrcode_url'])
-        else:
-            super().save(*args, **kwargs)
+        # Reset QR code fields
+        self.qrcode_url = None
+        self.is_qrcode_applied = False
+        self.save(update_fields=['qrcode_url', 'is_qrcode_applied'])
 
-    def get_absolute_url(self):
-        return reverse('device_detail', args=[str(self.pk)])
+        # Generate new QR code
+        self.generate_qr_code()
+
+    class Meta:
+        ordering = ['id']
+    
+
+
+
+
+from django.contrib.auth.models import User
+
+class InventorizationList(models.Model):
+    SCOPE_CHOICES = [
+        ('ENTIRE', 'Entire Building'),
+        ('PARTIAL', 'Selected Rooms'),
+    ]
+    STATUS_CHOICES = [
+        ('ACTIVE', 'Active'),
+        ('PAUSED', 'Paused'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELED', 'Canceled'),  # New status added
+    ]
+
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_inventorizations')
+    start_date = models.DateTimeField(default=timezone.now)
+    modified_date = models.DateTimeField(auto_now=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+    scope = models.CharField(max_length=10, choices=SCOPE_CHOICES)
+    building = models.ForeignKey('Building', on_delete=models.CASCADE)
+    room_ids = JSONField(default=list)  # This will store the list of room IDs
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='ACTIVE')
+
+    def __str__(self):
+        return f"Inventorization {self.id} by {self.creator.username}"
+
+    class Meta:
+        ordering = ['-start_date']
+
+class InventorizationRoom(models.Model):
+    inventorization = models.ForeignKey(InventorizationList, on_delete=models.CASCADE, related_name='rooms')
+    room = models.ForeignKey('Room', on_delete=models.CASCADE)
+    is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Room {self.room.name} in Inventorization {self.inventorization.id}"
+
+class InventorizationDevice(models.Model):
+    inventorization_room = models.ForeignKey(InventorizationRoom, on_delete=models.CASCADE, related_name='devices')
+    device = models.ForeignKey('Device', on_delete=models.CASCADE)
+    is_scanned = models.BooleanField(default=False)
+    scan_date = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Device {self.device.name} in Room {self.inventorization_room.room.name}"
+
+class DeviceScan(models.Model):
+    inventory = models.ForeignKey(InventorizationList, on_delete=models.CASCADE)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
+    scanned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('inventory', 'device')
+
+

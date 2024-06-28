@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 
 class LoginView(View):
     template_name = 'devices/login.html'
@@ -50,8 +51,6 @@ class LogoutView(View):
         logout(request)
 
         return render(request, self.template_name)
-
-
 
 class GetSubcategoriesView(LoginRequiredMixin,View):
     login_url = 'login'
@@ -100,7 +99,6 @@ class HomePageView(BaseContextMixin,LoginRequiredMixin,View):
     def get(self, request):
         context = self.get_base_context()
         return render(request, 'devices/home.html', context)
-
 
 class DeviceListView(BaseContextMixin,LoginRequiredMixin,View):
     login_url = 'login'
@@ -205,21 +203,72 @@ def add_device(request):
 
     return render(request, 'devices/device_list.html', context)
 
-
+from django.views.generic import TemplateView
+from .models import InventorizationList, Building
 
 class ActionsView(LoginRequiredMixin, TemplateView):
-    login_url = 'login'
-
     template_name = 'devices/actions.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        context['subcategories'] = Subcategory.objects.all()
-        # Add any other context data you need for the actions page
+        context.update({
+            'inventorization_lists': InventorizationList.objects.all().order_by('-start_date'),
+            'buildings': Building.objects.all(),
+            #'recent_activities': RecentActivity.objects.all().order_by('-timestamp')[:10],  # Adjust as needed
+            #'history_entries': HistoryEntry.objects.all().order_by('-timestamp'),  # Adjust as needed
+        })
         return context
 
-    
+from django.views.generic import DetailView
+from django.db.models import Count
+from .models import InventorizationList, Device, Room, DeviceScan
+
+class InventorizationListDetailView(DetailView):
+    model = InventorizationList
+    template_name = 'devices/inventorization_list_detail.html'
+    context_object_name = 'inventory'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        inventory = self.object
+        
+        # Get the rooms based on the stored room_ids
+        rooms = Room.objects.filter(id__in=inventory.room_ids)
+        
+        total_devices = 0
+        total_scanned = 0
+        rooms_data = []
+        for room in rooms:
+            devices = Device.objects.filter(room=room)
+            scanned_devices = self.get_scanned_devices(inventory, devices)
+            room_data = {
+                'room': room,
+                'devices': devices,
+                'scanned_devices': scanned_devices,
+            }
+            rooms_data.append(room_data)
+            total_devices += devices.count()
+            total_scanned += scanned_devices.count()
+
+        context['rooms_data'] = rooms_data
+        context['total_devices'] = total_devices
+        context['total_scanned'] = total_scanned
+
+        # Check if all devices are scanned and update status if necessary
+        if total_scanned == total_devices and inventory.status != 'COMPLETED':
+            inventory.status = 'COMPLETED'
+            inventory.save()
+
+        return context
+
+    def get_scanned_devices(self, inventory, devices):
+        return Device.objects.filter(
+            id__in=DeviceScan.objects.filter(
+                inventory=inventory, 
+                device__in=devices
+            ).values_list('device_id', flat=True)
+        )
+  
 
 class DeviceDetailView(LoginRequiredMixin,DetailView):
     login_url = 'login'
@@ -227,6 +276,40 @@ class DeviceDetailView(LoginRequiredMixin,DetailView):
     model = Device
     template_name = 'devices/device_detail.html'
     context_object_name = 'device'
+
+    def get(self, request, *args, **kwargs):
+        device = self.get_object()
+        user = request.user
+
+         # Check if this is a QR code scan
+        is_qr_scan = request.GET.get('source') == 'qr_scan'
+
+        # Only process as inventory scan if it's a QR code scan and user is an inventory manager
+        if is_qr_scan and user.groups.filter(name='Inventory-Managers').exists():
+            # Check for active inventorization list created by this user
+            active_inventory = InventorizationList.objects.filter(
+                creator=user,
+                status='ACTIVE',
+                building=device.building
+            ).first()
+
+            if active_inventory:
+                # Check if the device's room is part of the inventory
+                if device.room.id in active_inventory.room_ids:
+                    # Record the scan
+                    DeviceScan.objects.get_or_create(
+                        inventory=active_inventory,
+                        device=device,
+                        defaults={'scanned_at': timezone.now()}
+                    )
+
+                    messages.success(request, f"Device {device.name} scanned successfully for inventory {active_inventory.id}.")
+                    return redirect('inventory_detail', pk=active_inventory.id)
+                else:
+                    messages.warning(request, f"This device is not part of the active inventory {active_inventory.id}.")
+            
+        # If not an inventory manager or no active inventory, proceed to normal device detail view
+        return super().get(request, *args, **kwargs)
 
 class DownloadQRCodeView(LoginRequiredMixin, View):
     login_url = 'login'

@@ -3,97 +3,737 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="mb-4">Actions Dashboard</h1>
+    <h3 class="mb-2">Inventory Management</h3>
     
-    <div class="row">
-        <!-- Action Cards -->
-        <div class="col-md-6 mb-4">
+    <ul class="nav nav-tabs mb-2" id="inventoryTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="actions-tab" data-bs-toggle="tab" data-bs-target="#actions" type="button" role="tab" aria-controls="actions" aria-selected="true">Actions</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="recent-tab" data-bs-toggle="tab" data-bs-target="#recent" type="button" role="tab" aria-controls="recent" aria-selected="false">Recent Activity</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">History</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="inventoryTabsContent">
+        <!-- Actions Tab -->
+        <div class="tab-pane fade show active" id="actions" role="tabpanel" aria-labelledby="actions-tab">
+            <div class="row mb-2">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="h5 mb-0">Inventory Actions</h2>
+                        </div>
+                        <div class="card-body">
+                            <button id="startInventory" class="btn btn-primary me-2">Start New Inventory</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="h5 mb-0">Inventorization Lists</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                            <table id="inventorizationTable" class="table table-sm table-hover table-striped ">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Creator</th>
+                                        <th>Start Date</th>
+                                        <th>Status</th>
+                                        <th>Building</th>
+                                        <th>Scope</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                    {% for inventory in inventorization_lists %}
+                                    <tr>
+                                        <td>{{ inventory.id }}</td>
+                                        <td>{{ inventory.creator.username }}</td>
+                                        <td>{{ inventory.start_date|date:"Y-m-d H:i" }}</td>
+                                        <td>    
+                                            {% if inventory.status == 'ACTIVE' %}
+                                                <span class="badge text-success bg-light border border-success"><i class="bi bi-play-circle-fill me-1"></i>Active</span>
+                                            {% elif inventory.status == 'PAUSED' %}
+                                                <span class="badge bg-warning text-dark"><i class="bi bi-pause-circle-fill me-1"></i>Paused</span>
+                                            {% elif inventory.status == 'CANCELED' %}
+                                            <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Canceled</span>
+                                            {% elif inventory.status == 'COMPLETED' %}
+                                            <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ inventory.get_status_display }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ inventory.building.name }}</td>
+                                        <td>{{ inventory.get_scope_display }}</td>
+                                        <td>
+                                            <div class="container-fluid p-0">
+                                                <div class="row g-1">
+                                                    <div class="col-12 mb-1">
+                                                        <button class="btn btn-sm btn-dark w-100 view-details" onclick="window.location.href='{% url 'inventory_detail' inventory.id %}'" title="View Details">
+                                                            <i class="bi bi-eye-fill"></i> View
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="btn-group w-100" role="group">
+                                                            {% if inventory.status == 'ACTIVE' %}
+                                                                <button class="btn btn-sm btn-warning pause-resume" data-inventory-id="{{ inventory.id }}" data-action="pause" title="Pause">
+                                                                    <i class="bi bi-pause-fill"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-danger end" data-inventory-id="{{ inventory.id }}" title="End">
+                                                                    <i class="bi bi-square-fill"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-outline-danger cancel" data-inventory-id="{{ inventory.id }}" title="Cancel">
+                                                                    <i class="bi bi-trash3-fill"></i>
+                                                                </button>
+                                                            {% elif inventory.status == 'PAUSED' %}
+                                                                <button class="btn btn-sm btn-warning pause-resume" data-inventory-id="{{ inventory.id }}" data-action="resume" title="Resume">
+                                                                    <i class="bi bi-play-fill"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-danger end" data-inventory-id="{{ inventory.id }}" title="End">
+                                                                    <i class="bi bi-square-fill"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-outline-danger cancel" data-inventory-id="{{ inventory.id }}" title="Cancel">
+                                                                    <i class="bi bi-trash3-fill"></i>
+                                                                </button>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Tab -->
+        <div class="tab-pane fade" id="recent" role="tabpanel" aria-labelledby="recent-tab">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="h5 mb-0">Device Actions</h2>
+                    <h2 class="h5 mb-0">Recent Inventory Actions</h2>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Restart Device</span>
-                        <button class="btn btn-primary btn-sm">Execute</button>
+                <ul class="list-group list-group-flush" id="recentActivityList">
+                    {% for activity in recent_activities %}
+                    <li class="list-group-item">
+                        <span class="badge bg-primary me-2">{{ activity.timestamp|date:"Y-m-d H:i" }}</span>
+                        {{ activity.description }}
                     </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Update Firmware</span>
-                        <button class="btn btn-success btn-sm">Execute</button>
-                    </li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>
 
-        <!-- Recent Activity -->
-        <div class="col-md-6 mb-4">
+        <!-- History Tab -->
+        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
             <div class="card">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">Recent Activity</h2>
+                <div class="card-body">
+                    <table id="historyTable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>User</th>
+                                <th>Date</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in history_entries %}
+                            <tr>
+                                <td>{{ entry.action }}</td>
+                                <td>{{ entry.user.username }}</td>
+                                <td>{{ entry.timestamp|date:"Y-m-d H:i" }}</td>
+                                <td>{{ entry.details }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <span class="badge bg-primary me-2"></span>
-                        Device restarted - 2 hours ago
-                    </li>
-                    <li class="list-group-item">
-                        <span class="badge bg-success me-2"></span>
-                        Firmware updated - 1 day ago
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Action History Table -->
-    <h2 class="h4 mb-3">Action History</h2>
-    <div class="card">
-        <div class="card-body">
-            <table id="actionTable" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Restart Device</td>
-                        <td><span class="badge bg-success">Completed</span></td>
-                        <td>2023-06-15</td>
-                    </tr>
-                    <tr>
-                        <td>Update Firmware</td>
-                        <td><span class="badge bg-warning">Pending</span></td>
-                        <td>2023-06-14</td>
-                    </tr>
-                    <!-- Add more rows as needed -->
-                </tbody>
-            </table>
+<!-- Start Inventory Modal -->
+<div class="modal fade" id="startInventoryModal" tabindex="-1" aria-labelledby="startInventoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="startInventoryModalLabel">Start New Inventory</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="startInventoryForm">
+                    <div class="mb-3">
+                        <label for="buildingSelect" class="form-label">Building</label>
+                        <select class="form-select" id="buildingSelect" required>
+                            <option value="">Select a building</option>
+                            {% for building in buildings %}
+                                <option value="{{ building.id }}">{{ building.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="scopeSelect" class="form-label">Scope</label>
+                        <select class="form-select" id="scopeSelect" required>
+                            <option value="ENTIRE">Entire Building</option>
+                            <option value="PARTIAL">Partial</option>
+                        </select>
+                    </div>
+                    <div id="partialSelection" style="display: none;">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAllFloors">
+                                <label class="form-check-label" for="selectAllFloors">
+                                    <strong>All Floors</strong>
+                                </label>
+                            </div>
+                        </div>
+                        <div id="floorsList">
+                            <!-- Floor cards will be dynamically added here -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="confirmStartInventory">Start Inventory</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Inventory Details Modal -->
+<div class="modal fade" id="inventoryDetailsModal" tabindex="-1" aria-labelledby="inventoryDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inventoryDetailsModalLabel">Inventory Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="inventoryDetailsContent">
+                <!-- Inventory details will be loaded here -->
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+{{ block.super }}
 <script src="https://cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.js" type="text/javascript"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        new DataTable("#actionTable", {
-            perPage: 10,
-            perPageSelect: false,
-            searchable: true,
-            sortable: true,
-            fixedHeight: false,
-            labels: {
-                placeholder: "Search...",
-                perPage: "{select} entries per page",
-                noRows: "No entries found",
-                info: "Showing {start} to {end} of {rows} entries",
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DataTables
+    new DataTable("#inventorizationTable", {
+        reponsive:true,
+        scrollX:true,
+        autoWidth:false,
+        perPage: 10,
+        perPageSelect: [5, 10, 15, 20],
+        searchable: true,
+        sortable: true,
+        fixedHeight: false,
+        labels: {
+            placeholder: "Search...",
+            perPage: "{select} entries per page",
+            noRows: "No entries found",
+            info: "Showing {start} to {end} of {rows} entries",
+        }
+    });
+
+    new DataTable("#historyTable", {
+        perPage: 10,
+        perPageSelect: [5, 10, 15, 20],
+        searchable: true,
+        sortable: true,
+        fixedHeight: false,
+        labels: {
+            placeholder: "Search...",
+            perPage: "{select} entries per page",
+            noRows: "No entries found",
+            info: "Showing {start} to {end} of {rows} entries",
+        }
+    });
+
+    // Start Inventory
+    const startInventoryBtn = document.getElementById('startInventory');
+    const startInventoryModal = document.getElementById('startInventoryModal');
+    let startInventoryModalInstance = null;
+
+    if (startInventoryBtn && startInventoryModal) {
+        startInventoryBtn.addEventListener('click', function() {
+            if (!startInventoryModalInstance) {
+                startInventoryModalInstance = new bootstrap.Modal(startInventoryModal);
             }
+            startInventoryModalInstance.show();
+        });
+    }
+
+    // Confirm Start Inventory
+    document.getElementById('confirmStartInventory').addEventListener('click', startInventory);
+
+    function startInventory() {
+        const buildingId = document.getElementById('buildingSelect').value;
+        const scope = document.getElementById('scopeSelect').value;
+        
+        if (!buildingId) {
+            alert('Please select a building.');
+            return;
+        }
+
+        let selectedRooms = [];
+        if (scope === 'PARTIAL') {
+            selectedRooms = Array.from(document.querySelectorAll('.room-checkbox:checked')).map(cb => cb.dataset.roomId);
+            if (selectedRooms.length === 0) {
+                alert('Please select at least one room for partial inventory.');
+                return;
+            }
+        } else {
+            // If scope is ENTIRE, select all rooms in the building
+            selectedRooms = 'all'
+        }
+
+        const inventoryData = {
+            building_id: buildingId,
+            room_ids: selectedRooms,
+            scope: scope
+        };
+
+        fetch('{% url "api_start_inventory" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(inventoryData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Inventory started successfully');
+                if (startInventoryModalInstance) {
+                    startInventoryModalInstance.hide();
+                }
+                location.reload();  // Reload the page to show the new inventory
+            } else {
+                alert(data.message || 'Failed to start inventory');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while starting the inventory');
+        });
+    }
+
+    // View Details
+    document.querySelectorAll('.view-details').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const inventoryId = this.getAttribute('data-inventory-id');
+            fetchInventoryDetails(inventoryId);
         });
     });
+
+
+
+
+
+    // Pause/Resume
+    document.querySelectorAll('.pause-resume').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const inventoryId = this.getAttribute('data-inventory-id');
+            const action = this.getAttribute('data-action');
+            pauseResumeInventory(inventoryId, action, this);
+        });
+    });
+
+    // End
+    document.querySelectorAll('.end').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const inventoryId = this.getAttribute('data-inventory-id');
+            endInventory(inventoryId);
+        });
+    });
+
+    // Cancel
+    document.querySelectorAll('.cancel').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const inventoryId = this.getAttribute('data-inventory-id');
+            cancelInventory(inventoryId);
+        });
+    });
+
+
+    const buildingSelect = document.getElementById('buildingSelect');
+    const scopeSelect = document.getElementById('scopeSelect');
+    const partialSelection = document.getElementById('partialSelection');
+    const selectAllFloors = document.getElementById('selectAllFloors');
+    const floorsList = document.getElementById('floorsList');
+
+    buildingSelect.addEventListener('change', loadFloors);
+    scopeSelect.addEventListener('change', togglePartialSelection);
+    selectAllFloors.addEventListener('change', toggleAllFloors);
+    
+    function togglePartialSelection() {
+        partialSelection.style.display = scopeSelect.value === 'PARTIAL' ? 'block' : 'none';
+        if (scopeSelect.value === 'PARTIAL' && buildingSelect.value) {
+            loadFloors();
+        }
+    }
+
+    function toggleAllFloors(e) {
+        const isChecked = e.target.checked;
+        const allRoomsCheckboxes = document.querySelectorAll('.select-all-rooms');
+        const roomCheckboxes = document.querySelectorAll('.room-checkbox');
+
+        allRoomsCheckboxes.forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+
+        roomCheckboxes.forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+
+        updateAllFloorsStatus();
+    }
+
+    
+    function loadFloors() {
+        const buildingId = buildingSelect.value;
+        floorsList.innerHTML = '';
+        selectAllFloors.checked = false;
+        
+        if (buildingId && scopeSelect.value === 'PARTIAL') {
+            fetch(`{% url 'get_floors' %}?building_id=${buildingId}`)
+                .then(response => response.json())
+                .then(floors => {
+                    const accordion = document.createElement('div');
+                    accordion.className = 'accordion';
+                    accordion.id = 'floorsAccordion';
+
+                    floors.forEach((floor, index) => {
+                        const floorItem = document.createElement('div');
+                        floorItem.className = 'accordion-item';
+                        floorItem.innerHTML = `
+                            <h2 class="accordion-header" id="heading${floor.id}">
+                                <button class="accordion-button ${index === 0 ? '' : 'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${floor.id}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="collapse${floor.id}">
+                                    ${floor.name}
+                                    <div class="ms-auto">
+                                        <div class="form-check">
+                                            <input class="form-check-input select-all-rooms" type="checkbox" id="selectAllRooms${floor.id}" data-floor-id="${floor.id}">
+                                            <label class="form-check-label" for="selectAllRooms${floor.id}">
+                                                All Rooms
+                                            </label>
+                                        </div>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="collapse${floor.id}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" aria-labelledby="heading${floor.id}" data-bs-parent="#floorsAccordion">
+                                <div class="accordion-body">
+                                    <div id="roomsList${floor.id}">
+                                        <!-- Rooms will be dynamically added here -->
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        accordion.appendChild(floorItem);
+
+                        const selectAllRooms = floorItem.querySelector(`#selectAllRooms${floor.id}`);
+                        selectAllRooms.addEventListener('change', (e) => toggleAllRooms(e, floor.id));
+                        
+                        loadRooms(floor.id);
+                    });
+
+                    floorsList.appendChild(accordion);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while loading floors');
+                });
+        }
+    }
+
+    function loadRooms(floorId) {
+        fetch(`{% url 'get_rooms' %}?floor_id=${floorId}`)
+            .then(response => response.json())
+            .then(rooms => {
+                const roomsList = document.getElementById(`roomsList${floorId}`);
+                roomsList.innerHTML = '';
+                rooms.forEach(room => {
+                    const roomDiv = document.createElement('div');
+                    roomDiv.className = 'form-check';
+                    roomDiv.innerHTML = `
+                        <input class="form-check-input room-checkbox" type="checkbox" id="room${room.id}" data-floor-id="${floorId}" data-room-id="${room.id}">
+                        <label class="form-check-label" for="room${room.id}">
+                            ${room.name}
+                        </label>
+                    `;
+                    roomsList.appendChild(roomDiv);
+                });
+
+                const roomCheckboxes = roomsList.querySelectorAll('.room-checkbox');
+                roomCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateFloorStatus);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while loading rooms');
+            });
+    }
+
+    function toggleAllRooms(e, floorId) {
+        const isChecked = e.target.checked;
+        const roomCheckboxes = document.querySelectorAll(`#roomsList${floorId} .room-checkbox`);
+        roomCheckboxes.forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+        updateAllFloorsStatus();
+    }
+
+    function updateFloorStatus(e) {
+        const floorId = e.target.dataset.floorId;
+        const selectAllRooms = document.getElementById(`selectAllRooms${floorId}`);
+        const roomCheckboxes = document.querySelectorAll(`#roomsList${floorId} .room-checkbox`);
+        const allChecked = Array.from(roomCheckboxes).every(checkbox => checkbox.checked);
+        const someChecked = Array.from(roomCheckboxes).some(checkbox => checkbox.checked);
+        
+        selectAllRooms.checked = allChecked;
+        selectAllRooms.indeterminate = someChecked && !allChecked;
+        
+        updateAllFloorsStatus();
+    }
+
+    function updateAllFloorsStatus() {
+        const allRoomsCheckboxes = document.querySelectorAll('.select-all-rooms');
+        const allChecked = Array.from(allRoomsCheckboxes).every(checkbox => checkbox.checked);
+        const someChecked = Array.from(allRoomsCheckboxes).some(checkbox => checkbox.checked || checkbox.indeterminate);
+        
+        selectAllFloors.checked = allChecked;
+        selectAllFloors.indeterminate = someChecked && !allChecked;
+    }
+
+
+
+    
+    function fetchInventoryDetails(inventoryId) {
+        fetch(`/api/inventory/${inventoryId}/details/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayInventoryDetails(data.inventory);
+                } else {
+                    alert('Failed to fetch inventory details');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching inventory details');
+            });
+    }
+
+    function displayInventoryDetails(inventory) {
+        const detailsContent = document.getElementById('inventoryDetailsContent');
+        let html = `
+            <h4>Inventory #${inventory.id}</h4>
+            <p><strong>Creator:</strong> ${inventory.creator}</p>
+            <p><strong>Start Date:</strong> ${inventory.start_date}</p>
+            <p><strong>Status:</strong> ${inventory.status}</p>
+            <p><strong>Building:</strong> ${inventory.building}</p>
+            <p><strong>Scope:</strong> ${inventory.scope}</p>
+            <h5>Rooms:</h5>
+            <ul>
+        `;
+
+        inventory.rooms.forEach(room => {
+            html += `
+                <li>
+                    ${room.name} (${room.is_completed ? 'Completed' : 'Pending'})
+                    <ul>
+            `;
+            room.devices.forEach(device => {
+                html += `
+                    <li>${device.name} (${device.is_scanned ? 'Scanned' : 'Not Scanned'})</li>
+                `;
+            });
+            html += `
+                    </ul>
+                </li>
+            `;
+        });
+
+        html += `
+            </ul>
+        `;
+
+        detailsContent.innerHTML = html;
+        const modal = new bootstrap.Modal(document.getElementById('inventoryDetailsModal'));
+        modal.show();
+    }
+
+    function pauseResumeInventory(inventoryId, action, button) {
+        if (confirm(`Are you sure you want to ${action} this inventory?`)) {
+            fetch('{% url "api_pause_resume_inventory" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    inventory_id: inventoryId,
+                    action: action
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update button and status
+                    if (action === 'pause') {
+                        button.setAttribute('data-action', 'resume');
+                        button.setAttribute('title', 'Resume');
+                        button.querySelector('i').classList.replace('bi-pause-fill', 'bi-play-fill');
+                        updateStatus(button, 'PAUSED');
+                    } else {
+                        button.setAttribute('data-action', 'pause');
+                        button.setAttribute('title', 'Pause');
+                        button.querySelector('i').classList.replace('bi-play-fill', 'bi-pause-fill');
+                        updateStatus(button, 'ACTIVE');
+                    }
+                    alert(`Inventory ${action}d successfully`);
+                } else {
+                    alert(data.message || `Failed to ${action} inventory`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(`An error occurred while ${action}ing the inventory`);
+            });
+        }
+    }
+    
+    function endInventory(inventoryId) {
+        if (confirm('Are you sure you want to end this inventory?')) {
+            fetch('{% url "api_end_inventory" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    inventory_id: inventoryId
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Inventory ended successfully');
+                    // Update the status and disable buttons
+                    const row = document.querySelector(`[data-inventory-id="${inventoryId}"]`).closest('tr');
+                    updateStatus(row.querySelector('.pause-resume'), 'COMPLETED');
+                    disableButtons(row);
+                } else {
+                    alert(data.message || 'Failed to end inventory');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while ending the inventory');
+            });
+        }
+    }
+    
+    function cancelInventory(inventoryId) {
+        if (confirm('Are you sure you want to cancel this inventory? This action cannot be undone.')) {
+            fetch('{% url "api_cancel_inventory" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    inventory_id: inventoryId
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Inventory canceled successfully');
+                    // Update the status and disable buttons
+                    const row = document.querySelector(`[data-inventory-id="${inventoryId}"]`).closest('tr');
+                    updateStatus(row.querySelector('.pause-resume'), 'CANCELED');
+                    disableButtons(row);
+                } else {
+                    alert(data.message || 'Failed to cancel inventory');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while canceling the inventory');
+            });
+        }
+    }
+    
+    function updateStatus(button, newStatus) {
+        const row = button.closest('tr');
+        const statusCell = row.querySelector('td:nth-child(4)');
+        statusCell.innerHTML = getStatusBadge(newStatus);
+    }
+
+    function disableButtons(row) {
+        row.querySelectorAll('.pause-resume, .end, .cancel').forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('disabled');
+        });
+    }
+
+    function getStatusBadge(status) {
+        switch (status) {
+            case 'ACTIVE':
+                return '<span class="badge text-success bg-light border border-success"><i class="bi bi-play-circle-fill me-1"></i>Active</span>';
+            case 'PAUSED':
+                return '<span class="badge bg-warning text-dark"><i class="bi bi-pause-circle-fill me-1"></i>Paused</span>';
+            case 'CANCELED':
+                return '<span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Canceled</span>';
+            case 'COMPLETED':
+                return '<span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>';
+            default:
+                return `<span class="badge bg-secondary"><i class="bi bi-question-circle-fill me-1"></i>${status}</span>`;
+        }
+    }
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+});
 </script>
 {% endblock %}
 
@@ -104,5 +744,38 @@
         width: auto;
         display: inline-block;
     }
+    .nav-tabs .nav-link {
+        color: #495057;
+    }
+    .nav-tabs .nav-link.active {
+        color: #007bff;
+    }
+    .container {
+        max-width: 100%;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table {
+        width: 100%;
+        max-width: none;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 767.98px) {
+        .table-responsive {
+            width: 100%;
+            margin-bottom: 15px;
+            overflow-y: hidden;
+            -ms-overflow-style: -ms-autohiding-scrollbar;
+            border: 1px solid #ddd;
+        }
+    }
 </style>
 {% endblock %}
+
