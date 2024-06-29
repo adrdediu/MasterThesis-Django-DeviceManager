@@ -100,6 +100,7 @@ class Device(models.Model):
         # Generate the device URL with the qr_scan parameter
         device_url = reverse('device_detail', args=[str(self.pk)])
         current_site = Site.objects.get_current()
+
         complete_url = f"http://{current_site.domain}{device_url}?source=qr_scan"
 
         qr.add_data(complete_url)
