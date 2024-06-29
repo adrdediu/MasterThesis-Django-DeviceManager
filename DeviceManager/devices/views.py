@@ -1,8 +1,9 @@
 # devices/views.py
 import requests
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseForbidden, FileResponse,HttpResponseBadRequest,HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.views import LoginView,LogoutView
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
@@ -14,6 +15,7 @@ from io import BytesIO
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
+from .utils import generate_inventory_excel_report,generate_inventory_pdf_report
 
 class LoginView(View):
     template_name = 'devices/login.html'
@@ -231,6 +233,10 @@ class InventorizationListDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         inventory = self.object
+
+        # Check for message in session
+        if 'qr_scan_message' in self.request.session:
+            context['qr_scan_message'] = self.request.session.pop('qr_scan_message')
         
         # Get the rooms based on the stored room_ids
         rooms = Room.objects.filter(id__in=inventory.room_ids)
@@ -293,6 +299,12 @@ class DeviceDetailView(LoginRequiredMixin,DetailView):
                 building=device.building
             ).first()
 
+            paused_inventory = InventorizationList.objects.filter(
+                creator=user,
+                status='PAUSED',
+                building=device.building
+            ).first()
+
             if active_inventory:
                 # Check if the device's room is part of the inventory
                 if device.room.id in active_inventory.room_ids:
@@ -303,10 +315,23 @@ class DeviceDetailView(LoginRequiredMixin,DetailView):
                         defaults={'scanned_at': timezone.now()}
                     )
 
-                    messages.success(request, f"Device {device.name} scanned successfully for inventory {active_inventory.id}.")
+                    request.session['qr_scan_message'] = {
+                        'type': 'success',
+                        'text': f"Device {device.name} scanned successfully for inventory {active_inventory.id}."
+                    }
                     return redirect('inventory_detail', pk=active_inventory.id)
                 else:
-                    messages.warning(request, f"This device is not part of the active inventory {active_inventory.id}.")
+                    request.session['qr_scan_message'] = {
+                        'type': 'warning',
+                        'text': f"This device is not part of the active inventory {active_inventory.id}."
+                    }
+            elif paused_inventory:
+                request.session['qr_scan_message'] = {
+                        'type': 'warning',
+                        'text': f"This inventory {paused_inventory.id} is currently paused. Please resume the inventory to scan devices."
+                }
+                return redirect('inventory_detail', pk=paused_inventory.id)
+
             
         # If not an inventory manager or no active inventory, proceed to normal device detail view
         return super().get(request, *args, **kwargs)
@@ -366,3 +391,31 @@ class DownloadQRCodeView(LoginRequiredMixin, View):
         response.write(modified_image_buffer.read())
 
         return response
+    
+
+@login_required
+@require_POST
+def generate_inventory_report_view(request, inventory_id):
+    inventory = get_object_or_404(InventorizationList, id=inventory_id)
+    
+    # Check permissions here if needed
+    if request.user != inventory.creator and not request.user.is_staff:
+        return HttpResponseForbidden("You don't have permission to generate this report.")
+    
+    report_type = request.POST.get('report_type', 'pdf')
+    
+    if report_type == 'pdf':
+        report_file = generate_inventory_pdf_report(inventory)
+        if report_file is None:
+            return HttpResponseServerError("Failed to generate PDF report")
+        filename = f'inventory_report_{inventory_id}.pdf'
+        content_type = 'application/pdf'
+    elif report_type == 'excel':
+        report_file = generate_inventory_excel_report(inventory)
+        filename = f'inventory_report_{inventory_id}.xlsx'
+        content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    else:
+        return HttpResponseBadRequest("Invalid report type")
+    
+    # Return the file
+    return FileResponse(report_file, as_attachment=True, filename=filename, content_type=content_type)

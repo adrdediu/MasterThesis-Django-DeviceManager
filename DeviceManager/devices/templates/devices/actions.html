@@ -3,6 +3,12 @@
 
 {% block content %}
 <div class="container mt-4">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb bg-light p-1 rounded">
+          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Actions</li>
+        </ol>
+      </nav>
     <h3 class="mb-2">Inventory Management</h3>
     
     <ul class="nav nav-tabs mb-2" id="inventoryTabs" role="tablist">
@@ -83,28 +89,31 @@
                                                         </button>
                                                     </div>
                                                     <div class="col-12">
-                                                        <div class="btn-group w-100" role="group">
-                                                            {% if inventory.status == 'ACTIVE' %}
-                                                                <button class="btn btn-sm btn-warning pause-resume" data-inventory-id="{{ inventory.id }}" data-action="pause" title="Pause">
-                                                                    <i class="bi bi-pause-fill"></i>
+                                                        <div class="row">
+                                                            <div class="col mb-1">
+                                                                {% if inventory.status == 'ACTIVE' %}
+                                                                    <button class="btn btn-sm btn-warning pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="pause" title="Pause">
+                                                                        <i class="bi bi-pause-fill"></i>
+                                                                    </button>
+                                                                {% elif inventory.status == 'PAUSED' %}
+                                                                    <button class="btn btn-sm btn-success pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="resume" title="Resume">
+                                                                        <i class="bi bi-play-fill"></i>
+                                                                    </button>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="col mb-1">
+                                                                <button class="btn btn-sm btn-primary generate-report w-100" data-inventory-id="{{ inventory.id }}" title="Generate Report">
+                                                                    <i class="bi bi-file-earmark-text-fill"></i>
                                                                 </button>
-                                                                <button class="btn btn-sm btn-danger end" data-inventory-id="{{ inventory.id }}" title="End">
-                                                                    <i class="bi bi-square-fill"></i>
-                                                                </button>
-                                                                <button class="btn btn-sm btn-outline-danger cancel" data-inventory-id="{{ inventory.id }}" title="Cancel">
+
+                                                            </div>
+                                                            <div class="col mb-1">
+                                                                <button class="btn btn-sm btn-outline-danger cancel w-100" data-inventory-id="{{ inventory.id }}" title="Cancel">
                                                                     <i class="bi bi-trash3-fill"></i>
                                                                 </button>
-                                                            {% elif inventory.status == 'PAUSED' %}
-                                                                <button class="btn btn-sm btn-warning pause-resume" data-inventory-id="{{ inventory.id }}" data-action="resume" title="Resume">
-                                                                    <i class="bi bi-play-fill"></i>
-                                                                </button>
-                                                                <button class="btn btn-sm btn-danger end" data-inventory-id="{{ inventory.id }}" title="End">
-                                                                    <i class="bi bi-square-fill"></i>
-                                                                </button>
-                                                                <button class="btn btn-sm btn-outline-danger cancel" data-inventory-id="{{ inventory.id }}" title="Cancel">
-                                                                    <i class="bi bi-trash3-fill"></i>
-                                                                </button>
-                                                            {% endif %}
+                                                            </div>
+                                                        </div>
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -295,7 +304,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const scope = document.getElementById('scopeSelect').value;
         
         if (!buildingId) {
-            alert('Please select a building.');
+            //alert('Please select a building.');
+            showAlert('Please select a building.','warning');
+            
             return;
         }
 
@@ -364,11 +375,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // End
-    document.querySelectorAll('.end').forEach(btn => {
+    // Add event listeners for the new Generate Report buttons
+    document.querySelectorAll('.generate-report').forEach(btn => {
         btn.addEventListener('click', function() {
             const inventoryId = this.getAttribute('data-inventory-id');
-            endInventory(inventoryId);
+            generateReport(inventoryId);
         });
     });
 
@@ -419,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const buildingId = buildingSelect.value;
         floorsList.innerHTML = '';
         selectAllFloors.checked = false;
-        
+
         if (buildingId && scopeSelect.value === 'PARTIAL') {
             fetch(`{% url 'get_floors' %}?building_id=${buildingId}`)
                 .then(response => response.json())
@@ -530,66 +541,14 @@ document.addEventListener('DOMContentLoaded', function() {
         selectAllFloors.indeterminate = someChecked && !allChecked;
     }
 
-
-
-    
-    function fetchInventoryDetails(inventoryId) {
-        fetch(`/api/inventory/${inventoryId}/details/`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    displayInventoryDetails(data.inventory);
-                } else {
-                    alert('Failed to fetch inventory details');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while fetching inventory details');
-            });
-    }
-
-    function displayInventoryDetails(inventory) {
-        const detailsContent = document.getElementById('inventoryDetailsContent');
-        let html = `
-            <h4>Inventory #${inventory.id}</h4>
-            <p><strong>Creator:</strong> ${inventory.creator}</p>
-            <p><strong>Start Date:</strong> ${inventory.start_date}</p>
-            <p><strong>Status:</strong> ${inventory.status}</p>
-            <p><strong>Building:</strong> ${inventory.building}</p>
-            <p><strong>Scope:</strong> ${inventory.scope}</p>
-            <h5>Rooms:</h5>
-            <ul>
-        `;
-
-        inventory.rooms.forEach(room => {
-            html += `
-                <li>
-                    ${room.name} (${room.is_completed ? 'Completed' : 'Pending'})
-                    <ul>
-            `;
-            room.devices.forEach(device => {
-                html += `
-                    <li>${device.name} (${device.is_scanned ? 'Scanned' : 'Not Scanned'})</li>
-                `;
-            });
-            html += `
-                    </ul>
-                </li>
-            `;
-        });
-
-        html += `
-            </ul>
-        `;
-
-        detailsContent.innerHTML = html;
-        const modal = new bootstrap.Modal(document.getElementById('inventoryDetailsModal'));
-        modal.show();
-    }
-
-    function pauseResumeInventory(inventoryId, action, button) {
-        if (confirm(`Are you sure you want to ${action} this inventory?`)) {
+    function pauseResumeInventory(inventoryId, action) {
+    showConfirmation(
+        'Confirm Action',
+        `Are you sure you want to ${action} this inventory?`,
+        `Yes, ${action} it!`,
+        'Cancel'
+    ).then((result) => {
+        if (result.isConfirmed) {
             fetch('{% url "api_pause_resume_inventory" %}', {
                 method: 'POST',
                 headers: {
@@ -604,92 +563,75 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Update button and status
-                    if (action === 'pause') {
-                        button.setAttribute('data-action', 'resume');
-                        button.setAttribute('title', 'Resume');
-                        button.querySelector('i').classList.replace('bi-pause-fill', 'bi-play-fill');
-                        updateStatus(button, 'PAUSED');
-                    } else {
-                        button.setAttribute('data-action', 'pause');
-                        button.setAttribute('title', 'Pause');
-                        button.querySelector('i').classList.replace('bi-play-fill', 'bi-pause-fill');
-                        updateStatus(button, 'ACTIVE');
-                    }
-                    alert(`Inventory ${action}d successfully`);
+                    showAlertAndReload(`Inventory ${action}d successfully`, 'success');
                 } else {
-                    alert(data.message || `Failed to ${action} inventory`);
+                    showAlertAndReload(data.message || `Failed to ${action} inventory`, 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert(`An error occurred while ${action}ing the inventory`);
+                showAlert(`An error occurred while ${action}ing the inventory`, 'error');
             });
         }
-    }
-    
-    function endInventory(inventoryId) {
-        if (confirm('Are you sure you want to end this inventory?')) {
-            fetch('{% url "api_end_inventory" %}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    inventory_id: inventoryId
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Inventory ended successfully');
-                    // Update the status and disable buttons
-                    const row = document.querySelector(`[data-inventory-id="${inventoryId}"]`).closest('tr');
-                    updateStatus(row.querySelector('.pause-resume'), 'COMPLETED');
-                    disableButtons(row);
-                } else {
-                    alert(data.message || 'Failed to end inventory');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while ending the inventory');
-            });
-        }
-    }
-    
+    });
+}
+
     function cancelInventory(inventoryId) {
-        if (confirm('Are you sure you want to cancel this inventory? This action cannot be undone.')) {
-            fetch('{% url "api_cancel_inventory" %}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    inventory_id: inventoryId
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Inventory canceled successfully');
-                    // Update the status and disable buttons
-                    const row = document.querySelector(`[data-inventory-id="${inventoryId}"]`).closest('tr');
-                    updateStatus(row.querySelector('.pause-resume'), 'CANCELED');
-                    disableButtons(row);
-                } else {
-                    alert(data.message || 'Failed to cancel inventory');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while canceling the inventory');
-            });
-        }
+        showConfirmation(
+            'Cancel Inventory',
+            'Are you sure you want to cancel this inventory? This action cannot be undone.',
+            'Yes, cancel it!',
+            'No, keep it'
+        ).then((result) => {
+            if (result.isConfirmed) {
+                fetch('{% url "api_cancel_inventory" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inventory_id: inventoryId
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlertAndReload('Inventory canceled successfully','success');
+                    } else {
+                        showAlert(data.message || 'Failed to cancel inventory', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('An error occurred while canceling the inventory', 'error');
+                });
+            }
+        });
     }
-    
+
+
+    function generateReport(inventoryId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/api/inventory/${inventoryId}/generate-report/`;
+        
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = getCookie('csrftoken');
+        form.appendChild(csrfInput);
+
+        const typeInput = document.createElement('input');
+        typeInput.type = 'hidden';
+        typeInput.name = 'report_type';
+        typeInput.value = 'pdf'; // You can change this to 'excel' if needed
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
+
     function updateStatus(button, newStatus) {
         const row = button.closest('tr');
         const statusCell = row.querySelector('td:nth-child(4)');
@@ -717,6 +659,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return `<span class="badge bg-secondary"><i class="bi bi-question-circle-fill me-1"></i>${status}</span>`;
         }
     }
+  
     // Helper function to get CSRF token
     function getCookie(name) {
         let cookieValue = null;
@@ -731,6 +674,71 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         return cookieValue;
+    }
+
+    function showConfirmation(title, text, confirmButtonText, cancelButtonText) {
+        return Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: confirmButtonText,
+            cancelButtonText: cancelButtonText
+        });
+    }
+    function showAlertAndReload(message, type = 'info', delay = 2000) {
+        const iconTypes = {
+            success: 'success',
+            warning: 'warning',
+            error: 'error',
+            info: 'info'
+        };
+
+        const buttonColors = {
+            success: '#198754', // Bootstrap 5 success color
+            warning: '#ffc107', // Bootstrap 5 warning color
+            error: '#dc3545',   // Bootstrap 5 danger color
+            info: '#0dcaf0'     // Bootstrap 5 info color
+        };
+
+        Swal.fire({
+            title: type.charAt(0).toUpperCase() + type.slice(1),
+            text: message,
+            icon: iconTypes[type] || 'info',
+            position: 'center',
+            showConfirmButton: false,
+            timer: delay,
+            timerProgressBar: true
+        }).then(() => {
+            location.reload();
+    });
+}
+    function showAlert(message, type = 'info') {
+        const iconTypes = {
+            success: 'success',
+            warning: 'warning',
+            error: 'error',
+            info: 'info'
+        };
+        const buttonColors = {
+            success: '#198754', // Bootstrap 5 success color
+            warning: '#ffc107', // Bootstrap 5 warning color
+            error: '#dc3545',   // Bootstrap 5 danger color
+            info: '#0dcaf0'     // Bootstrap 5 info color
+        };
+
+        Swal.fire({
+            title: type.charAt(0).toUpperCase() + type.slice(1),
+            text: message,
+            icon: iconTypes[type] || 'info',
+            toast: true,
+            position: 'center',
+            showConfirmButton: true,
+            confirmButtonText: 'OK',
+            confirmButtonColor: buttonColors[type] || buttonColors.info,
+        });
     }
 
 });

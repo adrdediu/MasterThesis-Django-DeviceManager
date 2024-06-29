@@ -1,0 +1,186 @@
+<!-- templates/devices/inventory_report_pdf.html -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Inventory Report - {{ inventory.id }}</title>
+        <style type="text/css">
+            @page {
+                size: A4 portrait;
+                margin: 1cm;
+            }
+            body {
+                font-family: Helvetica, sans-serif;
+                color: #333;
+                line-height: 1.4;
+                font-size: 9px;
+            }
+            h1 {
+                color: #2c3e50;
+                border-bottom: 2px solid #2c3e50;
+                padding-bottom: 10px;
+                font-size: 18px;
+            }
+            h2 {
+                color: #34495e;
+                margin-top: 20px;
+                font-size: 14px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            th, td {
+                border: 1px solid #bdc3c7;
+                padding: 4px;
+                text-align: left;
+                font-size: 8px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 150px;
+            }
+            th {
+                background-color: #34495e;
+                color: white;
+                font-weight: bold;
+            }
+            .progress-bar {
+                height: 20px;
+                text-align: center;
+                line-height: 20px;
+                color: white;
+                font-weight: bold;
+            }
+            .room-header {
+                background-color: #ecf0f1;
+                font-weight: bold;
+                font-size: 10px;
+            }
+            .room-not-scanned {
+                border: 2px solid #e74c3c;
+            }
+            .room-partial-scanned {
+                border: 2px solid #f39c12;
+            }
+            .room-fully-scanned {
+                border: 2px solid #2ecc71;
+            }
+            .room-no-devices {
+                border: 2px solid #95a5a6;
+            }
+            .status-not-scanned {
+                color: #e74c3c;
+                font-weight: bold;
+            }
+            .status-scanned {
+                color: #2ecc71;
+                font-weight: bold;
+            }
+            .status-active {
+                background-color: #ffffff;
+                color: #2ecc71;
+                font-weight: bold;
+            }
+            .status-completed {
+                background-color: #2ecc71;
+                color: #ffffff;
+                font-weight: bold;
+            }
+            .status-canceled {
+                background-color: #e74c3c;
+                color: #ffffff;
+                font-weight: bold;
+            }
+            .status-paused {
+                background-color: #f39c12;
+                color: #ffffff;
+                font-weight: bold;
+            }
+            .col-id { width: 5%; }
+            .col-name { width: 15%; }
+            .col-serial { width: 10%; }
+            .col-category { width: 10%; }
+            .col-subcategory { width: 10%; }
+            .col-building { width: 20%; }
+            .col-floor { width: 5%; }
+            .col-room { width: 10%; }
+            .col-status { width: 7%; }
+            .col-updated { width: 8%; }
+        </style>
+    </head>
+    <body>
+        <h1>Inventory Report - ID: {{ inventory.id }}</h1>
+        
+        <h2>General Information</h2>
+        <table>
+            <tr><th>ID</th><td>{{ inventory.id }}</td></tr>
+            <tr><th>Creator</th><td>{{ inventory.creator.username }}</td></tr>
+            <tr><th>Building</th><td>{{ inventory.building.name }}</td></tr>
+            <tr><th>Start Date</th><td>{{ inventory.start_date }}</td></tr>
+            <tr><th>End Date</th><td>{{ inventory.end_date|default:"Not ended" }}</td></tr>
+            <tr><th>Status</th><td class="status-{{ inventory.status|lower }}">{{ inventory.get_status_display }}</td></tr>
+            <tr><th>Scope</th><td>{{ inventory.get_scope_display }}</td></tr>
+            <tr><th>Total Devices</th><td>{{ total_devices }}</td></tr>
+            <tr><th>Scanned Devices</th><td>{{ total_scanned }} / {{ total_devices }}</td></tr>
+        </table>
+
+        <h3>Progress</h3>
+        <div class="progress-bar" style="width: 100%; background-color: 
+            {% if total_scanned == 0 %}#e74c3c
+            {% elif total_scanned == total_devices %}#2ecc71
+            {% else %}#f39c12{% endif %};">
+            {% widthratio total_scanned total_devices 100 %}%
+        </div>
+
+        <h2>Rooms and Devices</h2>
+        {% for room_data in rooms_data %}
+            <table class="
+                {% if room_data.devices|length == 0 %}
+                    room-no-devices
+                {% elif room_data.scanned_devices|length == 0 %}
+                    room-not-scanned
+                {% elif room_data.scanned_devices|length == room_data.devices|length %}
+                    room-fully-scanned
+                {% else %}
+                    room-partial-scanned
+                {% endif %}
+            ">
+                <tr class="room-header">
+                    <th colspan="10">Room: {{ room_data.room.name }} - Scanned Devices: {{ room_data.scanned_devices|length }} / {{ room_data.devices|length }}</th>
+                </tr>
+                <tr>
+                    <th class="col-id">ID</th>
+                    <th class="col-name">Name</th>
+                    <th class="col-serial">Serial Number</th>
+                    <th class="col-category">Category</th>
+                    <th class="col-subcategory">Subcategory</th>
+                    <th class="col-building">Building</th>
+                    <th class="col-floor">Floor</th>
+                    <th class="col-room">Room</th>
+                    <th class="col-status">Status</th>
+                    <th class="col-updated">Last Updated</th>
+                </tr>
+                {% for device in room_data.devices %}
+                <tr>
+                    <td class="col-id">{{ device.id }}</td>
+                    <td class="col-name">{{ device.name }}</td>
+                    <td class="col-serial">{{ device.serial_number }}</td>
+                    <td class="col-category">{{ device.category.name }}</td>
+                    <td class="col-subcategory">{{ device.subcategory.name }}</td>
+                    <td class="col-building">{{ device.building.name }}</td>
+                    <td class="col-floor">{{ device.floor.name }}</td>
+                    <td class="col-room">{{ device.room.name }}</td>
+                    <td class="col-status {% if device in room_data.scanned_devices %}status-scanned{% else %}status-not-scanned{% endif %}">
+                        {% if device in room_data.scanned_devices %}
+                            Scanned
+                        {% else %}
+                            Not Scanned
+                        {% endif %}
+                    </td>
+                    <td class="col-updated">{{ device.updated_at|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+    </body>
+</html>

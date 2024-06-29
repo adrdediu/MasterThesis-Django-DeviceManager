@@ -177,3 +177,4 @@ def qrcode_action(request, device_id, action):
         return JsonResponse({'success': False, 'message': 'Device not found'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
+    

@@ -3,40 +3,87 @@
 
 {% block content %}
 <div class="container my-4">
-    <h1 class="mb-4">Inventory Details</h1>
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb bg-light p-1 rounded">
+          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'actions' %}" class="text-decoration-none">Actions</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Inventory #{{ inventory.id }}</li>
+        </ol>
+      </nav>
+    <h2 class="mb-4">Inventory Details</h2>
     
-    <div class="card mb-4">
-        <div class="card-header">
-            <h2 class="h5 mb-0">General Information</h2>
+    <div class="row mb-4">
+        <!-- General Information Card -->
+        <div class="col-md-8">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">General Information</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>ID:</strong> {{ inventory.id }}</p>
+                            <p><strong>Creator:</strong> {{ inventory.creator.username }}</p>
+                            <p><strong>Building:</strong> {{ inventory.building.name }}</p>
+                            <p><strong>Start Date:</strong> {{ inventory.start_date }}</p>
+                            <p><strong>End Date:</strong> {{ inventory.end_date|default:"Not ended" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Status:</strong> 
+                                {% if inventory.status == 'ACTIVE' %}
+                                    <span class="badge text-success bg-light border border-success"><i class="bi bi-play-circle-fill me-1"></i>Active</span>
+                                {% elif inventory.status == 'PAUSED' %}
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-pause-circle-fill me-1"></i>Paused</span>
+                                {% elif inventory.status == 'CANCELED' %}
+                                    <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Canceled</span>
+                                {% elif inventory.status == 'COMPLETED' %}
+                                    <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
+                                {% endif %}
+                            </p>
+                            <p><strong>Scope:</strong> {{ inventory.get_scope_display }}</p>
+                            <p><strong>Total Devices:</strong> {{ total_devices }}</p>
+                            <p><strong>Scanned Devices:</strong> {{ total_scanned }} / {{ total_devices }}</p>
+                        </div>
+                    </div>
+                    <div class="progress mt-3">
+                        <div class="progress-bar" role="progressbar" style="width: {% widthratio total_scanned total_devices 100 %}%;" aria-valuenow="{{ total_scanned }}" aria-valuemin="0" aria-valuemax="{{ total_devices }}">
+                            {% widthratio total_scanned total_devices 100 %}%
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <p><strong>ID:</strong> {{ inventory.id }}</p>
-            <p><strong>Creator:</strong> {{ inventory.creator.username }}</p>
-            <p><strong>Building:</strong> {{ inventory.building.name }}</p>
-            <p><strong>Start Date:</strong> {{ inventory.start_date }}</p>
-            <p><strong>End Date:</strong> {{ inventory.end_date|default:"Not ended" }}</p>
-            <p><strong>Status:</strong> 
-                {% if inventory.status == 'ACTIVE' %}
-                    <span class="badge text-success bg-light border border-success">Active</span>
-                {% elif inventory.status == 'PAUSED' %}
-                    <span class="badge bg-warning text-dark">Paused</span>
-                {% elif inventory.status == 'CANCELED' %}
-                    <span class="badge bg-danger">Canceled</span>
-                {% elif inventory.status == 'COMPLETED' %}
-                    <span class="badge bg-success text-white">Completed</span>
-                {% endif %}
-            </p>
-            <p><strong>Scope:</strong> {{ inventory.get_scope_display }}</p>
-            <p><strong>Total Devices:</strong> {{ total_devices }}</p>
-            <p><strong>Scanned Devices:</strong> {{ total_scanned }} / {{ total_devices }}</p>
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: {% widthratio total_scanned total_devices 100 %}%;" aria-valuenow="{{ total_scanned }}" aria-valuemin="0" aria-valuemax="{{ total_devices }}">
-                    {% widthratio total_scanned total_devices 100 %}%
+
+        <!-- Actions Card -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Actions</h2>
+                </div>
+                <div class="card-body d-flex flex-column justify-content-center">
+                    {% if inventory.status == 'ACTIVE' %}
+                        <button class="btn btn-warning mb-2 pause-resume" data-inventory-id="{{ inventory.id }}" data-action="pause">
+                            <i class="bi bi-pause-fill"></i> Pause Inventory
+                        </button>
+                    {% elif inventory.status == 'PAUSED' %}
+                        <button class="btn btn-success mb-2 pause-resume" data-inventory-id="{{ inventory.id }}" data-action="resume">
+                            <i class="bi bi-play-fill"></i> Resume Inventory
+                        </button>
+                    {% endif %}
+                    {% if inventory.status == 'ACTIVE' or inventory.status == 'PAUSED' %}
+                        <button class="btn btn-secondary mb-2 cancel" data-inventory-id="{{ inventory.id }}">
+                            <i class="bi bi-x-circle-fill"></i> Cancel Inventory
+                        </button>
+                    {% endif %}
+                    <button class="btn btn-primary mb-2 generate-report" data-inventory-id="{{ inventory.id }}">
+                        <i class="bi bi-file-earmark-text"></i> Generate Report
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Rooms and Devices Section -->
     {% for room_data in rooms_data %}
     <div class="card mb-4">
         <div class="card-header">
@@ -81,13 +128,32 @@
     </div>
     {% endfor %}
 </div>
+
+<!-- Add this modal for report type selection -->
+<div class="modal fade" id="reportTypeModal" tabindex="-1" aria-labelledby="reportTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportTypeModalLabel">Choose Report Type</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <button class="btn btn-primary generate-report-type" data-type="pdf">PDF</button>
+          <button class="btn btn-success generate-report-type" data-type="excel">Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
 
 {% block extra_js %}
 {{ block.super }}
+{{ qr_scan_message|json_script:"qr-scan-message" }}
 <script src="https://cdn.jsdelivr.net/npm/vanilla-datatables@latest/dist/vanilla-dataTables.min.js" type="text/javascript"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // DataTable initialization
     document.querySelectorAll('.table').forEach(table => {
         new DataTable(table, {
             perPage: 10,
@@ -97,7 +163,220 @@ document.addEventListener('DOMContentLoaded', function() {
             fixedHeight: false,
         });
     });
-});
+
+    const qrScanMessage = JSON.parse(document.getElementById('qr-scan-message')?.textContent || '{}');
+    if (qrScanMessage.text && qrScanMessage.type) {
+        showAlert(qrScanMessage.text, qrScanMessage.type);
+    }
+
+
+    // Action buttons functionality
+    document.querySelectorAll('.pause-resume').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const inventoryId = this.getAttribute('data-inventory-id');
+            const action = this.getAttribute('data-action');
+            pauseResumeInventory(inventoryId, action);
+        });
+    });
+
+    document.querySelectorAll('.cancel').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const inventoryId = this.getAttribute('data-inventory-id');
+            cancelInventory(inventoryId);
+        });
+    });
+
+    document.querySelectorAll('.generate-report').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const inventoryId = this.getAttribute('data-inventory-id');
+        const modal = new bootstrap.Modal(document.getElementById('reportTypeModal'));
+        modal.show();
+
+        document.querySelectorAll('.generate-report-type').forEach(typeBtn => {
+            typeBtn.onclick = function() {
+                const reportType = this.getAttribute('data-type');
+                generateReport(inventoryId, reportType);
+                modal.hide();
+            };
+        });
+    });
+    });
+
+
+    function pauseResumeInventory(inventoryId, action) {
+    showConfirmation(
+        'Confirm Action',
+        `Are you sure you want to ${action} this inventory?`,
+        `Yes, ${action} it!`,
+        'Cancel'
+    ).then((result) => {
+        if (result.isConfirmed) {
+            fetch('{% url "api_pause_resume_inventory" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    inventory_id: inventoryId,
+                    action: action
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlertAndReload(data.message || `Inventory ${action}d successfully`,'success');
+                } else {
+                    showAlert(data.message || `Failed to ${action} inventory`, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An error occurred while'+ action + 'ing the inventory', 'error');
+            });
+        }
+    });
+}
+
+    function cancelInventory(inventoryId) {
+        showConfirmation(
+            'Cancel Inventory',
+            'Are you sure you want to cancel this inventory? This action cannot be undone.',
+            'Yes, cancel it!',
+            'No, keep it'
+        ).then((result) => {
+            if (result.isConfirmed) {
+                fetch('{% url "api_cancel_inventory" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inventory_id: inventoryId
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlertAndReload('Inventory canceled successfully', 'success');   
+                    } else {
+                        showAlert(data.message || 'Failed to cancel inventory', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('An error occurred while canceling the inventory', 'error');
+                });
+            }
+        });
+    }
+
+
+    function generateReport(inventoryId, reportType) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/api/inventory/${inventoryId}/generate-report/`;
+        
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = getCookie('csrftoken');
+        form.appendChild(csrfInput);
+
+        const typeInput = document.createElement('input');
+        typeInput.type = 'hidden';
+        typeInput.name = 'report_type';
+        typeInput.value = reportType;
+        form.appendChild(typeInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
+
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+
+    function showConfirmation(title, text, confirmButtonText, cancelButtonText) {
+        return Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: confirmButtonText,
+            cancelButtonText: cancelButtonText
+        });
+    }
+    function showAlertAndReload(message, type = 'info', delay = 2000) {
+        const iconTypes = {
+            success: 'success',
+            warning: 'warning',
+            error: 'error',
+            info: 'info'
+        };
+
+        const buttonColors = {
+            success: '#198754', // Bootstrap 5 success color
+            warning: '#ffc107', // Bootstrap 5 warning color
+            error: '#dc3545',   // Bootstrap 5 danger color
+            info: '#0dcaf0'     // Bootstrap 5 info color
+        };
+
+        Swal.fire({
+            title: type.charAt(0).toUpperCase() + type.slice(1),
+            text: message,
+            icon: iconTypes[type] || 'info',
+            position: 'center',
+            showConfirmButton: false,
+            timer: delay,
+            timerProgressBar: true
+        }).then(() => {
+            location.reload();
+    });
+}
+    function showAlert(message, type = 'info') {
+        const iconTypes = {
+            success: 'success',
+            warning: 'warning',
+            error: 'error',
+            info: 'info'
+        };
+        const buttonColors = {
+            success: '#198754', // Bootstrap 5 success color
+            warning: '#ffc107', // Bootstrap 5 warning color
+            error: '#dc3545',   // Bootstrap 5 danger color
+            info: '#0dcaf0'     // Bootstrap 5 info color
+        };
+
+        Swal.fire({
+            title: type.charAt(0).toUpperCase() + type.slice(1),
+            text: message,
+            icon: iconTypes[type] || 'info',
+            toast: true,
+            position: 'center',
+            showConfirmButton: true,
+            confirmButtonText: 'OK'
+        });
+    }
+
 </script>
 {% endblock %}
 

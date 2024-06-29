@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.urls import path,include
 from devices.views import  DeviceDetailView, add_device, GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView
-from devices.views import LoginView, LogoutView,ActionsView
+from devices.views import LoginView, LogoutView,ActionsView, generate_inventory_report_view
 from devices.api_views import start_inventory, pause_resume_inventory, end_inventory, edit_inventory,get_inventory_status,cancel_inventory,qrcode_action
 
 urlpatterns = [
@@ -26,7 +26,8 @@ urlpatterns = [
     path('download_qrcode/<int:device_id>/', DownloadQRCodeView.as_view(), name='download_qrcode'),
     # Add other URL patterns as needed
      path('actions/', ActionsView.as_view(), name='actions'),
-     path('api/device/<int:device_id>/qrcode/<str:action>/', qrcode_action, name='qrcode_action'),
+    path('api/device/<int:device_id>/qrcode/<str:action>/', qrcode_action, name='qrcode_action'),
+    path('api/inventory/<int:inventory_id>/generate-report/', generate_inventory_report_view, name='generate_inventory_report'),
     
     path('inventory/cancel/', cancel_inventory, name='api_cancel_inventory'),
     path('inventory/start/', start_inventory, name='api_start_inventory'),
