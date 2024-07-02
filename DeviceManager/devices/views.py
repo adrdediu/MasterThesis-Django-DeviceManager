@@ -208,8 +208,8 @@ def add_device(request):
 from django.views.generic import TemplateView
 from .models import InventorizationList, Building
 
-class ActionsView(LoginRequiredMixin, TemplateView):
-    template_name = 'devices/actions.html'
+class InventoryManagementView(LoginRequiredMixin, TemplateView):
+    template_name = 'devices/inventory_management.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
