@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (scope === 'PARTIAL') {
             selectedRooms = Array.from(document.querySelectorAll('.room-checkbox:checked')).map(cb => cb.dataset.roomId);
             if (selectedRooms.length === 0) {
-                alert('Please select at least one room for partial inventory.');
+                showAlert('Please select at least one room for partial inventory.','warning');
                 return;
             }
         } else {
@@ -339,18 +339,18 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Inventory started successfully');
+                showAlert('Inventory started successfully','success');
                 if (startInventoryModalInstance) {
                     startInventoryModalInstance.hide();
                 }
                 location.reload();  // Reload the page to show the new inventory
             } else {
-                alert(data.message || 'Failed to start inventory');
+                showAlert(data.message || 'Failed to start inventory','danger');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while starting the inventory');
+            showAlert('An error occurred while starting the inventory','danger');
         });
     }
 
