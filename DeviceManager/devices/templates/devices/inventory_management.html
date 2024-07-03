@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container my-3">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-2">
         <ol class="breadcrumb bg-light p-1 rounded">
           <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
@@ -90,17 +90,21 @@
                                                     </div>
                                                     <div class="col-12">
                                                         <div class="row">
-                                                            <div class="col mb-1">
+                                                            
                                                                 {% if inventory.status == 'ACTIVE' %}
+                                                                <div class="col mb-1">
                                                                     <button class="btn btn-sm btn-warning pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="pause" title="Pause">
                                                                         <i class="bi bi-pause-fill"></i>
                                                                     </button>
+                                                                </div>
                                                                 {% elif inventory.status == 'PAUSED' %}
+                                                                <div class="col mb-1">
                                                                     <button class="btn btn-sm btn-success pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="resume" title="Resume">
                                                                         <i class="bi bi-play-fill"></i>
                                                                     </button>
+                                                                </div>
                                                                 {% endif %}
-                                                            </div>
+                                                            
                                                             <div class="col mb-1">
                                                                 <button class="btn btn-sm btn-primary generate-report w-100" data-inventory-id="{{ inventory.id }}" title="Generate Report">
                                                                     <i class="bi bi-file-earmark-text-fill"></i>
