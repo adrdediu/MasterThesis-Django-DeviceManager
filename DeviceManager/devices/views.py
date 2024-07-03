@@ -58,16 +58,17 @@ class GetSubcategoriesView(LoginRequiredMixin,View):
     login_url = 'login'
 
     def get(self,request,*args,**kwargs):
-        category_id = self.request.GET.get('category_id')
-        subcategories = Subcategory.objects.filter(category_id=category_id)
+        category_name = self.request.GET.get('category_name')
+        subcategories = Subcategory.objects.filter(category__name=category_name)
         data =[{'id':subcategory.id,'name':subcategory.name} for subcategory in subcategories]
+
         return JsonResponse(data,safe=False)
     
 class GetFloorsView(View):
     login_url = 'login'
     def get(self, request, *args, **kwargs):
-        building_id = self.request.GET.get('building_id')
-        floors = Floor.objects.filter(building_id=building_id)
+        building_acronym = self.request.GET.get('building_acronym')
+        floors = Floor.objects.filter(building__acronym=building_acronym)
         data = [{'id': floor.id, 'name': floor.name} for floor in floors]
         return JsonResponse(data, safe=False)
     
