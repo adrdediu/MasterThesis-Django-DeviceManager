@@ -53,7 +53,7 @@
                             <select id="deviceCategory" class="form-select form-select-sm">
                                 <option value="">All</option>
                                 {% for category in categories %}
-                                    <option value="{{ category.name }}">{{ category.name }}</option>
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
                                 {% endfor %}
                             </select>
                         </th>
@@ -66,7 +66,7 @@
                             <select id="deviceBuilding" class="form-select form-select-sm">
                                 <option value="">All</option>
                                 {% for building in buildings %}
-                                    <option value="{{ building.acronym }}">{{ building.acronym }}</option>
+                                    <option value="{{ building.id }}">{{ building.acronym }}</option>
                                 {% endfor %}
                             </select>
                         </th>
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
         responsive: true,
         pageLength: 10,
         lengthMenu: [[5, 10, 15, 20, 25], [5, 10, 15, 20, 25]],
-        dom: '<"row"<"col mb-1"li><"col"p>rt<"clear">',
+        dom: '<"row justify-content-between"<"col mb-1"li><"col d-flex justify-content-end"p>>rt<"clear">',
         language: {
             search: "_INPUT_",
             searchPlaceholder: "Search...",
@@ -277,7 +277,78 @@ document.addEventListener('DOMContentLoaded', function() {
     if (addDeviceForm) {
         addDeviceForm.addEventListener('submit', function(event) {
             event.preventDefault();
-            // Add your form submission logic here
+            const formData = new FormData(this);
+
+            fetch('{% url "add_device" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+
+                    // Close the Add Device modal
+                    var addDeviceModal = bootstrap.Modal.getInstance(document.getElementById('addDeviceModal'));
+                    addDeviceModal.hide();
+                    
+                    Toastify({
+                        text: data.success,
+                        position: 'center',
+                        backgroundColor: 'green',
+                        className: 'success-toast',
+                        duration: 1000,
+                        callback: function() {
+                            var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+                            confirmationModal.show();
+                        }
+                    }).showToast();
+
+                    // Handle the click event on the "Yes" button in the confirmation modal
+                    document.getElementById('cancelRedirect').addEventListener('click', function() {
+                        window.location.href = `/devices/`;
+                    });
+                    // Handle the click event on the "Yes" button in the confirmation modal
+                    document.getElementById('confirmRedirect').addEventListener('click', function() {
+                        window.location.href = `/device/${data.device_pk}/`;
+                    });
+
+                    // Optionally, update the DataTable with the new device
+                    table.ajax.reload();
+                } else if (data.error) {
+                    Toastify({
+                        text: data.error,
+                        position:'center',
+                        backgroundColor: 'red',
+                        className: 'error-toast',
+                    }).showToast();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
+
+        // Category and subcategory handling in the modal
+        const deviceCategoryModal = document.getElementById('deviceCategoryModal');
+    if (deviceCategoryModal) {
+        deviceCategoryModal.addEventListener('change', function() {
+            selectorHandler([deviceCategoryModal, document.getElementById('deviceSubcategoryModal')], "/get_subcategories/?category_id", ["Category", "Subcategory"], true);
+        });
+    }
+
+    // Building, floor, and room handling in the modal
+    const deviceBuildingModal = document.getElementById('deviceBuildingModal');
+    const deviceFloorModal = document.getElementById('deviceFloorModal');
+    if (deviceBuildingModal) {
+        deviceBuildingModal.addEventListener('change', function() {
+            selectorHandler([deviceBuildingModal, deviceFloorModal, document.getElementById('deviceRoomModal')], "/get_floors/?building_id", ["Building", "Floor", "Room"], true);
+        });
+    }
+    if (deviceFloorModal) {
+        deviceFloorModal.addEventListener('change', function() {
+            selectorHandler([deviceFloorModal, document.getElementById('deviceRoomModal')], "/get_rooms/?floor_id", ["Floor", "Room"], true);
         });
     }
 
@@ -292,10 +363,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         let value = selectors[0].value;
+        console.log(value);
         if(value){
             fetch(`${url}=${value}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 if (!(Array.isArray(data) && data.length === 0)) {
                     if (detailed_options)
                         selectors[1].innerHTML = `<option value="">Select a ${modelNames[1]}</option>`;
@@ -325,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const deviceSubcategory = document.getElementById('deviceSubcategory');
     
     deviceCategory.addEventListener('change', function() {
-        selectorHandler([deviceCategory, deviceSubcategory], "/get_subcategories/?category_name", ["Category", "Subcategory"], false);
+        selectorHandler([deviceCategory, deviceSubcategory], "/get_subcategories/?category_id", ["Category", "Subcategory"], false);
         
         let selectedOption = this.options[this.selectedIndex];
         let selectedText = selectedOption ? selectedOption.textContent : '';
@@ -355,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const deviceRoom = document.getElementById('deviceRoom');
 
     deviceBuilding.addEventListener('change', function() {
-        selectorHandler([deviceBuilding, deviceFloor, deviceRoom], "/get_floors/?building_acronym", ["Building", "Floor", "Room"], false);
+        selectorHandler([deviceBuilding, deviceFloor, deviceRoom], "/get_floors/?building_id", ["Building", "Floor", "Room"], false);
 
 
         let selectedOption = this.options[this.selectedIndex];
