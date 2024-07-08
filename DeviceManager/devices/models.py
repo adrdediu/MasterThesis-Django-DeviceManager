@@ -149,7 +149,8 @@ class InventorizationList(models.Model):
         ('ACTIVE', 'Active'),
         ('PAUSED', 'Paused'),
         ('COMPLETED', 'Completed'),
-        ('CANCELED', 'Canceled'),  # New status added
+        ('CANCELED', 'Canceled'),
+        ('UNKNOWN', 'Unknown'),
     ]
 
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_inventorizations')

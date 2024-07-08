@@ -38,6 +38,8 @@
                                     <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Canceled</span>
                                 {% elif inventory.status == 'COMPLETED' %}
                                     <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
+                                {% elif inventory.status == 'UNKNOWN' %}
+                                    <span class="badge bg-secondary text-white"><i class="bi bi-question-circle-fill me-1"></i>Unknown</span>
                                 {% endif %}
                             </p>
                             <p><strong>Scope:</strong> {{ inventory.get_scope_display }}</p>

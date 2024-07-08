@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 from django.contrib import admin
 from django.urls import path,include
-from devices.views import  DeviceDetailView, add_device, GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
+from devices.views import  DeviceDetailView, add_device,edit_device, delete_device, GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView
 from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
 from devices.api_views import start_inventory, pause_resume_inventory, end_inventory, edit_inventory,get_inventory_status,cancel_inventory,qrcode_action
@@ -18,8 +18,11 @@ urlpatterns = [
     path('devices/', DeviceListView.as_view(), name='device_list'),
     path('devices/<str:category>/', DeviceListView.as_view(), name='device_list_with_category'),
     path('devices/<str:category>/<str:subcategory>/', DeviceListView.as_view(), name='device_list_with_subcategory'),
-    path('add_device/', add_device, name='add_device'),
+    path('api/devices/add_device/', add_device, name='add_device'),
+    path('api/devices/edit/', edit_device, name='edit_device'),
+    path('api/devices/delete_device/', delete_device, name='delete_device'),
     path('device/<int:pk>/', DeviceDetailView.as_view(), name='device_detail'),
+
     path('get_floors/', GetFloorsView.as_view(), name='get_floors'),
     path('get_rooms/', GetRoomsView.as_view(), name='get_rooms'),
     path('get_subcategories/',GetSubcategoriesView.as_view(),name='get_subcategories'),

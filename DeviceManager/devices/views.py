@@ -1,9 +1,10 @@
 # devices/views.py
 import requests
+import json
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden, FileResponse,HttpResponseBadRequest,HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST, require_GET, require_http_methods
 from django.contrib.auth.views import LoginView,LogoutView
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm
@@ -106,7 +107,7 @@ class HomePageView(BaseContextMixin,LoginRequiredMixin,View):
 class DeviceListView(BaseContextMixin,LoginRequiredMixin,View):
     login_url = 'login'
     def get(self, request, category=None, subcategory=None, building=None, floor=None, room=None):
-        devices = Device.objects.all()
+        devices = Device.objects.all().order_by('-id')
 
         selected_category = selected_subcategory = selected_building = selected_floor = selected_room = ""
 
@@ -137,22 +138,9 @@ class DeviceListView(BaseContextMixin,LoginRequiredMixin,View):
 
         return render(request, 'devices/device_list.html', context)
 
+@require_POST
 @login_required(login_url='login')
 def add_device(request):
-
-    buildings = Building.objects.all()
-    floors = Floor.objects.all()
-    rooms = Room.objects.all()
-    categories = Category.objects.all()
-    subcategories = Subcategory.objects.all()
-
-    context = {
-        'buildings': buildings,
-        'floors': floors,
-        'rooms': rooms,
-        'categories': categories,
-        'subcategories': subcategories,
-    }
 
     if request.method == 'POST':
         # Retrieve form data
@@ -204,19 +192,88 @@ def add_device(request):
          # return redirect('device_detail', pk=device.pk)
         return JsonResponse({'success': 'Device added successfully','device_pk':device.pk})  # Redirect to the device list page
 
-    return render(request, 'devices/device_list.html', context)
+    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+
+
+@require_http_methods(["GET", "POST"])
+@login_required(login_url='login')
+def edit_device(request):
+    if request.method == 'GET':
+        device_id = request.GET.get('device_id')
+        device = get_object_or_404(Device, id=device_id)
+        data = {
+            'success': True,
+            'device': {
+                'id': device.id,
+                'name': device.name,
+                'description': device.description,
+                'serial_number': device.serial_number,
+                'category': device.category.id,
+                'subcategory': device.subcategory.id,
+                'building': device.building.id,
+                'floor': device.floor.id,
+                'room': device.room.id,
+            }
+        }
+        return JsonResponse(data)
+
+    elif request.method == 'POST':
+        device_id = request.POST.get('device_id')
+        device = get_object_or_404(Device, id=device_id)
+        try:
+            device.name = request.POST.get('name')
+            device.description = request.POST.get('description')
+            device.serial_number = request.POST.get('serial_number')
+            
+            category_id = request.POST.get('category')
+            subcategory_id = request.POST.get('subcategory')
+            building_id = request.POST.get('building')
+            floor_id = request.POST.get('floor')
+            room_id = request.POST.get('room')
+
+            device.category = get_object_or_404(Category, id=category_id)
+            device.subcategory = get_object_or_404(Subcategory, id=subcategory_id)
+            device.building = get_object_or_404(Building, id=building_id)
+            device.floor = get_object_or_404(Floor, id=floor_id)
+            device.room = get_object_or_404(Room, id=room_id)
+
+            device.save()
+            return JsonResponse({'success': True, 'message': 'Device updated successfully'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
+@require_POST
+@login_required(login_url='login')
+def delete_device(request):
+    try:
+        data = json.loads(request.body)
+        device_id = data.get('device_id')
+        
+        if not device_id:
+            return JsonResponse({'success': False, 'message': 'Device ID not provided'}, status=400)
+        
+        device = get_object_or_404(Device, pk=device_id)
+        device.delete()
+        
+        return JsonResponse({'success': True, 'message': 'Device deleted successfully'})
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON data'}, status=400)
+    except Device.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Device not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 from django.views.generic import TemplateView
 from .models import InventorizationList, Building
 
-class InventoryManagementView(LoginRequiredMixin, TemplateView):
+class InventoryManagementView(BaseContextMixin,LoginRequiredMixin, TemplateView):
     template_name = 'devices/inventory_management.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = self.get_base_context(**kwargs)
         context.update({
             'inventorization_lists': InventorizationList.objects.all().order_by('-start_date'),
-            'buildings': Building.objects.all(),
             #'recent_activities': RecentActivity.objects.all().order_by('-timestamp')[:10],  # Adjust as needed
             #'history_entries': HistoryEntry.objects.all().order_by('-timestamp'),  # Adjust as needed
         })
@@ -262,7 +319,10 @@ class InventorizationListDetailView(DetailView):
         context['total_scanned'] = total_scanned
 
         # Check if all devices are scanned and update status if necessary
-        if total_scanned == total_devices and inventory.status != 'COMPLETED':
+        if total_devices == 0:
+            inventory.status = 'UNKNOWN'
+            inventory.save()
+        elif total_scanned == total_devices and inventory.status != 'COMPLETED':
             inventory.status = 'COMPLETED'
             inventory.save()
 

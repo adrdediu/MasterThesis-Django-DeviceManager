@@ -9,7 +9,7 @@
           <li class="breadcrumb-item active" aria-current="page">Devices</li>
         </ol>
     </nav>
-    <h3 class="mb-2">Device Management</h3>
+    <h3 class="mb-3">Device Management</h3>
 
     <div class="row mb-3">
         <div class="col-md-12">
@@ -95,9 +95,29 @@
                         <td>{{ device.floor.name }}</td>
                         <td>{{ device.room.name }}</td>
                         <td>
-                            <button class="btn btn-sm btn-primary" onclick="window.location.href='{% url 'device_detail' device.id %}'">
-                                <i class="bi bi-eye-fill"></i> View
-                            </button>
+                            <div class="container-fluid p-0">
+                                <div class="row g-1">
+                                    <div class="col-12 mb-1">
+                                        <button class="btn btn-sm btn-dark w-100" onclick="window.location.href='{% url 'device_detail' device.id %}'">
+                                            <i class="bi bi-eye-fill"></i> View
+                                        </button>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col mb-1">
+                                                <button class="btn btn-sm btn-warning edit-device w-100" data-device-id="{{ device.id }}" title="Edit">
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                </button>
+                                            </div>
+                                            <div class="col mb-1">
+                                                <button class="btn btn-sm btn-danger delete-device w-100" data-device-id="{{ device.id }}" title="Delete">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+
                         </td>
                     </tr>
                     {% endfor %}
@@ -208,6 +228,103 @@
     </div>
 </div>
 
+<!-- Edit Device Modal -->
+<div class="modal fade" id="editDeviceModal" tabindex="-1" aria-labelledby="editDeviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editDeviceModalLabel">Edit Device</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editDeviceForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="editDeviceId" name="device_id">
+                    <div class="mb-4">
+                        <label for="editDeviceName" class="form-label fw-bold">Name</label>
+                        <input type="text" class="form-control" id="editDeviceName" name="name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="editDeviceDescription" class="form-label fw-bold">Description</label>
+                        <textarea class="form-control" id="editDeviceDescription" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="editDeviceSerialNumber" class="form-label fw-bold">Serial Number</label>
+                        <input type="text" class="form-control" id="editDeviceSerialNumber" name="serial_number" required>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Category</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="editDeviceCategoryModal" class="form-label">Category</label>
+                                    <select class="form-select" id="editDeviceCategoryModal" name="category" required>
+                                        <option value="">Select a category</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="editDeviceSubcategoryModal" class="form-label">Subcategory</label>
+                                    <select class="form-select" id="editDeviceSubcategoryModal" name="subcategory" required>
+                                        <option value="">Select a Category first</option>
+                                        {% for subcategory in subcategories %}
+                                            <option value="{{ subcategory.id }}" data-category="{{ subcategory.category_id }}" style="display:none;">{{ subcategory.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Location</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="editDeviceBuildingModal" class="form-label">Building</label>
+                                    <select class="form-select" id="editDeviceBuildingModal" name="building" required>
+                                        <option value="">Select a building</option>
+                                        {% for building in buildings %}
+                                            <option value="{{ building.id }}">{{ building.acronym }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="editDeviceFloorModal" class="form-label">Floor</label>
+                                    <select class="form-select" id="editDeviceFloorModal" name="floor" required>
+                                        <option value="">Select a Building first</option>
+                                        {% for floor in floors %}
+                                            <option value="{{ floor.id }}" data-building="{{ floor.building_id }}" style="display:none;">{{ floor.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="editDeviceRoomModal" class="form-label">Room</label>
+                                    <select class="form-select" id="editDeviceRoomModal" name="room" required>
+                                        <option value="">Select a Building and a Floor first</option>
+                                        {% for room in rooms %}
+                                            <option value="{{ room.id }}" data-floor="{{ room.floor_id }}" style="display:none;">{{ room.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="resetEditForm">Reset</button>
+                <button type="submit" form="editDeviceForm" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_css %}
@@ -222,11 +339,26 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+            // Edit Device
+    document.querySelectorAll('.edit-device').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const deviceId = this.getAttribute('data-device-id');
+            editDevice(deviceId);
+        });
+    });
+
+    // Delete Device
+    document.querySelectorAll('.delete-device').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const deviceId = this.getAttribute('data-device-id');
+            deleteDevice(deviceId);
+        });
+    });
     let table = new DataTable('#deviceTable', {
         responsive: true,
         pageLength: 10,
         lengthMenu: [[5, 10, 15, 20, 25], [5, 10, 15, 20, 25]],
-        dom: '<"row justify-content-between"<"col mb-1"li><"col d-flex justify-content-end"p>>rt<"clear">',
+        dom: '<"row"<"col-12 col-lg-6 text-sm-center text-lg-start mb-1"li><"col-12 col-lg-6 d-flex justify-content-sm-center justify-content-lg-end p-0 mb-1"p>>rt<"clear">',
         language: {
             search: "_INPUT_",
             searchPlaceholder: "Search...",
@@ -238,6 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 previous: "Previous"
             }
         },
+        order:[[0,'desc']],
         orderCellsTop: true,
         scrollX: true,
         autoWidth: true,
@@ -254,7 +387,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             { width: '25px', targets: 6 },  // S/N
-            { width: '25px',targets: 7}
+            { width: '25px',targets: 7},
+            { width: '10%',targets: 8, orderable: false},
         ],
         initComplete: function (settings, json) {
             
@@ -282,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch('{% url "add_device" %}', {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                    'X-CSRFToken': '{{ csrf_token }}',
                 },
                 body: formData,
             })
@@ -293,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Close the Add Device modal
                     var addDeviceModal = bootstrap.Modal.getInstance(document.getElementById('addDeviceModal'));
                     addDeviceModal.hide();
-                    
+
                     Toastify({
                         text: data.success,
                         position: 'center',
@@ -315,8 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         window.location.href = `/device/${data.device_pk}/`;
                     });
 
-                    // Optionally, update the DataTable with the new device
-                    table.ajax.reload();
+
                 } else if (data.error) {
                     Toastify({
                         text: data.error,
@@ -330,8 +463,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-        // Category and subcategory handling in the modal
-        const deviceCategoryModal = document.getElementById('deviceCategoryModal');
+    // Category and subcategory handling in the modal
+    const deviceCategoryModal = document.getElementById('deviceCategoryModal');
     if (deviceCategoryModal) {
         deviceCategoryModal.addEventListener('change', function() {
             selectorHandler([deviceCategoryModal, document.getElementById('deviceSubcategoryModal')], "/get_subcategories/?category_id", ["Category", "Subcategory"], true);
@@ -352,9 +485,173 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-     // Selector handlers
-     function selectorHandler(selectors, url, modelNames, detailed_options) {
+    // Edit Device form submission
+    const editDeviceForm = document.getElementById('editDeviceForm');
+    if (editDeviceForm) {
+        editDeviceForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
 
+            fetch('{% url "edit_device" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Success', 'Device updated successfully', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to update device', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'An unexpected error occurred', 'error');
+            });
+        });
+    }
+
+    // Update event listeners
+    document.getElementById('editDeviceCategoryModal').addEventListener('change', function() {
+        updateOptions('editDeviceSubcategoryModal', 'category', this.value);
+        document.getElementById('editDeviceSubcategoryModal').value = '';
+    });
+
+    document.getElementById('editDeviceBuildingModal').addEventListener('change', function() {
+        updateOptions('editDeviceFloorModal', 'building', this.value);
+        document.getElementById('editDeviceFloorModal').value = '';
+        document.getElementById('editDeviceRoomModal').value = '';
+    });
+
+    document.getElementById('editDeviceFloorModal').addEventListener('change', function() {
+        updateOptions('editDeviceRoomModal', 'floor', this.value);
+        document.getElementById('editDeviceRoomModal').value = '';
+    });
+
+    // Edit Device Function
+    function editDevice(deviceId) {
+        fetch(`{% url 'edit_device' %}?device_id=${deviceId}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+        if (data.success) {
+            window.editingDevice = data.device;
+            populateEditForm(data.device);
+            var editDeviceModal = new bootstrap.Modal(document.getElementById('editDeviceModal'));
+            editDeviceModal.show();
+        } else {
+            Swal.fire('Error', data.message || 'Failed to load device data', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire('Error', 'An unexpected error occurred', 'error');
+    });
+}
+
+    function populateEditForm(device) {
+        document.getElementById('editDeviceId').value = device.id;
+        document.getElementById('editDeviceName').value = device.name;
+        document.getElementById('editDeviceDescription').value = device.description;
+        document.getElementById('editDeviceSerialNumber').value = device.serial_number;
+        
+        const categorySelect = document.getElementById('editDeviceCategoryModal');
+        categorySelect.value = device.category;
+        updateOptions('editDeviceSubcategoryModal', 'category', device.category);
+        
+        const buildingSelect = document.getElementById('editDeviceBuildingModal');
+        buildingSelect.value = device.building;
+        updateOptions('editDeviceFloorModal', 'building', device.building);
+        
+        document.getElementById('editDeviceSubcategoryModal').value = device.subcategory;
+        document.getElementById('editDeviceFloorModal').value = device.floor;
+
+        updateOptions('editDeviceRoomModal', 'floor', device.floor);
+        document.getElementById('editDeviceRoomModal').value = device.room;
+    }
+    
+    function updateOptions(selectId, parentAttribute, parentValue) {
+        const select = document.getElementById(selectId);
+        Array.from(select.options).forEach(option => {
+            if (option.dataset[parentAttribute] === parentValue.toString()) {
+                option.style.display = '';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    }
+
+    // Add reset functionality
+    document.getElementById('resetEditForm').addEventListener('click', function() {
+        if (window.editingDevice) {
+            populateEditForm(window.editingDevice);
+        }
+    });
+    
+    // Delete Device function
+    function deleteDevice(device_id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`{% url "delete_device" %}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'device_id': device_id
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Deleted!',
+                        'The device has been deleted.',
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        data.message || 'An error occurred while deleting the device.',
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire(
+                    'Error!',
+                    'An error occurred while deleting the device.',
+                    'error'
+                );
+            });
+        }
+    });
+}
+
+    // Selector handlers
+    function selectorHandler(selectors, url, modelNames, detailed_options) {
         for (var i = 1; i < selectors.length; i++) {
             if (detailed_options)
                 selectors[i].innerHTML = `<option value="">Select a ${modelNames[0]} first</option>`;
@@ -363,7 +660,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         let value = selectors[0].value;
-        console.log(value);
         if(value){
             fetch(`${url}=${value}`)
             .then(response => response.json())
@@ -410,7 +706,6 @@ document.addEventListener('DOMContentLoaded', function() {
             table.column(3).search(selectedText).draw();
         }
     });
-
     deviceSubcategory.addEventListener('change', function() {
         let selectedOption = this.options[this.selectedIndex];
         let selectedText = selectedOption ? selectedOption.textContent : '';
@@ -442,7 +737,6 @@ document.addEventListener('DOMContentLoaded', function() {
             table.column(5).search(selectedText).draw();
         }
     });
-
     deviceFloor.addEventListener('change', function() {
         selectorHandler([deviceFloor, deviceRoom], "/get_rooms/?floor_id", ["Floor", "Room"], false);
         
@@ -456,7 +750,6 @@ document.addEventListener('DOMContentLoaded', function() {
             table.column(6).search(selectedText).draw();
         }
     });
-
     deviceRoom.addEventListener('change', function() {
         let selectedOption = this.options[this.selectedIndex];
         let selectedText = selectedOption ? selectedOption.textContent : '';
@@ -467,8 +760,8 @@ document.addEventListener('DOMContentLoaded', function() {
             table.column(7).search(selectedText).draw();
         }
     });
-
 });
+
 </script>
 {% endblock %}
 
