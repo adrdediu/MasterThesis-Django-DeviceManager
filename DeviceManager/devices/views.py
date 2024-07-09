@@ -483,12 +483,38 @@ def generate_inventory_report_view(request, inventory_id):
     # Return the file
     return FileResponse(report_file, as_attachment=True, filename=filename, content_type=content_type)
 
-from django.views.generic import TemplateView
 
-class NextJSView(TemplateView):
+#Include only Next JS Related Imports
+from django.utils.safestring import mark_safe
+from .serializers import DeviceSerializer, CategorySerializer, UserSerializer
+
+
+class NextJSView(BaseContextMixin,TemplateView):
     template_name = 'devices/nextjs_template.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = self.get_base_context(**kwargs)
         context['next_js_url'] = 'static/js/next/index.html'
         return context    
+    
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'devices/nextjs_template.html'
+    login_url = '/login/'  # Specify the login URL
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        devices = Device.objects.all()
+        categories = Category.objects.all()
+        
+        next_js_context = {
+            'user': UserSerializer(self.request.user).data,
+            'devices': DeviceSerializer(devices, many=True).data,
+            'categories': CategorySerializer(categories, many=True).data,
+        }
+        
+        # Convert to JSON and mark as safe for rendering in template
+        context['next_js_context_json'] = mark_safe(json.dumps(next_js_context))
+
+        context['next_js_url'] = f'static/js/next/dashboard.html'
+        return context

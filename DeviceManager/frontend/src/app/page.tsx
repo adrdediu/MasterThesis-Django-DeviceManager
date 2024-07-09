@@ -1,9 +1,11 @@
 import Image from "next/image";
+import Link from 'next/link';
 import vercel from "./images/vercel.svg";
 import nextLogo from "./images/next.svg";
-
+import CustomLink from "./components/custom-link";
 
 export default function Home() {
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -40,7 +42,10 @@ export default function Home() {
           height={37}
           priority
         />
+
       </div>
+      <CustomLink href="/dashboard">Dashboard</CustomLink>
+      <CustomLink href="/">Homepage</CustomLink>
 
       <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
         <a
