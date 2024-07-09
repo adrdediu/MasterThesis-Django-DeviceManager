@@ -33,9 +33,7 @@ background: linear-gradient(to right, #4b6cb7, #182848);
   
 /* -- Display area -- */
 .display-area {
-    min-height: 90vh;
-    max-height: 90vh;
-    overflow-y: auto;
+    height:100vh;
 }
   
 /* -- Top bar -- */
