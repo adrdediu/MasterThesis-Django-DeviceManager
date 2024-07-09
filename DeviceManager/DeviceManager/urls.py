@@ -4,11 +4,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path,re_path
 from devices.views import  DeviceDetailView, add_device,edit_device, delete_device, GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView
 from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
 from devices.api_views import start_inventory, pause_resume_inventory, end_inventory, edit_inventory,get_inventory_status,cancel_inventory,qrcode_action
+from devices.views import NextJSView
+from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,7 +41,12 @@ urlpatterns = [
     path('inventory/edit/', edit_inventory, name='api_edit_inventory'),
     path('inventory/status/',get_inventory_status, name='api_get_inventory_status'),
     path('inventory/<int:pk>/', InventorizationListDetailView.as_view(), name='inventory_detail'),
-]
+
+    path('nextjs/', NextJSView.as_view(), name='nextjs'),
+        # Add this new pattern
+    re_path(r'^nextjs/static/(?P<path>.*)$', serve, {
+        'document_root': settings.STATICFILES_DIRS[0]
+    }),]
 
 
 # Serve media files during development

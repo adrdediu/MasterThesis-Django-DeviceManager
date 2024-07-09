@@ -1,6 +1,7 @@
 # devices/views.py
 import requests
 import json
+import os
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden, FileResponse,HttpResponseBadRequest,HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
@@ -17,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from .utils import generate_inventory_excel_report,generate_inventory_pdf_report
+from django.conf import settings
 
 class LoginView(View):
     template_name = 'devices/login.html'
@@ -480,3 +482,13 @@ def generate_inventory_report_view(request, inventory_id):
     
     # Return the file
     return FileResponse(report_file, as_attachment=True, filename=filename, content_type=content_type)
+
+from django.views.generic import TemplateView
+
+class NextJSView(TemplateView):
+    template_name = 'devices/nextjs_template.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next_js_url'] = 'static/js/next/index.html'
+        return context    

@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['192.168.0.105','127.0.0.1','192.168.214.7','192.168.80.132', '
 
 SITE_ID = 1  # You can choose any positive integer as the site ID
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 # Application definition
 
 INSTALLED_APPS = [
