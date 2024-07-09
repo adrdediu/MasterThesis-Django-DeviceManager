@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import { initializeDjangoContext, useDjangoContext } from "./utils/djangoContext";
 const inter = Inter({ subsets: ["latin"] });
 
+import { ThemeProvider } from "./components/theme-provider"
+import { ModeToggle } from './components/mode-toggle'; // Import your mode toggle component
 
 export default function RootLayout({
   children,
@@ -21,7 +23,17 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ModeToggle />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
