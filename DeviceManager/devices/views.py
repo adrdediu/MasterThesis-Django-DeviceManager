@@ -19,6 +19,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from .utils import generate_inventory_excel_report,generate_inventory_pdf_report
 from django.conf import settings
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+
 
 class LoginView(View):
     template_name = 'devices/login.html'
@@ -139,6 +142,54 @@ class DeviceListView(BaseContextMixin,LoginRequiredMixin,View):
         })
 
         return render(request, 'devices/device_list.html', context)
+
+
+@login_required
+@require_POST
+def update_profile(request):
+    user = request.user
+    password = request.POST.get('password')
+    print(password)
+    print(user.check_password(password))
+    if not user.check_password(password):
+        return JsonResponse({'success': False, 'message': 'Incorrect password'})
+    
+    # Validate email
+    email = request.POST.get('email')
+    print(email)
+    try:
+        validate_email(email)
+    except ValidationError:
+        return JsonResponse({'success': False, 'message': 'Invalid email address'})
+
+    # Validate names
+    first_name = request.POST.get('first_name').strip()
+    last_name = request.POST.get('last_name').strip()
+    if not first_name or not last_name:
+        return JsonResponse({'success': False, 'message': 'First name and last name are required'})
+
+    # Validate rank and faculty
+    rank = request.POST.get('rank')
+    faculty = request.POST.get('faculty')
+    if rank not in dict(user.extended_user.RANK_CHOICES):
+        return JsonResponse({'success': False, 'message': 'Invalid rank selected'})
+    if faculty not in dict(user.extended_user.FACULTY_CHOICES):
+        return JsonResponse({'success': False, 'message': 'Invalid faculty selected'})
+
+    # Update user information
+    user.email = email
+    user.first_name = first_name
+    user.last_name = last_name
+    user.save()
+    
+    # Update extended user information
+    extended_user = user.extended_user
+    extended_user.rank = rank
+    extended_user.faculty = faculty
+    extended_user.building = request.POST.get('building')
+    extended_user.save()
+    
+    return JsonResponse({'success': True, 'message': 'Profile updated successfully'})
 
 @require_POST
 @login_required(login_url='login')
@@ -265,6 +316,9 @@ def delete_device(request):
         return JsonResponse({'success': False, 'message': 'Device not found'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+
+
 
 from django.views.generic import TemplateView
 from .models import InventorizationList, Building

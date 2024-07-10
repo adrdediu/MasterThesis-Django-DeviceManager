@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container my-3 h-100" style="overflow-y: auto;">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-2">
-        <ol class="breadcrumb bg-light p-1 rounded">
+        <ol class="breadcrumb  p-1 rounded">
           <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
           <li class="breadcrumb-item active" aria-current="page">Devices</li>
         </ol>
@@ -87,7 +87,7 @@
                     {% for device in devices %}
                     <tr>
                         <td>{{ device.id }}</td>
-                        <td><a href="{% url 'device_detail' device.id %}" class="link-primary">{{ device.name }}</a></td>
+                        <td>{{ device.name }}</td>
                         <td>{{ device.serial_number }}</td>
                         <td>{{ device.category.name }}</td>
                         <td>{{ device.subcategory.name }}</td>
@@ -98,7 +98,7 @@
                             <div class="container-fluid p-0">
                                 <div class="row g-1">
                                     <div class="col-12 mb-1">
-                                        <button class="btn btn-sm btn-dark w-100" onclick="window.location.href='{% url 'device_detail' device.id %}'">
+                                        <button class="btn btn-sm btn-primary text-white w-100" onclick="window.location.href='{% url 'device_detail' device.id %}'">
                                             <i class="bi bi-eye-fill"></i> View
                                         </button>
                                     </div>
@@ -332,6 +332,7 @@
 {% endblock %}
 
 {% block extra_js %}
+{{ block.super }}
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <!-- DataTables -->
 <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>

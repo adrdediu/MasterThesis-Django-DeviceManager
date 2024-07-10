@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Building, Floor, Room, Device,Category,Subcategory,InventorizationDevice,InventorizationList,InventorizationRoom
+from .models import ExtendedUser,Building, Floor, Room, Device,Category,Subcategory,InventorizationDevice,InventorizationList,InventorizationRoom
 
+admin.site.register(ExtendedUser)
 admin.site.register(Building)
 admin.site.register(Floor)
 admin.site.register(Room)

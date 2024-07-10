@@ -10,6 +10,91 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.db.models import JSONField
+from django.contrib.auth.models import AbstractUser,User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+class ExtendedUser(models.Model):
+
+    RANK_CHOICES = [
+        ('PROF', 'Profesor (Professor)'),
+        ('CONF', 'Conferentiar (Associate Professor)'),
+        ('LECTOR', 'Șef lucrări (Lecturer)'),
+        ('ASIST', 'Asistent universitar (Assistant)'),
+        ('ENG', 'Engineer'),
+        ('None' , 'None'),
+    ]
+
+    ACRONYM_RANK_CHOICES = [
+        ('PROF', 'Prof.dr.ing.'),
+        ('CONF', 'Conf.dr.ing.'),
+        ('LECTOR', 'Șef lucrări dr.ing.'),
+        ('ASIST', 'Asist.dr.ing.'),
+        ('ENG', 'Eng.'),
+        ('None' , 'None'),
+    ]
+    
+
+    ADMIN_RANK_CHOICES = [
+        ('RECTOR', 'Rector'),
+        ('PRORECTOR', 'Vice-rector'),
+        ('DECAN', 'Decan (Dean)'),
+        ('PRODECAN', 'Prodecan (Vice-dean)'),
+        ('DIR_DEPT', 'Director de departament (Head of department)'),
+        ('SEF_DISC', 'Șef de disciplină (Head of a subject)'),
+        ('None' , 'None'),
+    ]
+    FACULTY_CHOICES = [
+        ('AC', 'Faculty of Automatic Control & Computer Engineering'),
+        ('EE', 'Faculty of Electrical Engineering'),
+        ('ETTI', 'Faculty of Electronics, Telecommunications & Information Technology'),
+        ('CEBS', 'Faculty of Civil Engineering & Building Services'),
+        ('CEEP', 'Faculty of „Cristofor Simionescu” Chemical Engineering & Environmental Protection'),
+        ('MMIM', 'Faculty of Machine Manufacturing & Industrial Management'),
+        ('ARCH', 'Faculty of „G. M. Cantacuzino” Architecture'),
+        ('HGEE', 'Faculty of Hydrotechnics, Geodesy & Environmental Engineering'),
+        ('ME', 'Faculty of Mechanical Engineering'),
+        ('SIM', 'Faculty of Material Science & Engineering'),
+        ('IDBM', 'Faculty of Industrial Design and Business Management'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='extended_user')
+    age = models.PositiveIntegerField(null=True, blank=True)
+    rank = models.CharField(max_length=20, choices=RANK_CHOICES, blank=True)
+    acronym_rank = models.CharField(max_length=20, choices=ACRONYM_RANK_CHOICES, blank=True)
+    admin_rank = models.CharField(max_length=20, choices=ADMIN_RANK_CHOICES, blank=True)
+    faculty = models.CharField(max_length=4, choices=FACULTY_CHOICES, blank=True)
+
+    def __str__(self):
+        return self.user.username
+    
+    def save(self, *args, **kwargs):
+        # Ensure acronym_rank matches rank
+        if self.rank:
+            self.acronym_rank = self.rank
+        super().save(*args, **kwargs)
+    
+    def get_full_name_with_title(self):
+        full_name = f"{self.user.first_name} {self.user.last_name}".strip()
+        if not full_name:
+            full_name = self.user.username
+        
+        titles = []
+
+        if self.admin_rank and self.admin_rank != 'None':
+            titles.append(dict(self.ADMIN_RANK_CHOICES)[self.admin_rank].split('(')[0].strip())
+        if self.rank and self.rank != 'None':
+            titles.append(dict(self.ACRONYM_RANK_CHOICES)[self.rank].split('(')[0].strip())
+        
+        if titles:
+            return f"{' '.join(titles)} {full_name}".strip()
+        else:
+            return full_name
+
+@receiver(post_save, sender=User)
+def create_or_update_extended_user(sender, instance, created, **kwargs):
+    ExtendedUser.objects.get_or_create(user=instance)
+
 
 
 class Building(models.Model):
@@ -51,14 +136,12 @@ class Category(models.Model):
     def __str__(self):
         return f'{self.pk} - {self.name}'
 
-
 class Subcategory(models.Model):
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.pk} - {self.category} - {self.name}'
-
 
 class Device(models.Model):
     name = models.CharField(max_length=255)
@@ -134,11 +217,6 @@ class Device(models.Model):
     class Meta:
         ordering = ['id']
     
-
-
-
-
-from django.contrib.auth.models import User
 
 class InventorizationList(models.Model):
     SCOPE_CHOICES = [

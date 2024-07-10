@@ -38,7 +38,7 @@ background: linear-gradient(to right, #4b6cb7, #182848);
   
 /* -- Top bar -- */
 .top-bar {
-    background-color: #333; /* Adjust the background color */
+    background-color: #343a40; /* Adjust the background color */
     color: #fff; /* Adjust the text color */
     padding: 10px;
     position: sticky;
@@ -151,4 +151,10 @@ background: linear-gradient(to right, #4b6cb7, #182848);
   /* Optional: Handle on hover state */
   ::-webkit-scrollbar-thumb:hover {
     background-color: #495057;
+  }
+
+
+  .card-shadow {
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
   }
