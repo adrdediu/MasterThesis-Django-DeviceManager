@@ -54,7 +54,7 @@ background: linear-gradient(to right, #4b6cb7, #182848);
 }
 
 /* -- Media Queries -- Top Bar, Side Bar, Display Area --*/  
-@media (min-width: 768px) and (min-height:600px) {
+@media (min-width: 992px) and (min-height:600px) {
     .top-bar {
         display: none !important; 
     }
@@ -65,7 +65,6 @@ background: linear-gradient(to right, #4b6cb7, #182848);
 
     .display-area {
         flex: 0 0 75%;
-        max-height: 100vh;
     }
 }
 
@@ -157,4 +156,8 @@ background: linear-gradient(to right, #4b6cb7, #182848);
   .card-shadow {
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+  }
+
+  .dev-man-bg{
+    background: linear-gradient(to right, #00d2ff, #3a47d5);
   }

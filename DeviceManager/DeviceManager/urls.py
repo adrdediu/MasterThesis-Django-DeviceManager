@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 from django.contrib import admin
 from django.urls import path,re_path
-from devices.views import  DeviceDetailView, add_device,edit_device, delete_device, update_profile
+from devices.views import  DeviceDetailView, add_device,edit_device, delete_device, update_profile, change_password
 from devices.views import GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView
 from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
@@ -18,6 +18,8 @@ from django.views.static import serve
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('update_profile/', update_profile, name='update_profile'),
+    path('change_password/', change_password, name='change_password'),
+
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('', HomePageView.as_view(), name='homepage'),

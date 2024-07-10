@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block content %}
-<div class="container my-3 h-100" style="overflow-y: auto;">
-    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-2">
-        <ol class="breadcrumb bg-light p-1 rounded">
-          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Actions</li>
-        </ol>
-      </nav>
+<nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;;" aria-label="breadcrumb" class="sticky-top m-2 rounded" data-bs-theme="dark">
+    <ol class="breadcrumb  p-1 rounded">
+      <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Inventory Management</li>
+    </ol>
+</nav>
+<div class="container-fluid my-3 h-100" style="overflow-y: auto;">
     <h3 class="mb-2">Inventory Management</h3>
     
     <ul class="nav nav-tabs mb-2" id="inventoryTabs" role="tablist">

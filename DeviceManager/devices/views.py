@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.decorators.http import require_POST, require_GET, require_http_methods
 from django.contrib.auth.views import LoginView,LogoutView
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from .forms import LoginForm
 from django.views.generic import DetailView, TemplateView
 from .models import Device,Floor,Room,Building,Subcategory,Category
@@ -190,6 +190,25 @@ def update_profile(request):
     extended_user.save()
     
     return JsonResponse({'success': True, 'message': 'Profile updated successfully'})
+
+@login_required
+@require_POST
+def change_password(request):
+    user = request.user
+    current_password = request.POST.get('current_password')
+    new_password1 = request.POST.get('new_password1')
+    new_password2 = request.POST.get('new_password2')
+
+    if not user.check_password(current_password):
+        return JsonResponse({'success': False, 'message': 'Current password is incorrect'})
+
+    if new_password1 != new_password2:
+        return JsonResponse({'success': False, 'message': 'New passwords do not match'})
+
+    user.set_password(new_password1)
+    user.save()
+    update_session_auth_hash(request, user)  # Important to keep the user logged in
+    return JsonResponse({'success': True, 'message': 'Password changed successfully'})
 
 @require_POST
 @login_required(login_url='login')
