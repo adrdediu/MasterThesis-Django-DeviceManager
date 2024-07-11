@@ -53,34 +53,7 @@ background: linear-gradient(to right, #00d2ff, #3a47d5);
 background: linear-gradient(to right, #4b6cb7, #182848);
 }
 
-/* -- Media Queries -- Top Bar, Side Bar, Display Area --*/  
-@media (min-width: 992px) and (min-height:600px) {
-    .top-bar {
-        display: none !important; 
-    }
 
-    .sidebar {
-        flex: 0 0 25%; 
-    }
-
-    .display-area {
-        flex: 0 0 75%;
-    }
-}
-
-@media (max-height: 599px) {
-    .top-bar {
-        flex: 0 0 100%;
-    }
-    .sidebar {
-        display: none !important; 
-    }
-
-    .display-area {
-        flex: 0 0 100%;
-    }
-}
-  
 
 /* -- Display Area -- */
 #homepageDisplayArea {

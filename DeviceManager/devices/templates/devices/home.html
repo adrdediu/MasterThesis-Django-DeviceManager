@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Device Manager</title>
+  <title>Device Manager</title>
 
     {% load static %}
 
@@ -24,7 +24,7 @@
     <div class="row">
 
       <!-- Top bar for small screens -->
-      <div class="col-12 vh-20 d-flex  justify-content-between align-items-center top-bar">
+      <div class="col-12 d-lg-none d-flex justify-content-between align-items-center py-1" style="background-color:  #343a40">
         <!-- Hamburger button for the left -->
         <div class="d-flex align-items-center p-2">
           <button class="btn btn-dark text-light" style="width: 40px; height: 40px; padding: 5px;" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
@@ -43,7 +43,7 @@
         </div>
 
         <!-- Profile pic button on the right -->
-        <div class="d-flex align-items-center ms-3 p-2">
+        <div class="d-flex align-items-center  p-1">
           <button class="btn btn-dark p-1 border-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#profileOffcanvas" aria-controls="profileOffcanvas" style="border-radius:50%">
             <img src="{% static 'devices/cat.png' %}" alt="Profile" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover; border: 2px solid #00d2ff;">
             <span class="visually-hidden">User profile</span>
