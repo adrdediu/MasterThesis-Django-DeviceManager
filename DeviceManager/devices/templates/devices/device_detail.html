@@ -2,101 +2,108 @@
 {% load static %}
 
 {% block content %}
-<nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;" aria-label="breadcrumb" class="sticky-top m-2 rounded" data-bs-theme="dark">
-    <ol class="breadcrumb p-1 rounded">
-        <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'device_list' %}" class="text-decoration-none">Devices</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Device #{{ device.id }} - {{ device.name }}</li>
-    </ol>
-</nav>
-
-<div class="container-fluid my-3 pb-5 h-100" style="overflow-y: auto;">
-    <h3 class="mb-3">Device #{{ device.id }} - {{ device.name }}</h3>
-
-    <div class="row">
-        <!-- First Column: General Information and Location -->
-        <div class="col-md-8">
-            <!-- General Information Card -->
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">General Information</h2>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Name:</strong> {{ device.name }}</p>
-                            <p><strong>Description:</strong> {{ device.description }}</p>
-                            <p><strong>Serial Number:</strong> {{ device.serial_number }}</p>
-                            <p><strong>Category:</strong> {{ device.category.name }}</p>
-                            <p><strong>Subcategory:</strong> {{ device.subcategory.name }}</p>
+<div class="container-fluid h-100 overflow-auto mt-2">
+    <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;" aria-label="breadcrumb" class="sticky-top rounded" data-bs-theme="dark">
+        <ol class="breadcrumb p-2 card-shadow rounded">
+            <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'device_list' %}" class="text-decoration-none">Devices</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Device #{{ device.id }} - {{ device.name }}</li>
+        </ol>
+    </nav>
+    <div class="row p-1">
+        <div class="col">
+            <h3 class="mb-3">Device #{{ device.id }} - {{ device.name }}</h3>
+            <div class="row">
+                <!-- First Column: General Information and Location -->
+                <div class="col-md-8">
+                    <!-- General Information Card -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="h5 mb-0">General Information</h2>
                         </div>
-                        <div class="col-md-6">
-                            <p><strong>Created At:</strong> {{ device.created_at }}</p>
-                            <p><strong>Updated At:</strong> {{ device.updated_at }}</p>
-                            <p><strong>QR Code Applied:</strong> {% if device.is_qrcode_applied %}Yes{% else %}No{% endif %}</p>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Name:</strong> {{ device.name }}</p>
+                                    <p><strong>Description:</strong> {{ device.description }}</p>
+                                    <p><strong>Serial Number:</strong> {{ device.serial_number }}</p>
+                                    <p><strong>Category:</strong> {{ device.category.name }}</p>
+                                    <p><strong>Subcategory:</strong> {{ device.subcategory.name }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Created At:</strong> {{ device.created_at }}</p>
+                                    <p><strong>Updated At:</strong> {{ device.updated_at }}</p>
+                                    <p><strong>QR Code Applied:</strong> {% if device.is_qrcode_applied %}Yes{% else %}No{% endif %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Location Card -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="h5 mb-0">Location</h2>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Building:</strong> {{ device.building.name }}</p>
+                            <p><strong>Floor:</strong> {{ device.floor.name }}</p>
+                            <p><strong>Room:</strong> {{ device.room.name }}</p>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Second Column: Device Actions and QR Code -->
+                <div class="col-md-4">
+                    <!-- Device Actions Card -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="h5 mb-0">Device Actions</h2>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-warning edit-device mb-2 w-100" data-device-id="{{ device.id }}">
+                                <i class="bi bi-pencil-fill"></i> Edit Device
+                            </button>
+                            <button class="btn btn-danger delete-device mb-2 w-100" data-device-id="{{ device.id }}">
+                                <i class="bi bi-trash-fill"></i> Delete Device
+                            </button>
+                        </div>
+                    </div>
+        
+                    <!-- QR Code Card -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="h5 mb-0">QR Code</h2>
+                        </div>
+                        <div class="card-body text-center">
+                            {% if device.qrcode_url %}
+                                <div class="card card-shadow bg-white p-1 rounded mb-3" style="display: inline-block;">
+                                    <img src="{{ device.qrcode_url }}" class="img-fluid" alt="QR Code" style="max-width: 200px;">
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'download_qrcode' device.id %}" class="btn btn-primary">
+                                        <i class="bi bi-download"></i> Download QR Code
+                                    </a>
+                                    <button id="regenerateQRCode" class="btn btn-warning">
+                                        <i class="bi bi-arrow-clockwise"></i> Regenerate QR Code
+                                    </button>
+                                </div>
+                            {% else %}
+                                <p>No QR code available.</p>
+                                <button id="generateQRCode" class="btn btn-primary w-100">
+                                    <i class="bi bi-qr-code"></i> Generate QR Code
+                                </button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="d-lg-none mb-3 pb-5">
 
-            <!-- Location Card -->
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">Location</h2>
-                </div>
-                <div class="card-body">
-                    <p><strong>Building:</strong> {{ device.building.name }}</p>
-                    <p><strong>Floor:</strong> {{ device.floor.name }}</p>
-                    <p><strong>Room:</strong> {{ device.room.name }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Second Column: Device Actions and QR Code -->
-        <div class="col-md-4">
-            <!-- Device Actions Card -->
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">Device Actions</h2>
-                </div>
-                <div class="card-body">
-                    <button class="btn btn-warning edit-device mb-2 w-100" data-device-id="{{ device.id }}">
-                        <i class="bi bi-pencil-fill"></i> Edit Device
-                    </button>
-                    <button class="btn btn-danger delete-device mb-2 w-100" data-device-id="{{ device.id }}">
-                        <i class="bi bi-trash-fill"></i> Delete Device
-                    </button>
-                </div>
-            </div>
-
-            <!-- QR Code Card -->
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">QR Code</h2>
-                </div>
-                <div class="card-body text-center">
-                    {% if device.qrcode_url %}
-                        <div class="card card-shadow bg-white p-1 rounded mb-3" style="display: inline-block;">
-                            <img src="{{ device.qrcode_url }}" class="img-fluid" alt="QR Code" style="max-width: 200px;">
-                        </div>
-                        <div class="d-grid gap-2">
-                            <a href="{% url 'download_qrcode' device.id %}" class="btn btn-primary">
-                                <i class="bi bi-download"></i> Download QR Code
-                            </a>
-                            <button id="regenerateQRCode" class="btn btn-warning">
-                                <i class="bi bi-arrow-clockwise"></i> Regenerate QR Code
-                            </button>
-                        </div>
-                    {% else %}
-                        <p>No QR code available.</p>
-                        <button id="generateQRCode" class="btn btn-primary w-100">
-                            <i class="bi bi-qr-code"></i> Generate QR Code
-                        </button>
-                    {% endif %}
-                </div>
             </div>
         </div>
     </div>
+
+
 </div>
 
 <!-- Edit Device Modal -->
@@ -217,7 +224,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // QR Code regeneration
     var regenerateButton = document.getElementById('regenerateQRCode');
-    var generateButton = document.getElementById('generateQRCode');
 
     function handleQRCodeGeneration(action) {
         fetch(`/api/device/{{ device.id }}/qrcode/${action}/`, {
@@ -230,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                location.reload();  // Reload the page to show the new QR code
+                showAlertAndReload('QR code successfully '+ action + 'd!','success');
             } else {
                 showAlert('Failed to ' + action + ' QR code: ' + data.message, 'error');
             }
@@ -252,11 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    if (generateButton) {
-        generateButton.addEventListener('click', function() {
-            handleQRCodeGeneration('generate');
-        });
-    }
 
     // Add event listener for the download QR code button
   const downloadQRCodeBtn = document.querySelector('a[href^="{% url 'download_qrcode' device.id %}"]');
