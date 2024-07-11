@@ -2,219 +2,230 @@
 {% load static %}
 
 {% block content %}
-<nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;;" aria-label="breadcrumb" class="sticky-top m-2 rounded" data-bs-theme="dark">
-    <ol class="breadcrumb  p-1 rounded">
-      <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Inventory Management</li>
-    </ol>
-</nav>
-<div class="container-fluid my-3 pb-5 h-100" style="overflow-y: auto;">
-    <h3 class="mb-3">Inventory Management</h3>
+<div class="container-fluid h-100 overflow-auto mt-2">
     
-    <ul class="nav nav-tabs mb-2" id="inventoryTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="actions-tab" data-bs-toggle="tab" data-bs-target="#actions" type="button" role="tab" aria-controls="actions" aria-selected="true">Actions</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="recent-tab" data-bs-toggle="tab" data-bs-target="#recent" type="button" role="tab" aria-controls="recent" aria-selected="false">Recent Activity</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">History</button>
-        </li>
-    </ul>
-
-    <div class="tab-content pb-3" id="inventoryTabsContent">
-        <!-- Actions Tab -->
-        <div class="tab-pane fade show active" id="actions" role="tabpanel" aria-labelledby="actions-tab">
-            <div class="row mb-2">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="h5 mb-0">Inventory Actions</h2>
-                        </div>
-                        <div class="card-body">
-                            <button id="startInventory" class="btn btn-primary me-2">Start New Inventory</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="h5 mb-0">Inventorization Lists</h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table id="inventorizationTable" class="table table-hover table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Creator</th>
-                                            <th>Start Date</th>
-                                            <th>Status</th>
-                                            <th>Building</th>
-                                            <th>Scope</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                        <tr class="search-row">
-                                            <th><input type="text" placeholder="&#128269; ID" class="form-control form-control-sm"></th>
-                                            <th><input type="text" placeholder="Search Creator" class="form-control form-control-sm"></th>
-                                            <th><input type="text" placeholder="Search Date" class="form-control form-control-sm"></th>
-                                            <th>
-                                                <select class="form-select form-select-sm">
-                                                    <option value="">All</option>
-                                                    <option value="ACTIVE">Active</option>
-                                                    <option value="PAUSED">Paused</option>
-                                                    <option value="CANCELED">Canceled</option>
-                                                    <option value="COMPLETED">Completed</option>
-                                                    <option value="UNKNOWN">Unknown</option>
-                                                </select>
-                                            </th>
-                                            <th><input type="text" placeholder="Search Building" class="form-control form-control-sm"></th>
-                                            <th>
-                                                <select class="form-select form-select-sm">
-                                                    <option value="">All</option>
-                                                    <option value="ENTIRE">Entire</option>
-                                                    <option value="PARTIAL">Partial</option>
-                                                </select>
-                                            </th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                <tbody>
-                                    {% for inventory in inventorization_lists %}
-                                    <tr>
-                                        <td>{{ inventory.id }}</td>
-                                        <td>{{ inventory.creator.username }}</td>
-                                        <td>{{ inventory.start_date|date:"Y-m-d H:i" }}</td>
-                                        <td>    
-                                            {% if inventory.status == 'ACTIVE' %}
-                                                <span class="badge text-success bg-light border border-success"><i class="bi bi-play-circle-fill me-1"></i>Active</span>
-                                            {% elif inventory.status == 'PAUSED' %}
-                                                <span class="badge bg-warning text-dark"><i class="bi bi-pause-circle-fill me-1"></i>Paused</span>
-                                            {% elif inventory.status == 'CANCELED' %}
-                                            <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Canceled</span>
-                                            {% elif inventory.status == 'COMPLETED' %}
-                                            <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
-                                            {% elif inventory.status == 'UNKNOWN' %}
-                                            <span class="badge bg-secondary"><i class="bi bi-question-circle-fill me-1"></i>Unknown</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary">{{ inventory.get_status_display }}</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ inventory.building.name }}</td>
-                                        <td>{{ inventory.get_scope_display }}</td>
-                                        <td>
-                                            <div class="container-fluid p-0">
-                                                <div class="row g-1">
-                                                    <div class="col-12 mb-1">
-                                                        <button class="btn btn-sm btn-dark border border-primary w-100 view-details" onclick="window.location.href='{% url 'inventory_detail' inventory.id %}'" title="View Details">
-                                                            <i class="bi bi-eye-fill"></i> View
-                                                        </button>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <div class="row">
-                                                            
-                                                                {% if inventory.status == 'ACTIVE' %}
-                                                                <div class="col mb-1">
-                                                                    <button class="btn btn-sm btn-warning pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="pause" title="Pause">
-                                                                        <i class="bi bi-pause-fill"></i>
-                                                                    </button>
-                                                                </div>
-                                                                {% elif inventory.status == 'PAUSED' %}
-                                                                <div class="col mb-1">
-                                                                    <button class="btn btn-sm btn-success pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="resume" title="Resume">
-                                                                        <i class="bi bi-play-fill"></i>
-                                                                    </button>
-                                                                </div>
-                                                                {% endif %}
-                                                            
-                                                            <div class="col mb-1">
-                                                                <button class="btn btn-sm btn-primary generate-report w-100" data-inventory-id="{{ inventory.id }}" title="Generate Report">
-                                                                    <i class="bi bi-file-earmark-text-fill"></i>
-                                                                </button>
-
-                                                            </div>
-                                                            <div class="col mb-1">
-                                                                <button class="btn btn-sm btn-danger cancel w-100" data-inventory-id="{{ inventory.id }}" title="Cancel">
-                                                                    <i class="bi bi-trash3-fill"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+    <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;;" aria-label="breadcrumb" class="sticky-top rounded" data-bs-theme="dark">
+        <ol class="breadcrumb  p-2 card-shadow rounded">
+          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Inventory Management</li>
+        </ol>
+    </nav>
+    <div class="row p-1">
+        <div class="col">
+            <h3 class="mb-3">Inventory Management</h3>
+            <ul class="nav nav-tabs mb-2" id="inventoryTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="actions-tab" data-bs-toggle="tab" data-bs-target="#actions" type="button" role="tab" aria-controls="actions" aria-selected="true">Actions</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="recent-tab" data-bs-toggle="tab" data-bs-target="#recent" type="button" role="tab" aria-controls="recent" aria-selected="false">Recent Activity</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">History</button>
+                </li>
+            </ul>
+        
+            <div class="tab-content pb-3" id="inventoryTabsContent">
+                <!-- Actions Tab -->
+                <div class="tab-pane fade show active" id="actions" role="tabpanel" aria-labelledby="actions-tab">
+                    <div class="row mb-2">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="h5 mb-0">Inventory Actions</h2>
+                                </div>
+                                <div class="card-body">
+                                    <button id="startInventory" class="btn btn-primary me-2">Start New Inventory</button>
+                                </div>
                             </div>
                         </div>
                     </div>
+        
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2 class="h5 mb-0">Inventorization Lists</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="inventorizationTable" class="table table-hover table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Creator</th>
+                                                    <th>Start Date</th>
+                                                    <th>Status</th>
+                                                    <th>Building</th>
+                                                    <th>Scope</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                                <tr class="search-row">
+                                                    <th><input type="text" placeholder="&#128269; ID" class="form-control form-control-sm"></th>
+                                                    <th><input type="text" placeholder="Search Creator" class="form-control form-control-sm"></th>
+                                                    <th><input type="text" placeholder="Search Date" class="form-control form-control-sm"></th>
+                                                    <th>
+                                                        <select class="form-select form-select-sm">
+                                                            <option value="">All</option>
+                                                            <option value="ACTIVE">Active</option>
+                                                            <option value="PAUSED">Paused</option>
+                                                            <option value="CANCELED">Canceled</option>
+                                                            <option value="COMPLETED">Completed</option>
+                                                            <option value="UNKNOWN">Unknown</option>
+                                                        </select>
+                                                    </th>
+                                                    <th><input type="text" placeholder="Search Building" class="form-control form-control-sm"></th>
+                                                    <th>
+                                                        <select class="form-select form-select-sm">
+                                                            <option value="">All</option>
+                                                            <option value="ENTIRE">Entire</option>
+                                                            <option value="PARTIAL">Partial</option>
+                                                        </select>
+                                                    </th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                        <tbody>
+                                            {% for inventory in inventorization_lists %}
+                                            <tr>
+                                                <td>{{ inventory.id }}</td>
+                                                <td>{{ inventory.creator.username }}</td>
+                                                <td>{{ inventory.start_date|date:"Y-m-d H:i" }}</td>
+                                                <td>    
+                                                    {% if inventory.status == 'ACTIVE' %}
+                                                        <span class="badge text-success bg-light border border-success"><i class="bi bi-play-circle-fill me-1"></i>Active</span>
+                                                    {% elif inventory.status == 'PAUSED' %}
+                                                        <span class="badge bg-warning text-dark"><i class="bi bi-pause-circle-fill me-1"></i>Paused</span>
+                                                    {% elif inventory.status == 'CANCELED' %}
+                                                    <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Canceled</span>
+                                                    {% elif inventory.status == 'COMPLETED' %}
+                                                    <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
+                                                    {% elif inventory.status == 'UNKNOWN' %}
+                                                    <span class="badge bg-secondary"><i class="bi bi-question-circle-fill me-1"></i>Unknown</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">{{ inventory.get_status_display }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ inventory.building.name }}</td>
+                                                <td>{{ inventory.get_scope_display }}</td>
+                                                <td>
+                                                    <div class="container-fluid p-0">
+                                                        <div class="row g-1">
+                                                            <div class="col-12 mb-1">
+                                                                <button class="btn btn-sm btn-dark border border-primary w-100 view-details" onclick="window.location.href='{% url 'inventory_detail' inventory.id %}'" title="View Details">
+                                                                    <i class="bi bi-eye-fill"></i> View
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <div class="row">
+                                                                    
+                                                                        {% if inventory.status == 'ACTIVE' %}
+                                                                        <div class="col mb-1">
+                                                                            <button class="btn btn-sm btn-warning pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="pause" title="Pause">
+                                                                                <i class="bi bi-pause-fill"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                        {% elif inventory.status == 'PAUSED' %}
+                                                                        <div class="col mb-1">
+                                                                            <button class="btn btn-sm btn-success pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="resume" title="Resume">
+                                                                                <i class="bi bi-play-fill"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                        {% endif %}
+                                                                    
+                                                                    <div class="col mb-1">
+                                                                        <button class="btn btn-sm btn-primary generate-report w-100" data-inventory-id="{{ inventory.id }}" title="Generate Report">
+                                                                            <i class="bi bi-file-earmark-text-fill"></i>
+                                                                        </button>
+        
+                                                                    </div>
+                                                                    <div class="col mb-1">
+                                                                        <button class="btn btn-sm btn-danger cancel w-100" data-inventory-id="{{ inventory.id }}" title="Cancel">
+                                                                            <i class="bi bi-trash3-fill"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+        
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        
+                <!-- Recent Activity Tab -->
+            <div class="tab-pane fade" id="recent" role="tabpanel" aria-labelledby="recent-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">Recent Inventory Actions</h2>
+                    </div>
+                    <ul class="list-group list-group-flush" id="recentActivityList">
+                        {% for activity in recent_activities %}
+                        <li class="list-group-item">
+                            <span class="badge bg-primary me-2">{{ activity.timestamp|date:"Y-m-d H:i" }}</span>
+                            {{ activity.description }}
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-        </div>
-
-        <!-- Recent Activity Tab -->
-        <div class="tab-pane fade" id="recent" role="tabpanel" aria-labelledby="recent-tab">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">Recent Inventory Actions</h2>
+    
+                <!-- History Tab -->
+            <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <table id="historyTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Date</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in history_entries %}
+                                <tr>
+                                    <td>{{ entry.action }}</td>
+                                    <td>{{ entry.user.username }}</td>
+                                    <td>{{ entry.timestamp|date:"Y-m-d H:i" }}</td>
+                                    <td>{{ entry.details }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <ul class="list-group list-group-flush" id="recentActivityList">
-                    {% for activity in recent_activities %}
-                    <li class="list-group-item">
-                        <span class="badge bg-primary me-2">{{ activity.timestamp|date:"Y-m-d H:i" }}</span>
-                        {{ activity.description }}
-                    </li>
-                    {% endfor %}
-                </ul>
             </div>
-        </div>
 
-        <!-- History Tab -->
-        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
-            <div class="card">
-                <div class="card-body">
-                    <table id="historyTable" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Action</th>
-                                <th>User</th>
-                                <th>Date</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for entry in history_entries %}
-                            <tr>
-                                <td>{{ entry.action }}</td>
-                                <td>{{ entry.user.username }}</td>
-                                <td>{{ entry.timestamp|date:"Y-m-d H:i" }}</td>
-                                <td>{{ entry.details }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="d-lg-none mb-3 pb-5">
+
+            </div>
+
             </div>
         </div>
     </div>
+    
+ 
 </div>
 
 <!-- Start Inventory Modal -->
 <div class="modal fade" id="startInventoryModal" tabindex="-1" aria-labelledby="startInventoryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="startInventoryModalLabel">Start New Inventory</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header text-white border-bottom-0 dev-man-bg-center card-shadow">
+                <h5 class="modal-title text-white" id="startInventoryModalLabel">Start New Inventory</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="startInventoryForm">
@@ -326,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
         responsive: true,
         pageLength: 10,
         lengthMenu: [[5, 10, 15, 20, 25], [5, 10, 15, 20, 25]],
-        dom: '<"row justify-content-between"<"col-md-6 mb-1"li><"col-md-6"p>><"row overflow-auto"rt><"clear">',
+        dom: '<"row"<"col-12 col-lg-6 text-center text-lg-start mb-1"li><"col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end p-0 mb-1"p>>rt<"clear">',
         language: {
             search: "_INPUT_",
             searchPlaceholder: "Search...",
@@ -340,14 +351,14 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         order:[[0,'desc']],
         orderCellsTop: true,
-        scrollX: false,
-        autoWidth: false,
+        scrollX: true,
+        autoWidth: true,
         columnDefs: [
             { width: '40px', targets: 0 },   // ID
-            { width: '50px', targets: 1 },  // Creator
+            { width: '100px', targets: 1 },  // Creator
             { width: '100px', targets: 2 },  // Start Date
             { width: '50px', targets: 3 },   // Status
-            { width: '120px', targets: 4 },  // Building
+            
             { width: '80px', targets: 5 },   // Scope
             { width: '150px', targets: 6, orderable: false }  // Actions
         ],

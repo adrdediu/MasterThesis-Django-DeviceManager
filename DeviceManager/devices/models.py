@@ -148,6 +148,8 @@ class Device(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     serial_number = models.CharField(max_length=50,unique=True)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='owned_devices')
+
     category = models.ForeignKey(Category,on_delete=models.CASCADE)  # Choices: laptop, pc, router, server
     subcategory = models.ForeignKey(Subcategory,on_delete=models.CASCADE)
 

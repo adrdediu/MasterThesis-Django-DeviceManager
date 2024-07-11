@@ -450,7 +450,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header border-bottom-0 card-shadow dev-man-bg-center">
-        <h5 class="modal-title" id="profileInfoModalLabel">Profile Information</h5>
+        <h5 class="modal-title text-white" id="profileInfoModalLabel">Profile Information</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -539,23 +539,23 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header border-bottom-0 card-shadow dev-man-bg-center">
-        <h5 class="modal-title" id="passwordChangeModalLabel">Change Password</h5>
+        <h5 class="modal-title text-white" id="passwordChangeModalLabel">Change Password</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="passwordChangeForm">
           {% csrf_token %}
           <div class="mb-3">
-            <label for="current_password" class="form-label text-light">Current Password</label>
-            <input type="password" class="form-control bg-dark text-light" id="current_password" name="current_password" required>
+            <label for="current_password" class="form-label">Current Password</label>
+            <input type="password" class="form-control" id="current_password" name="current_password" required>
           </div>
           <div class="mb-3">
-            <label for="new_password1" class="form-label text-light">New Password</label>
-            <input type="password" class="form-control bg-dark text-light" id="new_password1" name="new_password1" required>
+            <label for="new_password1" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="new_password1" name="new_password1" required>
           </div>
           <div class="mb-3">
-            <label for="new_password2" class="form-label text-light">Confirm New Password</label>
-            <input type="password" class="form-control bg-dark text-light" id="new_password2" name="new_password2" required>
+            <label for="new_password2" class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" id="new_password2" name="new_password2" required>
           </div>
         </form>
       </div>
