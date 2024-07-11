@@ -1,6 +1,6 @@
 <!-- templates/homepage.html -->
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="auto">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -13,8 +13,6 @@
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
       <!-- Bootstrap Icons-->
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
-      <!-- Toastify library from CDN -->
-      <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
       <!-- Global CSS-->
       <link rel="stylesheet" type="text/css" href="{% static 'css/global_styles.css' %}">
       {% block extra_css %}
@@ -55,7 +53,7 @@
       </div>
 
       <!-- Sidebar -->
-      <div class="col-lg-3 text-light vh-100 d-none d-lg-flex flex-column sidebar">
+      <div class="col-lg-3 text-light vh-100 d-none d-lg-flex flex-column sidebar" data-bs-theme="dark">
       
         <!-- Logo -->
         <div id="sidebarLogo" class="d-flex h-20 justify-content-center align-items-center rounded card-shadow p-2" style="height: 20%; overflow: hidden;">
@@ -182,12 +180,12 @@
         <!-- User Profile -->
         <div class="mt-auto">
           <hr >
-          <div class="d-flex align-items-center bg-black rounded p-3">
+          <div class="d-flex align-items-center bg-black card-shadow rounded p-3">
             <img src="{% static 'devices/cat.png' %}" alt="Profile" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #00d2ff;">
             <div class="flex-grow-1">
               <h6 class="mb-0 text-white">{{user.username}}</h6>
               <small class="text-muted">User Account</small>
-            </div>
+            </div>            
             <button class="btn btn-outline-light btn-sm rounded-circle" type="button" data-bs-toggle="offcanvas" data-bs-target="#profileOffcanvas" aria-controls="profileOffcanvas">
               <i class="bi bi-gear"></i>
             </button>
@@ -217,7 +215,7 @@
   
   <!-- Offcanvas for the left sidebar menu-->
   <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel" >
-    <div class="offcanvas-header border border-bottom card-shadow dev-man-bg">
+    <div class="offcanvas-header text-white card-shadow dev-man-bg-left">
       <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Menu</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
@@ -340,7 +338,7 @@
 
   <!-- Offcanvas for the right sidebar profile menu -->
   <div class="offcanvas offcanvas-end" tabindex="-1" id="profileOffcanvas" aria-labelledby="profileOffcanvasLabel">
-    <div class="offcanvas-header border-bottom card-shadow dev-man-bg">
+    <div class="offcanvas-header text-white card-shadow dev-man-bg-right">
       <h5 class="offcanvas-title" id="profileOffcanvasLabel">Profile Menu</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
@@ -366,7 +364,7 @@
       <hr>
   
       <!-- Account Settings -->
-      <div class="bg-black p-3 card-shadow rounded mb-4">
+      <div class="bg-black p-3 card-shadow rounded">
         <h6 class="text-white mb-3">Account Settings</h6>
         <ul class="list-group bg-transparent border-0">
           <li class="list-group-item bg-transparent border-0">
@@ -391,7 +389,27 @@
           </li>
         </ul>
       </div>
-  
+
+    <!-- Horizontal line separator -->
+    <hr>
+
+    <!-- New section for application settings -->
+    <div class="bg-black p-3 card-shadow rounded mb-2">
+      <h6 class="text-white mb-3">Application Settings</h6>
+      <div class="dropdown w-100">
+        <button class="btn btn-dark dropdown-toggle text-start" type="button" id="themeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-palette me-2"></i>Theme
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark w-100" aria-labelledby="themeDropdown">
+          <li><button class="dropdown-item" type="button" data-bs-theme-value="light">Light</button></li>
+          <li><button class="dropdown-item" type="button" data-bs-theme-value="dark">Dark</button></li>
+          <li><button class="dropdown-item" type="button" data-bs-theme-value="auto">System</button></li>
+        </ul>
+      </div>
+    </div>
+    
+    <hr>
+
       <!-- Logout Button -->
       <button class="btn btn-danger w-100 card-shadow mt-auto" data-bs-toggle="modal" data-bs-target="#logoutModal">
         <i class="bi bi-box-arrow-left me-2"></i>Logout
@@ -409,11 +427,11 @@
   <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-    <div class="modal-header card-shadow dev-man-bg">
+    <div class="modal-header card-shadow dev-man-bg-center">
       <h5 class="modal-title" id="logoutModalLabel">Log Out</h5>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <div class="modal-body text-black">
+    <div class="modal-body">
       Are you sure you want to log out?
     </div>
     <div class="modal-footer">
@@ -431,7 +449,7 @@
 <div class="modal fade" id="profileInfoModal" tabindex="-1" aria-labelledby="profileInfoModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header border-bottom-0 card-shadow dev-man-bg">
+      <div class="modal-header border-bottom-0 card-shadow dev-man-bg-center">
         <h5 class="modal-title" id="profileInfoModalLabel">Profile Information</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -501,7 +519,7 @@
             <h6 class="text-white mb-3">Confirm Changes</h6>
             <div class="mb-3">
               <label for="password" class="form-label text-light">Enter Password to Confirm Changes</label>
-              <input type="password" class="form-control bg-dark text-light" id="password" required>
+              <input type="password" class="form-control bg-dark text-light" id="password" name="password" required>
             </div>
           </div>
         </form>
@@ -520,7 +538,7 @@
 <div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header border-bottom-0 card-shadow dev-man-bg">
+      <div class="modal-header border-bottom-0 card-shadow dev-man-bg-center">
         <h5 class="modal-title" id="passwordChangeModalLabel">Change Password</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -574,12 +592,145 @@
   <script type="module" src="{% static 'js/stars.js' %}" async></script>
   <!-- Bootstrap JS 5.3.2 -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous" async></script>
-  <!-- Toastify JS-->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js" async></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" async></script>
 
+  <script>
+    /*!
+     * Color mode toggler for Bootstrap's docs (https://getbootstrap.com/)
+     * Copyright 2011-2023 The Bootstrap Authors
+     * Licensed under the Creative Commons Attribution 3.0 Unported License.
+     */
+  
+    (() => {
+      'use strict'
+  
+      const storedTheme = localStorage.getItem('theme')
+  
+      const getPreferredTheme = () => {
+        if (storedTheme) {
+          return storedTheme
+        }
+  
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      }
+  
+      const setTheme = function (theme) {
+        if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.setAttribute('data-bs-theme', 'dark')
+        } else {
+          document.documentElement.setAttribute('data-bs-theme', theme)
+        }
+      }
+  
+      setTheme(getPreferredTheme())
+  
+      const showActiveTheme = theme => {
+      const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
+      
+      document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+        element.classList.remove('active')
+      })
+
+      if (btnToActive) {
+        btnToActive.classList.add('active')
+        // Update the dropdown button text to show the active theme
+        const themeDropdown = document.getElementById('themeDropdown')
+        if (themeDropdown) {
+          themeDropdown.innerHTML ='<i class="bi bi-palette me-2"></i>' + btnToActive.textContent
+        }
+      }
+    }
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (storedTheme !== 'light' || storedTheme !== 'dark') {
+          setTheme(getPreferredTheme())
+        }
+      })
+  
+      window.addEventListener('DOMContentLoaded', () => {
+        showActiveTheme(getPreferredTheme())
+  
+        document.querySelectorAll('[data-bs-theme-value]')
+          .forEach(toggle => {
+            toggle.addEventListener('click', () => {
+              const theme = toggle.getAttribute('data-bs-theme-value')
+              localStorage.setItem('theme', theme)
+              setTheme(theme)
+              showActiveTheme(theme)
+            })
+          })
+      })
+    })()
+  </script>
+  
   {% block extra_js %}
   <script>
+    function showConfirmation(title, text, confirmButtonText, cancelButtonText) {
+        return Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: confirmButtonText,
+            cancelButtonText: cancelButtonText
+        });
+    }
+    function showAlertAndReload(message, type = 'info', delay = 2000) {
+        const iconTypes = {
+            success: 'success',
+            warning: 'warning',
+            error: 'error',
+            info: 'info'
+        };
+
+        const buttonColors = {
+            success: '#198754', // Bootstrap 5 success color
+            warning: '#ffc107', // Bootstrap 5 warning color
+            error: '#dc3545',   // Bootstrap 5 danger color
+            info: '#0dcaf0'     // Bootstrap 5 info color
+        };
+
+        Swal.fire({
+            title: type.charAt(0).toUpperCase() + type.slice(1),
+            text: message,
+            icon: iconTypes[type] || 'info',
+            position: 'center',
+            showConfirmButton: false,
+            timer: delay,
+            timerProgressBar: true
+        }).then(() => {
+            location.reload();
+    });
+}
+    function showAlert(message, type = 'info') {
+        const iconTypes = {
+            success: 'success',
+            warning: 'warning',
+            error: 'error',
+            info: 'info'
+        };
+        const buttonColors = {
+            success: '#198754', // Bootstrap 5 success color
+            warning: '#ffc107', // Bootstrap 5 warning color
+            error: '#dc3545',   // Bootstrap 5 danger color
+            info: '#0dcaf0'     // Bootstrap 5 info color
+        };
+
+        Swal.fire({
+            title: type.charAt(0).toUpperCase() + type.slice(1),
+            text: message,
+            icon: iconTypes[type] || 'info',
+            toast: true,
+            position: 'center',
+            showConfirmButton: true,
+            confirmButtonText: 'OK',
+            confirmButtonColor: buttonColors[type] || buttonColors.info,
+        });
+    }
+
+
     document.addEventListener('DOMContentLoaded', function() {
   const profileForm = document.getElementById('profileUpdateForm');
   const updateProfileBtn = document.getElementById('updateProfileBtn');
@@ -688,15 +839,15 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        alert('Profile updated successfully');
         bootstrap.Modal.getInstance(document.getElementById('profileInfoModal')).hide();
+        showAlertAndReload ('Profile updated successfully','success');
       } else {
-        alert('Error: ' + data.message);
+        showAlert(data.message,'danger');
       }
     })
     .catch(error => {
       console.error('Error:', error);
-      alert('An error occurred while updating the profile');
+      showAlert('An error occurred while updating the profile','danger');
     });
   }
 });
@@ -718,22 +869,24 @@
           .then(response => response.json())
           .then(data => {
             if (data.success) {
-              alert('Password changed successfully');
               bootstrap.Modal.getInstance(document.getElementById('passwordChangeModal')).hide();
+              showAlert('Password changed successfully','success' );
               passwordChangeForm.reset();
             } else {
-              alert('Error: ' + data.message);
+              
+              showAlert( data.message,'danger');
             }
           })
           .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while changing the password');
+            showAlert( 'An error occurred while changing the password','danger');
           });
         } else {
           passwordChangeForm.reportValidity();
         }
       });
     });
+  
   </script>
   {% endblock %}
 </body>

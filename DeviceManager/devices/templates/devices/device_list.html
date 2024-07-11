@@ -8,7 +8,7 @@
       <li class="breadcrumb-item active" aria-current="page">Devices</li>
     </ol>
 </nav>
-<div class="container-fluid mb-3 h-100" style="overflow-y: auto;">
+<div class="container-fluid mb-3 pb-5 h-100" style="overflow-y: auto;">
 
     <h3 class="mb-3">Device Management</h3>
 
@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-header">
             <h2 class="h5 mb-0">Device List</h2>
         </div>
@@ -99,7 +99,7 @@
                             <div class="container-fluid p-0">
                                 <div class="row g-1">
                                     <div class="col-12 mb-1">
-                                        <button class="btn btn-sm btn-primary text-white w-100" onclick="window.location.href='{% url 'device_detail' device.id %}'">
+                                        <button class="btn btn-sm btn-dark border border-primary text-white w-100" onclick="window.location.href='{% url 'device_detail' device.id %}'">
                                             <i class="bi bi-eye-fill"></i> View
                                         </button>
                                     </div>
@@ -147,166 +147,152 @@
 <div class="modal fade" id="addDeviceModal" tabindex="-1" aria-labelledby="addDeviceModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addDeviceModalLabel">Add Device</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-bottom-0 card-shadow dev-man-bg-center">
+                <h5 class="modal-title text-white" id="addDeviceModalLabel">Add Device</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Form for adding a device -->
-            <form id="addDeviceForm" method="post" action="{% url 'add_device' %}">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="deviceName" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="deviceName" name="name" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="deviceDescription" class="form-label">Description</label>
-                    <textarea class="form-control" id="deviceDescription" name="description" rows="3" required></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label for="deviceSerialNumber" class="form-label">Serial Number</label>
-                    <input type="text" class="form-control" id="deviceSerialNumber" name="serial_number" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="deviceCategoryModal" class="form-label">Category</label>
-                    <select class="form-select" id="deviceCategoryModal" name="category" required>
-                        {% if categories %}
-                        <option value="">Select a category.</option>
-                            {% for category in categories %}
-                                <option value="{{ category.id }}">{{ category.name }}</option>
-                            {% endfor %}
-                        {% else %}
-                            <option value="">Please add a category first.</option>
-                        {% endif %}
-
-                        <!-- Add more options if needed -->
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="deviceSubcategoryModal" class="form-label">Subcategory</label>
-                    <select class="form-select" id="deviceSubcategoryModal" name="subcategory" required>
-                            <option value="">Select a Category first</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="deviceBuildingModal" class="form-label">Building</label>
-                    <select class="form-select" id="deviceBuildingModal" name="building" required>
-                        <!-- Add options for existing buildings or an option to add a new building -->
-                        {% if buildings %}
-                        <option value="">Select a building.</option>
-                            {% for building in buildings %}
-                                <option value="{{ building.id }}">{{ building.acronym }}</option>
-                            {% endfor %}
-                        {% else %}
-                            <option value="">Please add a building first.</option>
-                        {% endif %}
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="deviceFloorModal" class="form-label">Floor</label>
-                    <select class="form-select" id="deviceFloorModal" name="floor" required>
-                        <option value="">Select a Building first</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="deviceRoomModal" class="form-label">Room</label>
-                    <select class="form-select" id="deviceRoomModal" name="room" required>
-                        <option value="">Select a Building and a Floor first</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </form>
-
+                <form id="addDeviceForm" method="post" action="{% url 'add_device' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="bg-black p-3 rounded">
+                                <h6 class="text-white mb-3">Device Information</h6>
+                                <div class="mb-3">
+                                    <label for="deviceName" class="form-label text-light">Name</label>
+                                    <input type="text" class="form-control bg-dark text-light" id="deviceName" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deviceDescription" class="form-label text-light">Description</label>
+                                    <textarea class="form-control bg-dark text-light" id="deviceDescription" name="description" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deviceSerialNumber" class="form-label text-light">Serial Number</label>
+                                    <input type="text" class="form-control bg-dark text-light" id="deviceSerialNumber" name="serial_number" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="bg-black p-3 rounded">
+                                <h6 class="text-white mb-3">Device Location</h6>
+                                <div class="mb-3">
+                                    <label for="deviceBuildingModal" class="form-label text-light">Building</label>
+                                    <select class="form-select bg-dark text-light" id="deviceBuildingModal" name="building" required>
+                                        {% if buildings %}
+                                        <option value="">Select a building</option>
+                                        {% for building in buildings %}
+                                            <option value="{{ building.id }}">{{ building.acronym }}</option>
+                                        {% endfor %}
+                                        {% else %}
+                                            <option value="">Please add a building first</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deviceFloorModal" class="form-label text-light">Floor</label>
+                                    <select class="form-select bg-dark text-light" id="deviceFloorModal" name="floor" required>
+                                        <option value="">Select a Building first</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deviceRoomModal" class="form-label text-light">Room</label>
+                                    <select class="form-select bg-dark text-light" id="deviceRoomModal" name="room" required>
+                                        <option value="">Select a Building and a Floor first</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-black p-3 rounded mt-3">
+                        <h6 class="text-white mb-3">Device Classification</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="deviceCategoryModal" class="form-label text-light">Category</label>
+                                <select class="form-select bg-dark text-light" id="deviceCategoryModal" name="category" required>
+                                    {% if categories %}
+                                    <option value="">Select a category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                    {% else %}
+                                        <option value="">Please add a category first</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="deviceSubcategoryModal" class="form-label text-light">Subcategory</label>
+                                <select class="form-select bg-dark text-light" id="deviceSubcategoryModal" name="subcategory" required>
+                                    <option value="">Select a Category first</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="addDeviceForm" class="btn btn-primary">Save Device</button>
             </div>
         </div>
     </div>
 </div>
 
+
+
 <!-- Edit Device Modal -->
 <div class="modal fade" id="editDeviceModal" tabindex="-1" aria-labelledby="editDeviceModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editDeviceModalLabel">Edit Device</h5>
+            <div class="modal-header border-bottom-0 dev-man-bg-center card-shadow">
+                <h5 class="modal-title text-white" id="editDeviceModalLabel">Edit Device</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editDeviceForm" method="post">
                     {% csrf_token %}
                     <input type="hidden" id="editDeviceId" name="device_id">
-                    <div class="mb-4">
-                        <label for="editDeviceName" class="form-label fw-bold">Name</label>
-                        <input type="text" class="form-control" id="editDeviceName" name="name" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="editDeviceDescription" class="form-label fw-bold">Description</label>
-                        <textarea class="form-control" id="editDeviceDescription" name="description" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-4">
-                        <label for="editDeviceSerialNumber" class="form-label fw-bold">Serial Number</label>
-                        <input type="text" class="form-control" id="editDeviceSerialNumber" name="serial_number" required>
-                    </div>
-                    <div class="card mb-4">
-                        <div class="card-header bg-light">
-                            <h6 class="mb-0">Category</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="editDeviceCategoryModal" class="form-label">Category</label>
-                                    <select class="form-select" id="editDeviceCategoryModal" name="category" required>
-                                        <option value="">Select a category</option>
-                                        {% for category in categories %}
-                                            <option value="{{ category.id }}">{{ category.name }}</option>
-                                        {% endfor %}
-                                    </select>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="bg-black p-3 rounded">
+                                <h6 class="text-white mb-3">Device Information</h6>
+                                <div class="mb-3">
+                                    <label for="editDeviceName" class="form-label text-light">Name</label>
+                                    <input type="text" class="form-control bg-dark text-light" id="editDeviceName" name="name" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="editDeviceSubcategoryModal" class="form-label">Subcategory</label>
-                                    <select class="form-select" id="editDeviceSubcategoryModal" name="subcategory" required>
-                                        <option value="">Select a Category first</option>
-                                        {% for subcategory in subcategories %}
-                                            <option value="{{ subcategory.id }}" data-category="{{ subcategory.category_id }}" style="display:none;">{{ subcategory.name }}</option>
-                                        {% endfor %}
-                                    </select>
+                                <div class="mb-3">
+                                    <label for="editDeviceDescription" class="form-label text-light">Description</label>
+                                    <textarea class="form-control bg-dark text-light" id="editDeviceDescription" name="description" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editDeviceSerialNumber" class="form-label text-light">Serial Number</label>
+                                    <input type="text" class="form-control bg-dark text-light" id="editDeviceSerialNumber" name="serial_number" required>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header bg-light">
-                            <h6 class="mb-0">Location</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label for="editDeviceBuildingModal" class="form-label">Building</label>
-                                    <select class="form-select" id="editDeviceBuildingModal" name="building" required>
+                        <div class="col-md-6 mb-3">
+                            <div class="bg-black p-3 rounded">
+                                <h6 class="text-white mb-3">Device Location</h6>
+                                <div class="mb-3">
+                                    <label for="editDeviceBuildingModal" class="form-label text-light">Building</label>
+                                    <select class="form-select bg-dark text-light" id="editDeviceBuildingModal" name="building" required>
                                         <option value="">Select a building</option>
                                         {% for building in buildings %}
                                             <option value="{{ building.id }}">{{ building.acronym }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label for="editDeviceFloorModal" class="form-label">Floor</label>
-                                    <select class="form-select" id="editDeviceFloorModal" name="floor" required>
+                                <div class="mb-3">
+                                    <label for="editDeviceFloorModal" class="form-label text-light">Floor</label>
+                                    <select class="form-select bg-dark text-light" id="editDeviceFloorModal" name="floor" required>
                                         <option value="">Select a Building first</option>
                                         {% for floor in floors %}
                                             <option value="{{ floor.id }}" data-building="{{ floor.building_id }}" style="display:none;">{{ floor.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label for="editDeviceRoomModal" class="form-label">Room</label>
-                                    <select class="form-select" id="editDeviceRoomModal" name="room" required>
+                                <div class="mb-3">
+                                    <label for="editDeviceRoomModal" class="form-label text-light">Room</label>
+                                    <select class="form-select bg-dark text-light" id="editDeviceRoomModal" name="room" required>
                                         <option value="">Select a Building and a Floor first</option>
                                         {% for room in rooms %}
                                             <option value="{{ room.id }}" data-floor="{{ room.floor_id }}" style="display:none;">{{ room.name }}</option>
@@ -316,15 +302,39 @@
                             </div>
                         </div>
                     </div>
+                    <div class="bg-black p-3 rounded mt-3">
+                        <h6 class="text-white mb-3">Device Classification</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editDeviceCategoryModal" class="form-label text-light">Category</label>
+                                <select class="form-select bg-dark text-light" id="editDeviceCategoryModal" name="category" required>
+                                    <option value="">Select a category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editDeviceSubcategoryModal" class="form-label text-light">Subcategory</label>
+                                <select class="form-select bg-dark text-light" id="editDeviceSubcategoryModal" name="subcategory" required>
+                                    <option value="">Select a Category first</option>
+                                    {% for subcategory in subcategories %}
+                                        <option value="{{ subcategory.id }}" data-category="{{ subcategory.category_id }}" style="display:none;">{{ subcategory.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer border-top-0">
                 <button type="button" class="btn btn-secondary" id="resetEditForm">Reset</button>
                 <button type="submit" form="editDeviceForm" class="btn btn-primary">Save Changes</button>
             </div>
         </div>
     </div>
 </div>
+
 
 {% endblock %}
 
@@ -426,21 +436,12 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
 
+                    
                     // Close the Add Device modal
                     var addDeviceModal = bootstrap.Modal.getInstance(document.getElementById('addDeviceModal'));
                     addDeviceModal.hide();
 
-                    Toastify({
-                        text: data.success,
-                        position: 'center',
-                        backgroundColor: 'green',
-                        className: 'success-toast',
-                        duration: 1000,
-                        callback: function() {
-                            var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-                            confirmationModal.show();
-                        }
-                    }).showToast();
+                    showAlert('Device added successfully!', 'success');
 
                     // Handle the click event on the "Yes" button in the confirmation modal
                     document.getElementById('cancelRedirect').addEventListener('click', function() {
@@ -453,15 +454,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
                 } else if (data.error) {
-                    Toastify({
-                        text: data.error,
-                        position:'center',
-                        backgroundColor: 'red',
-                        className: 'error-toast',
-                    }).showToast();
+                    showAlert(data.error, 'danger');
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error)
+                showAlert('Something went wrong. Please try again.', 'danger');
+            });
         });
     }
 

@@ -88,20 +88,6 @@ def edit_inventory(request):
     context = {}  # Replace with your actual context data
     return render(request, 'devices/edit_inventory.html', context)
 
-@login_required
-@user_passes_test(is_inventory_manager)
-@require_GET
-def get_inventory_status(request):
-    current_inventory = Inventory.objects.filter(status__in=['active', 'paused']).first()
-    if current_inventory:
-        return JsonResponse({
-            'success': True,
-            'status': current_inventory.status,
-            'started_at': current_inventory.created_at.isoformat(),
-            'id': current_inventory.id
-        })
-    return JsonResponse({'success': False, 'message': 'No active inventory found'})
-
 @require_POST
 @login_required(login_url='login')
 def pause_resume_inventory(request):

@@ -8,8 +8,8 @@
       <li class="breadcrumb-item active" aria-current="page">Inventory Management</li>
     </ol>
 </nav>
-<div class="container-fluid my-3 h-100" style="overflow-y: auto;">
-    <h3 class="mb-2">Inventory Management</h3>
+<div class="container-fluid my-3 pb-5 h-100" style="overflow-y: auto;">
+    <h3 class="mb-3">Inventory Management</h3>
     
     <ul class="nav nav-tabs mb-2" id="inventoryTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -23,7 +23,7 @@
         </li>
     </ul>
 
-    <div class="tab-content" id="inventoryTabsContent">
+    <div class="tab-content pb-3" id="inventoryTabsContent">
         <!-- Actions Tab -->
         <div class="tab-pane fade show active" id="actions" role="tabpanel" aria-labelledby="actions-tab">
             <div class="row mb-2">
@@ -110,7 +110,7 @@
                                             <div class="container-fluid p-0">
                                                 <div class="row g-1">
                                                     <div class="col-12 mb-1">
-                                                        <button class="btn btn-sm btn-dark w-100 view-details" onclick="window.location.href='{% url 'inventory_detail' inventory.id %}'" title="View Details">
+                                                        <button class="btn btn-sm btn-dark border border-primary w-100 view-details" onclick="window.location.href='{% url 'inventory_detail' inventory.id %}'" title="View Details">
                                                             <i class="bi bi-eye-fill"></i> View
                                                         </button>
                                                     </div>
@@ -138,7 +138,7 @@
 
                                                             </div>
                                                             <div class="col mb-1">
-                                                                <button class="btn btn-sm btn-outline-danger cancel w-100" data-inventory-id="{{ inventory.id }}" title="Cancel">
+                                                                <button class="btn btn-sm btn-danger cancel w-100" data-inventory-id="{{ inventory.id }}" title="Cancel">
                                                                     <i class="bi bi-trash3-fill"></i>
                                                                 </button>
                                                             </div>
@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
         responsive: true,
         pageLength: 10,
         lengthMenu: [[5, 10, 15, 20, 25], [5, 10, 15, 20, 25]],
-        dom: '<"row justify-content-between"<"col mb-1"li><"col d-flex justify-content-end"p>>rt<"clear">',
+        dom: '<"row justify-content-between"<"col-md-6 mb-1"li><"col-md-6"p>><"row overflow-auto"rt><"clear">',
         language: {
             search: "_INPUT_",
             searchPlaceholder: "Search...",
@@ -334,20 +334,20 @@ document.addEventListener('DOMContentLoaded', function() {
             paginate: {
                 first: "First",
                 last: "Last",
-                next: "Next",
-                previous: "Previous"
+                next: ">",
+                previous: "<"
             }
         },
         order:[[0,'desc']],
         orderCellsTop: true,
-        scrollX: true,
-        autoWidth: true,
+        scrollX: false,
+        autoWidth: false,
         columnDefs: [
             { width: '40px', targets: 0 },   // ID
-            { width: '100px', targets: 1 },  // Creator
+            { width: '50px', targets: 1 },  // Creator
             { width: '100px', targets: 2 },  // Start Date
-            { width: '80px', targets: 3 },   // Status
-            { width: '50%', targets: 4 },  // Building
+            { width: '50px', targets: 3 },   // Status
+            { width: '120px', targets: 4 },  // Building
             { width: '80px', targets: 5 },   // Scope
             { width: '150px', targets: 6, orderable: false }  // Actions
         ],
@@ -742,72 +742,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(cookieValue);
         return cookieValue;
     }
-
-    function showConfirmation(title, text, confirmButtonText, cancelButtonText) {
-        return Swal.fire({
-            title: title,
-            text: text,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: confirmButtonText,
-            cancelButtonText: cancelButtonText
-        });
-    }
-    function showAlertAndReload(message, type = 'info', delay = 2000) {
-        const iconTypes = {
-            success: 'success',
-            warning: 'warning',
-            error: 'error',
-            info: 'info'
-        };
-
-        const buttonColors = {
-            success: '#198754', // Bootstrap 5 success color
-            warning: '#ffc107', // Bootstrap 5 warning color
-            error: '#dc3545',   // Bootstrap 5 danger color
-            info: '#0dcaf0'     // Bootstrap 5 info color
-        };
-
-        Swal.fire({
-            title: type.charAt(0).toUpperCase() + type.slice(1),
-            text: message,
-            icon: iconTypes[type] || 'info',
-            position: 'center',
-            showConfirmButton: false,
-            timer: delay,
-            timerProgressBar: true
-        }).then(() => {
-            location.reload();
-    });
-}
-    function showAlert(message, type = 'info') {
-        const iconTypes = {
-            success: 'success',
-            warning: 'warning',
-            error: 'error',
-            info: 'info'
-        };
-        const buttonColors = {
-            success: '#198754', // Bootstrap 5 success color
-            warning: '#ffc107', // Bootstrap 5 warning color
-            error: '#dc3545',   // Bootstrap 5 danger color
-            info: '#0dcaf0'     // Bootstrap 5 info color
-        };
-
-        Swal.fire({
-            title: type.charAt(0).toUpperCase() + type.slice(1),
-            text: message,
-            icon: iconTypes[type] || 'info',
-            toast: true,
-            position: 'center',
-            showConfirmButton: true,
-            confirmButtonText: 'OK',
-            confirmButtonColor: buttonColors[type] || buttonColors.info,
-        });
-    }
-
 });
 </script>
 {% endblock %}

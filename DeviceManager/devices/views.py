@@ -2,6 +2,7 @@
 import requests
 import json
 import os
+import datetime
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden, FileResponse,HttpResponseBadRequest,HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
@@ -309,6 +310,8 @@ def edit_device(request):
             device.floor = get_object_or_404(Floor, id=floor_id)
             device.room = get_object_or_404(Room, id=room_id)
 
+            device.updated_at = datetime.datetime.now()
+
             device.save()
             return JsonResponse({'success': True, 'message': 'Device updated successfully'})
         except Exception as e:
@@ -358,7 +361,9 @@ from django.views.generic import DetailView
 from django.db.models import Count
 from .models import InventorizationList, Device, Room, DeviceScan
 
-class InventorizationListDetailView(DetailView):
+class InventorizationListDetailView(LoginRequiredMixin,DetailView):
+    login_url='login'
+
     model = InventorizationList
     template_name = 'devices/inventorization_list_detail.html'
     context_object_name = 'inventory'
@@ -371,59 +376,49 @@ class InventorizationListDetailView(DetailView):
         if 'qr_scan_message' in self.request.session:
             context['qr_scan_message'] = self.request.session.pop('qr_scan_message')
         
-        # Get the rooms based on the stored room_ids
         rooms = Room.objects.filter(id__in=inventory.room_ids)
         
-        total_devices = 0
-        total_scanned = 0
         rooms_data = []
         for room in rooms:
+            room_data = inventory.room_data.get(str(room.id), {})
             devices = Device.objects.filter(room=room)
-            scanned_devices = self.get_scanned_devices(inventory, devices)
-            room_data = {
+            scanned_devices = devices.filter(id__in=DeviceScan.objects.filter(inventory=inventory, device__in=devices).values_list('device_id', flat=True))
+            rooms_data.append({
                 'room': room,
                 'devices': devices,
                 'scanned_devices': scanned_devices,
-            }
-            rooms_data.append(room_data)
-            total_devices += devices.count()
-            total_scanned += scanned_devices.count()
+                'total': room_data.get('total', 0),
+                'scanned': room_data.get('scanned', 0)
+            })
 
         context['rooms_data'] = rooms_data
-        context['total_devices'] = total_devices
-        context['total_scanned'] = total_scanned
-
-        # Check if all devices are scanned and update status if necessary
-        if total_devices == 0:
-            inventory.status = 'UNKNOWN'
-            inventory.save()
-        elif total_scanned == total_devices and inventory.status != 'COMPLETED':
-            inventory.status = 'COMPLETED'
-            inventory.save()
+        context['total_devices'] = inventory.total_devices
+        context['total_scanned'] = inventory.total_scanned
 
         return context
-
-    def get_scanned_devices(self, inventory, devices):
-        return Device.objects.filter(
-            id__in=DeviceScan.objects.filter(
-                inventory=inventory, 
-                device__in=devices
-            ).values_list('device_id', flat=True)
-        )
+    
   
 
-class DeviceDetailView(LoginRequiredMixin,DetailView):
-    login_url = 'login'
+class DeviceDetailView(BaseContextMixin,LoginRequiredMixin, DetailView):
+    login_url='login'
 
     model = Device
     template_name = 'devices/device_detail.html'
     context_object_name = 'device'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_base_context())
+        return context
+
     def get(self, request, *args, **kwargs):
-        device = self.get_object()
+        # Call the parent class's get() method to set self.object
+        response = super().get(request, *args, **kwargs)
+        
+        device = self.object
         user = request.user
 
-         # Check if this is a QR code scan
+        # Check if this is a QR code scan
         is_qr_scan = request.GET.get('source') == 'qr_scan'
 
         # Only process as inventory scan if it's a QR code scan and user is an inventory manager
@@ -445,11 +440,7 @@ class DeviceDetailView(LoginRequiredMixin,DetailView):
                 # Check if the device's room is part of the inventory
                 if device.room.id in active_inventory.room_ids:
                     # Record the scan
-                    DeviceScan.objects.get_or_create(
-                        inventory=active_inventory,
-                        device=device,
-                        defaults={'scanned_at': timezone.now()}
-                    )
+                    active_inventory.scan_device(device.id)
 
                     request.session['qr_scan_message'] = {
                         'type': 'success',
@@ -468,66 +459,72 @@ class DeviceDetailView(LoginRequiredMixin,DetailView):
                 }
                 return redirect('inventory_detail', pk=paused_inventory.id)
 
-            
-        # If not an inventory manager or no active inventory, proceed to normal device detail view
-        return super().get(request, *args, **kwargs)
+        context = self.get_context_data(object=device)
+        return response
 
 class DownloadQRCodeView(LoginRequiredMixin, View):
     login_url = 'login'
 
     def get(self, request, device_id):
-        # Fetch the device
-        device = get_object_or_404(Device, pk=device_id)
 
-        # Construct the complete URL for the QR code image
-        qr_code_url = request.build_absolute_uri(device.qrcode_url)
+        try:
+            device = Device.objects.get(pk=device_id)
+            # Construct the complete URL for the QR code image
+            qr_code_url = request.build_absolute_uri(device.qrcode_url)
 
-        # Fetch the QR code image using requests
-        response = requests.get(qr_code_url)
-        response.raise_for_status()  # Check for request success
-        qr_code_image = Image.open(BytesIO(response.content))
+            # Fetch the QR code image using requests
+            response = requests.get(qr_code_url)
+            response = requests.get(qr_code_url)
+            response.raise_for_status()  # Check for request success
+            qr_code_image = Image.open(BytesIO(response.content))
 
-        # Resize the image to a smaller size
-        new_size = (100, 100)  # Adjust the size as needed
-        qr_code_image = qr_code_image.resize(new_size)
+            # Resize the image to a smaller size
+            new_size = (100, 100)  # Adjust the size as needed
+            qr_code_image = qr_code_image.resize(new_size)
 
-        # Get a font for drawing text (adjust the font size and style as needed)
-        font = ImageFont.truetype("arial.ttf", size=12)
+            # Get a font for drawing text (adjust the font size and style as needed)
+            font = ImageFont.truetype("arial.ttf", size=12)
 
-        # Create a new image with a white background
-        image = Image.new('RGB', (new_size[0], new_size[1] + 30), 'white')
-
-
-        # Create a drawing object
-        draw = ImageDraw.Draw(image)
-        # Draw ID above QR code 
-        id_text = f"ID: {device.id}"
-        draw.text((10, 10), id_text, font=font, fill=(0, 0, 0))
-
-        # Draw serial number below ID, above QR code
-        #serial_text = f"Serial: {device.serial_number}" 
-        #draw.text((10, 50), serial_text, font=font, fill=(0, 0, 0)) 
-
-        # Draw name below QR code
-        #name_text = f"{device.name}"
-        #draw.text((10, 10), name_text, font=font, fill=(0, 0, 0))
-
-        # Draw QR code image
-        image.paste(qr_code_image, (0, 30))
+            # Create a new image with a white background
+            image = Image.new('RGB', (new_size[0], new_size[1] + 30), 'white')
 
 
-        # Save the modified image to an in-memory buffer
-        modified_image_buffer = BytesIO()
-        image.save(modified_image_buffer, format='PNG')
-        modified_image_buffer.seek(0)
+            # Create a drawing object
+            draw = ImageDraw.Draw(image)
+            # Draw ID above QR code 
+            id_text = f"ID: {device.id}"
+            draw.text((10, 10), id_text, font=font, fill=(0, 0, 0))
 
-        # Prepare response
-        response = HttpResponse(content_type='image/png')
-        response['Content-Disposition'] = f'attachment; filename={device.id}_{device.serial_number}_qrcode.png'
-        response.write(modified_image_buffer.read())
+            # Draw serial number below ID, above QR code
+            #serial_text = f"Serial: {device.serial_number}" 
+            #draw.text((10, 50), serial_text, font=font, fill=(0, 0, 0)) 
 
-        return response
+            # Draw name below QR code
+            #name_text = f"{device.name}"
+            #draw.text((10, 10), name_text, font=font, fill=(0, 0, 0))
+
+            # Draw QR code image
+            image.paste(qr_code_image, (0, 30))
+
+
+            # Save the modified image to an in-memory buffer
+            modified_image_buffer = BytesIO()
+            image.save(modified_image_buffer, format='PNG')
+            modified_image_buffer.seek(0)
+
+            # Prepare response
+            response = HttpResponse(content_type='image/png')
+            response['Content-Disposition'] = f'attachment; filename={device.id}_{device.serial_number}_qrcode.png'
+            response.write(modified_image_buffer.read())
+
+            return response
     
+        except Device.DoesNotExist:
+            return JsonResponse({"error": "Device not found"}, status=404)
+        except requests.exceptions.HTTPError:
+            return JsonResponse({"error": "Failed to fetch QR code image"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
 @login_required
 @require_POST

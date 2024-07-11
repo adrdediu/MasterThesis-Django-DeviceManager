@@ -9,7 +9,7 @@ from devices.views import  DeviceDetailView, add_device,edit_device, delete_devi
 from devices.views import GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView
 from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
-from devices.api_views import start_inventory, pause_resume_inventory, end_inventory, edit_inventory,get_inventory_status,cancel_inventory,qrcode_action
+from devices.api_views import start_inventory, pause_resume_inventory, end_inventory, edit_inventory,cancel_inventory,qrcode_action
 from devices.views import NextJSView,DashboardView
 from django.views.static import serve
 
@@ -45,7 +45,6 @@ urlpatterns = [
     path('inventory/pause-resume/', pause_resume_inventory, name='api_pause_resume_inventory'),
     path('inventory/end/', end_inventory, name='api_end_inventory'),
     path('inventory/edit/', edit_inventory, name='api_edit_inventory'),
-    path('inventory/status/',get_inventory_status, name='api_get_inventory_status'),
     path('inventory/<int:pk>/', InventorizationListDetailView.as_view(), name='inventory_detail'),
 
     # Add Paths used for NextJSView

@@ -144,6 +144,7 @@ class Subcategory(models.Model):
         return f'{self.pk} - {self.category} - {self.name}'
 
 class Device(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     serial_number = models.CharField(max_length=50,unique=True)
@@ -152,7 +153,8 @@ class Device(models.Model):
 
     # QR Code
     is_qrcode_applied = models.BooleanField(default=False)
-    qrcode_url = models.CharField(max_length=255,blank=True, null=True)
+    qrcode_path = models.CharField(max_length=255, blank=True, null=True)
+    qrcode_target_url = models.URLField(max_length=255, blank=True, null=True)
 
     # Location Related
     building = models.ForeignKey(Building, on_delete=models.CASCADE)
@@ -163,7 +165,13 @@ class Device(models.Model):
     updated_at = models.DateTimeField(default=datetime.datetime.now)
 
     def __str__(self):
-        return f"{self.name} - {self.serial_number}"
+        return f"{self.id} - {self.name} - {self.serial_number}"
+    
+    @property
+    def qrcode_url(self):
+        if self.qrcode_path:
+            return settings.MEDIA_URL + self.qrcode_path
+        return None
     
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -180,40 +188,38 @@ class Device(models.Model):
             border=4,
         )
         
-        # Generate the device URL with the qr_scan parameter
         device_url = reverse('device_detail', args=[str(self.pk)])
         current_site = Site.objects.get_current()
 
-        complete_url = f"http://{current_site.domain}{device_url}?source=qr_scan"
+        self.qrcode_target_url = f"http://{current_site.domain}{device_url}?source=qr_scan"
 
-        qr.add_data(complete_url)
+        qr.add_data(self.qrcode_target_url)
         qr.make(fit=True)
 
-        img_path = os.path.join(settings.MEDIA_ROOT, f'qrcodes/{self.pk}.png')
-        os.makedirs(os.path.dirname(img_path), exist_ok=True)
+        img_path = f'qrcodes/{self.pk}.png'
+        full_path = os.path.join(settings.MEDIA_ROOT, img_path)
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
 
         img = qr.make_image(fill_color="black", back_color="white")
-        img.save(img_path)
+        img.save(full_path)
 
-        self.qrcode_url = settings.MEDIA_URL + f'qrcodes/{self.pk}.png'
+        self.qrcode_path = img_path
         self.is_qrcode_applied = True
-        self.save(update_fields=['qrcode_url', 'is_qrcode_applied'])
+        self.save(update_fields=['qrcode_path', 'qrcode_target_url', 'is_qrcode_applied'])
 
     def regenerate_qr_code(self):
-        # Delete the old QR code file if it exists
-        if self.qrcode_url:
-            old_path = os.path.join(settings.MEDIA_ROOT, self.qrcode_url.lstrip('/'))
+        if self.qrcode_path:
+            old_path = os.path.join(settings.MEDIA_ROOT, self.qrcode_path)
             if os.path.exists(old_path):
                 os.remove(old_path)
 
-        # Reset QR code fields
-        self.qrcode_url = None
+        self.qrcode_path = None
+        self.qrcode_target_url = None
         self.is_qrcode_applied = False
-        self.save(update_fields=['qrcode_url', 'is_qrcode_applied'])
+        self.save(update_fields=['qrcode_path', 'qrcode_target_url', 'is_qrcode_applied'])
 
-        # Generate new QR code
         self.generate_qr_code()
-
+    
     class Meta:
         ordering = ['id']
     
@@ -240,9 +246,52 @@ class InventorizationList(models.Model):
     room_ids = JSONField(default=list)  # This will store the list of room IDs
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='ACTIVE')
 
+    total_devices = models.IntegerField(default=0)
+    total_scanned = models.IntegerField(default=0)
+    room_data = JSONField(default=dict)
+
     def __str__(self):
         return f"Inventorization {self.id} by {self.creator.username}"
 
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new:
+            self.initialize_inventory_data()
+
+    def initialize_inventory_data(self):
+        rooms = Room.objects.filter(id__in=self.room_ids)
+        self.room_data = {}
+        self.total_devices = 0
+
+        for room in rooms:
+            devices = Device.objects.filter(room=room)
+            device_count = devices.count()
+            self.room_data[str(room.id)] = {
+                'total': device_count,
+                'scanned': 0
+            }
+            self.total_devices += device_count
+
+        self.save(update_fields=['room_data', 'total_devices'])
+    
+    def scan_device(self, device_id):
+        device = Device.objects.get(id=device_id)
+        scan, created = DeviceScan.objects.get_or_create(inventory=self, device=device)
+        print(device,scan,created)
+        if created:
+            self.total_scanned += 1
+            room_id = str(device.room.id)
+            if room_id in self.room_data:
+                self.room_data[room_id]['scanned'] += 1
+            self.save(update_fields=['total_scanned', 'room_data'])
+
+        if self.total_scanned == self.total_devices:
+            self.status = 'COMPLETED'
+            self.end_date = datetime.datetime.now()
+            self.save(update_fields=['status'])
+
+    
     class Meta:
         ordering = ['-start_date']
 
