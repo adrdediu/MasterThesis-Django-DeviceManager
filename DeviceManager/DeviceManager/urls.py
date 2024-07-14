@@ -9,7 +9,7 @@ from devices.views import  DeviceDetailView, add_device,edit_device, delete_devi
 from devices.views import GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView
 from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
-from devices.api_views import start_inventory, pause_resume_inventory, end_inventory, edit_inventory,cancel_inventory,qrcode_action
+from devices.api_views import start_inventory, pause_resume_inventory, end_inventory, edit_inventory,cancel_inventory,qrcode_action, update_inventory_room_data
 from devices.views import NextJSView,DashboardView
 from django.views.static import serve
 
@@ -42,6 +42,7 @@ urlpatterns = [
     path('inventory/management', InventoryManagementView.as_view(), name='inventory_management'),
     path('inventory/cancel/', cancel_inventory, name='api_cancel_inventory'),
     path('inventory/start/', start_inventory, name='api_start_inventory'),
+    path('inventory/update_inventory_room_data/<int:inventory_id>/', update_inventory_room_data, name='update_inventory_room_data'),
     path('inventory/pause-resume/', pause_resume_inventory, name='api_pause_resume_inventory'),
     path('inventory/end/', end_inventory, name='api_end_inventory'),
     path('inventory/edit/', edit_inventory, name='api_edit_inventory'),

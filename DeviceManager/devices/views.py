@@ -234,7 +234,9 @@ def add_device(request):
 
         category = Category.objects.get(id=category_id)
         subcategory = Subcategory.objects.get(id=subcategory_id)
-        
+
+        # Retrieve Owner as the user who adds it
+        owner = request.user        
 
         # Retrieve building, floor, and room objects based on the selected IDs
         building_id = request.POST['building']
@@ -252,6 +254,7 @@ def add_device(request):
             serial_number=serial_number,
             category = category,
             subcategory = subcategory,
+            owner = owner,
             is_qrcode_applied=is_qrcode_applied,
             building=building,
             floor=floor,
@@ -297,7 +300,8 @@ def edit_device(request):
             device.name = request.POST.get('name')
             device.description = request.POST.get('description')
             device.serial_number = request.POST.get('serial_number')
-            
+            device.owner = request.user
+
             category_id = request.POST.get('category')
             subcategory_id = request.POST.get('subcategory')
             building_id = request.POST.get('building')
@@ -361,7 +365,7 @@ from django.views.generic import DetailView
 from django.db.models import Count
 from .models import InventorizationList, Device, Room, DeviceScan
 
-class InventorizationListDetailView(LoginRequiredMixin,DetailView):
+class InventorizationListDetailView(BaseContextMixin,LoginRequiredMixin,DetailView):
     login_url='login'
 
     model = InventorizationList
@@ -370,28 +374,30 @@ class InventorizationListDetailView(LoginRequiredMixin,DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context.update(self.get_base_context())
         inventory = self.object
 
         # Check for message in session
         if 'qr_scan_message' in self.request.session:
             context['qr_scan_message'] = self.request.session.pop('qr_scan_message')
         
-        rooms = Room.objects.filter(id__in=inventory.room_ids)
-        
-        rooms_data = []
-        for room in rooms:
-            room_data = inventory.room_data.get(str(room.id), {})
-            devices = Device.objects.filter(room=room)
-            scanned_devices = devices.filter(id__in=DeviceScan.objects.filter(inventory=inventory, device__in=devices).values_list('device_id', flat=True))
-            rooms_data.append({
-                'room': room,
-                'devices': devices,
-                'scanned_devices': scanned_devices,
-                'total': room_data.get('total', 0),
-                'scanned': room_data.get('scanned', 0)
-            })
+        # Use room_data from the inventory object
+        room_data = inventory.room_data
 
-        context['rooms_data'] = rooms_data
+        # Extract device IDs from room_data
+        device_ids = []
+        for room_info in room_data.values():
+            device_ids.extend(device['id'] for device in room_info['devices'])
+
+        # Get devices and scanned devices based on the extracted device IDs
+        devices = Device.objects.filter(id__in=device_ids).select_related(
+            'category', 'subcategory', 'room', 'room__floor', 'room__building'
+        )    
+        scanned_devices = DeviceScan.objects.filter(inventory=inventory, device__in=device_ids)
+        scanned_devices_set = set(scanned_devices.values_list('device_id', flat=True))
+
+        context['devices'] = devices
+        context['scanned_devices'] = scanned_devices_set
         context['total_devices'] = inventory.total_devices
         context['total_scanned'] = inventory.total_scanned
 

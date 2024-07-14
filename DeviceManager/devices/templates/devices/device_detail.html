@@ -27,6 +27,7 @@
                                     <p><strong>Name:</strong> {{ device.name }}</p>
                                     <p><strong>Description:</strong> {{ device.description }}</p>
                                     <p><strong>Serial Number:</strong> {{ device.serial_number }}</p>
+                                    <p><strong>Owner:</strong> {{ device.owner.username|default:"N/A" }}</p>
                                     <p><strong>Category:</strong> {{ device.category.name }}</p>
                                     <p><strong>Subcategory:</strong> {{ device.subcategory.name }}</p>
                                 </div>

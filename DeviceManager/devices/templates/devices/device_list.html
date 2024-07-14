@@ -34,7 +34,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="deviceTable" class="table table-striped table-bordered table-hover">
+                        <table id="deviceTable" class="table table-sm table-striped table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -42,6 +42,7 @@
                                 <th>S/N</th>
                                 <th>Category</th>
                                 <th>Subcategory</th>
+                                <th>Owner</th>
                                 <th>Building</th>
                                 <th>Floor</th>
                                 <th>Room</th>
@@ -64,6 +65,8 @@
                                         <option value="">All</option>
                                     </select>
                                 </th>
+                                <th><input type="text" placeholder="Search Owner" class="form-control form-control-sm"></th>
+
                                 <th>
                                     <select id="deviceBuilding" class="form-select form-select-sm">
                                         <option value="">All</option>
@@ -93,6 +96,7 @@
                                 <td>{{ device.serial_number }}</td>
                                 <td>{{ device.category.name }}</td>
                                 <td>{{ device.subcategory.name }}</td>
+                                <td>{{ device.owner}}</td>
                                 <td>{{ device.building.acronym }}</td>
                                 <td>{{ device.floor.name }}</td>
                                 <td>{{ device.room.name }}</td>
@@ -382,7 +386,17 @@ document.addEventListener('DOMContentLoaded', function() {
         autoWidth: true,
         columnDefs: [
             { width: '40px', targets: 0 },
-            { width: '100px',targets: 1},   // ID
+            { 
+                width: '100px',
+                targets: 1,
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        return '<div style="word-break: break-all; max-width: 100px;">' + data + '</div>';
+                    }
+                    return data;
+                }
+
+            },   // ID
             { 
                 width: '120px',
                 targets: 2, // Assuming S/N is the 3rd column (index 2)
@@ -393,10 +407,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     return data;
                 }
             },
-            { width: '75px', targets:5 },
-            { width: '25px', targets: 6 },  // S/N
-            { width: '25px',targets: 7},
-            { width: '120px',targets: 8, orderable: false},
+            { width: '50px',targets: 4 },
+            { 
+                width: '100px',
+                targets:5,
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        return '<div style="word-break: break-all; max-width: 100px;">' + data + '</div>';
+                    }
+                    return data;
+                }
+            },
+            { width: '75px', targets:6 },
+            { width: '25px', targets: 7 },  // S/N
+            { width: '25px',targets: 8},
+            { width: '120px',targets: 9, orderable: false},
         ],
         initComplete: function (settings, json) {
             
@@ -436,16 +461,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Close the Add Device modal
                     var addDeviceModal = bootstrap.Modal.getInstance(document.getElementById('addDeviceModal'));
                     addDeviceModal.hide();
-
-                    showAlert('Device added successfully!', 'success');
-
-                    // Handle the click event on the "Yes" button in the confirmation modal
-                    document.getElementById('cancelRedirect').addEventListener('click', function() {
-                        window.location.href = `/devices/`;
-                    });
-                    // Handle the click event on the "Yes" button in the confirmation modal
-                    document.getElementById('confirmRedirect').addEventListener('click', function() {
-                        window.location.href = `/device/${data.device_pk}/`;
+                    showConfirmation(
+                        'Device Added',
+                        'Do you want to view the added device details?',
+                        'Yes, view details',
+                        'No, return to list',
+                        'success',
+                    ).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = `/device/${data.device_pk}/`;
+                        } else {
+                            location.reload();
+                        }
                     });
 
 
@@ -727,11 +754,11 @@ document.addEventListener('DOMContentLoaded', function() {
         let selectedText = selectedOption ? selectedOption.textContent : '';
         
         if(selectedText === 'All') {
+            table.column(8).search('').draw();
             table.column(7).search('').draw();
             table.column(6).search('').draw();
-            table.column(5).search('').draw();
         } else {
-            table.column(5).search(selectedText).draw();
+            table.column(6).search(selectedText).draw();
         }
     });
     deviceFloor.addEventListener('change', function() {
@@ -741,10 +768,10 @@ document.addEventListener('DOMContentLoaded', function() {
         let selectedText = selectedOption ? selectedOption.textContent : '';
         
         if(selectedText === 'All') {
+            table.column(8).search('').draw();
             table.column(7).search('').draw();
-            table.column(6).search('').draw();
         } else {
-            table.column(6).search(selectedText).draw();
+            table.column(7).search(selectedText).draw();
         }
     });
     deviceRoom.addEventListener('change', function() {
@@ -752,9 +779,9 @@ document.addEventListener('DOMContentLoaded', function() {
         let selectedText = selectedOption ? selectedOption.textContent : '';
         
         if(selectedText === 'All') {
-            table.column(7).search('').draw();
+            table.column(8).search('').draw();
         } else {
-            table.column(7).search(selectedText).draw();
+            table.column(8).search(selectedText).draw();
         }
     });
 });

@@ -208,7 +208,7 @@
                 </div>
             </div>
 
-            <div class="d-lg-none mb-3 pb-5">
+            <div class="d-lg-none mb-5 pb-5 pt-5">
 
             </div>
 
@@ -457,7 +457,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (startInventoryModalInstance) {
                     startInventoryModalInstance.hide();
                 }
-                location.reload();  // Reload the page to show the new inventory
+                showConfirmation(
+                    'Inventory started successfully!',
+                    'Do you want to view the inventory details?',
+                    'Yes, view details',
+                    'No, return to list',
+                    'success',
+                ).then(result => {
+                    if (result.isConfirmed) {
+                        window.location.href = '{% url "inventory_detail" pk=0 %}'.replace('0', data.inventory_id);
+                    } else {
+                         window.location.href = '{% url "inventory_management" %}';
+                    }
+                });
             } else {
                 showAlert(data.message || 'Failed to start inventory','danger');
             }

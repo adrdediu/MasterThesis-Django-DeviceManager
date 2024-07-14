@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.decorators import login_required, user_passes_test
 from devices.models import Building,Room,InventorizationList,Device
@@ -78,6 +78,18 @@ def start_inventory(request):
     else:
         return JsonResponse({'success': False, 'message': 'You do not have permission to perform this action. You are not an inventory manager.'})
 
+@login_required
+@require_POST
+def update_inventory_room_data(request, inventory_id):
+    if not is_inventory_manager(request.user):
+        return JsonResponse({'success': False, 'message': 'You do not have permission to perform this action. You are not an inventory manager.'})
+    
+    inventory = get_object_or_404(InventorizationList, id=inventory_id)
+    if inventory.status in ['ACTIVE', 'PAUSED']:
+        inventory.initialize_inventory_data()
+        return JsonResponse({'success': True, 'message': 'Room data updated successfully'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Inventory is not active or paused'})
 
 
 @login_required
@@ -91,6 +103,10 @@ def edit_inventory(request):
 @require_POST
 @login_required(login_url='login')
 def pause_resume_inventory(request):
+
+    if not is_inventory_manager(request.user):
+        return JsonResponse({'success': False, 'message': 'You do not have permission to perform this action. You are not an inventory manager.'})
+
     data = json.loads(request.body)
     inventory_id = data.get('inventory_id')
     action = data.get('action')
@@ -115,6 +131,10 @@ def pause_resume_inventory(request):
 @require_POST
 @login_required(login_url='login')
 def end_inventory(request):
+
+    if not is_inventory_manager(request.user):
+        return JsonResponse({'success': False, 'message': 'You do not have permission to perform this'})
+
     data = json.loads(request.body)
     inventory_id = data.get('inventory_id')
 

@@ -271,7 +271,8 @@ class InventorizationList(models.Model):
             device_count = devices.count()
             self.room_data[str(room.id)] = {
                 'total': device_count,
-                'scanned': 0
+                'scanned': 0,
+                'devices': list(devices.values('id'))  # Add devices information here
             }
             self.total_devices += device_count
 
