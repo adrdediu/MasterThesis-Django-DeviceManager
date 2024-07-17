@@ -143,6 +143,15 @@ class Subcategory(models.Model):
     def __str__(self):
         return f'{self.pk} - {self.category} - {self.name}'
 
+class Inventory(models.Model):
+    building = models.ForeignKey(Building, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f'{self.name} - {self.building.name}'
+
+
+
 class Device(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -150,6 +159,7 @@ class Device(models.Model):
     serial_number = models.CharField(max_length=50,unique=True)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='owned_devices')
 
+    inventory = models.ForeignKey(Inventory, on_delete=models.SET_NULL, null=True, blank=True)  # New field
     category = models.ForeignKey(Category,on_delete=models.CASCADE)  # Choices: laptop, pc, router, server
     subcategory = models.ForeignKey(Subcategory,on_delete=models.CASCADE)
 
@@ -179,8 +189,30 @@ class Device(models.Model):
         is_new = self.pk is None
         super().save(*args, **kwargs)
 
-        if is_new or not self.qrcode_url:
+        if is_new:
             self.generate_qr_code()
+            InventoryChange.objects.create(
+                inventory=self.inventory,
+                device=self,
+                change_type='ADD',
+                user=self.owner
+            )
+        else:
+            InventoryChange.objects.create(
+                inventory=self.inventory,
+                device=self,
+                change_type='EDIT',
+                user=self.owner
+            )
+
+    def delete(self, *args, **kwargs):
+        InventoryChange.objects.create(
+            inventory=self.inventory,
+            device=self,
+            change_type='REMOVE',
+            user=self.owner
+        )
+        super().delete(*args, **kwargs)
 
     def generate_qr_code(self):
         qr = qrcode.QRCode(
@@ -225,6 +257,22 @@ class Device(models.Model):
     class Meta:
         ordering = ['id']
     
+class InventoryChange(models.Model):
+    CHANGE_TYPES = (
+        ('ADD', 'Add'),
+        ('REMOVE', 'Remove'),
+        ('EDIT', 'Edit'),
+    )
+
+    inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
+    change_type = models.CharField(max_length=10, choices=CHANGE_TYPES,blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+
+    def __str__(self):
+        return f"{self.id} - {self.get_change_type_display()} - {self.device} in {self.inventory.name} by {self.user} on {self.timestamp}"
 
 class InventorizationList(models.Model):
     SCOPE_CHOICES = [
@@ -239,6 +287,7 @@ class InventorizationList(models.Model):
         ('UNKNOWN', 'Unknown'),
     ]
 
+    inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE,blank=True, null=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_inventorizations')
     start_date = models.DateTimeField(default=timezone.now)
     modified_date = models.DateTimeField(auto_now=True)
@@ -298,22 +347,6 @@ class InventorizationList(models.Model):
     class Meta:
         ordering = ['-start_date']
 
-class InventorizationRoom(models.Model):
-    inventorization = models.ForeignKey(InventorizationList, on_delete=models.CASCADE, related_name='rooms')
-    room = models.ForeignKey('Room', on_delete=models.CASCADE)
-    is_completed = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Room {self.room.name} in Inventorization {self.inventorization.id}"
-
-class InventorizationDevice(models.Model):
-    inventorization_room = models.ForeignKey(InventorizationRoom, on_delete=models.CASCADE, related_name='devices')
-    device = models.ForeignKey('Device', on_delete=models.CASCADE)
-    is_scanned = models.BooleanField(default=False)
-    scan_date = models.DateTimeField(null=True, blank=True)
-
-    def __str__(self):
-        return f"Device {self.device.name} in Room {self.inventorization_room.room.name}"
 
 class DeviceScan(models.Model):
     inventory = models.ForeignKey(InventorizationList, on_delete=models.CASCADE)

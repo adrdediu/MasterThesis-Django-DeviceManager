@@ -39,7 +39,7 @@ urlpatterns = [
     path('api/device/<int:device_id>/qrcode/<str:action>/', qrcode_action, name='qrcode_action'),
     path('api/inventory/<int:inventory_id>/generate-report/', generate_inventory_report_view, name='generate_inventory_report'),
     
-    path('inventory/management', InventoryManagementView.as_view(), name='inventory_management'),
+    path('inventory/management/<int:pk>/', InventoryManagementView.as_view(), name='inventory_management'),
     path('inventory/cancel/', cancel_inventory, name='api_cancel_inventory'),
     path('inventory/start/', start_inventory, name='api_start_inventory'),
     path('inventory/update_inventory_room_data/<int:inventory_id>/', update_inventory_room_data, name='update_inventory_room_data'),

@@ -1,6 +1,6 @@
 # yourappname/management/commands/create_initial_instances.py
 from django.core.management.base import BaseCommand
-from ...models import Subcategory,Category,Building,Room,Floor  # Import your model
+from ...models import Inventory, Subcategory,Category,Building,Room,Floor  # Import your model
 
 class Command(BaseCommand):
     help = 'Create or update instances for Subcategory, Category, Building, Floor, and Room models'
@@ -60,12 +60,20 @@ class Command(BaseCommand):
         self.create_instances(Subcategory, subcategories_data)
 
         buildings_data = [
-            {'id': 1, 'name': 'Faculty of Electronics Telecommunications and Information Technology Iasi - Body A', 'address': 'Bd. Carol I, no. 11 A, Iaşi, 700506', 'acronym': 'ETTI'},
+            {'id': 1, 'name': 'Faculty of Electronics Telecommunications and Information Technology Iasi - Body A', 'address': 'Bd. Carol I, no. 11 A, Iaşi, 700506', 'acronym': 'ETTI - A'},
             {'id': 2, 'name': 'Faculty of Electronics Telecommunications and Information Technology Iasi - Body C', 'address': 'Strada Lascăr Catargi 38, Iași 700107', 'acronym': 'ETTI - C'},
             # Add more buildings as needed
         ]
 
         self.create_instances(Building, buildings_data)
+
+        inventories_data = [
+            {'id': 1, 'name': f'Inventory - {Building.objects.get(id=1).acronym}', 'building': Building.objects.get(id=1)},
+            {'id': 2, 'name': f'Inventory - {Building.objects.get(id=2).acronym}', 'building': Building.objects.get(id=2)},
+        ]
+
+        self.create_instances(Inventory, inventories_data)
+
 
         # ID -  GUIDE [BF] - B Building Number, F - Floor Number
         floors_data = [

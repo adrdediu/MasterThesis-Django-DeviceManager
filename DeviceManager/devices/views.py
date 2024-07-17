@@ -3,6 +3,7 @@ import requests
 import json
 import os
 import datetime
+from django.db.models import Max
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden, FileResponse,HttpResponseBadRequest,HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
@@ -11,7 +12,7 @@ from django.contrib.auth.views import LoginView,LogoutView
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from .forms import LoginForm
 from django.views.generic import DetailView, TemplateView
-from .models import Device,Floor,Room,Building,Subcategory,Category
+from .models import Device,Floor, Inventory, InventoryChange,Room,Building,Subcategory,Category
 from django.contrib import messages
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
@@ -89,6 +90,7 @@ class GetRoomsView(View):
 
 class BaseContextMixin:
     def get_base_context(self):
+        inventories = Inventory.objects.all()
         buildings = Building.objects.all()
         floors = Floor.objects.all()
         rooms = Room.objects.all()
@@ -96,6 +98,7 @@ class BaseContextMixin:
         subcategories = Subcategory.objects.all()
 
         return {
+            'inventories': inventories,
             'buildings': buildings,
             'floors': floors,
             'rooms': rooms,
@@ -244,6 +247,7 @@ def add_device(request):
         room_id = request.POST['room']
 
         building = Building.objects.get(id=building_id)
+        inventory = Inventory.objects.get(id=building_id)
         floor = Floor.objects.get(id=floor_id)
         room = Room.objects.get(id=room_id)
 
@@ -257,12 +261,14 @@ def add_device(request):
             owner = owner,
             is_qrcode_applied=is_qrcode_applied,
             building=building,
+            inventory=inventory,
             floor=floor,
             room=room,
         )
         
         # Save the device
         device.save()
+
 
         # Redirect to the device_detail view for the newly created device
          # return redirect('device_detail', pk=device.pk)
@@ -287,6 +293,7 @@ def edit_device(request):
                 'category': device.category.id,
                 'subcategory': device.subcategory.id,
                 'building': device.building.id,
+                'inventory': device.building.id,
                 'floor': device.floor.id,
                 'room': device.room.id,
             }
@@ -311,12 +318,13 @@ def edit_device(request):
             device.category = get_object_or_404(Category, id=category_id)
             device.subcategory = get_object_or_404(Subcategory, id=subcategory_id)
             device.building = get_object_or_404(Building, id=building_id)
+            device.inventory = get_object_or_404(Inventory, id=building_id)
             device.floor = get_object_or_404(Floor, id=floor_id)
             device.room = get_object_or_404(Room, id=room_id)
 
-            device.updated_at = datetime.datetime.now()
-
+            device.updated_at = timezone.now() + datetime.timedelta(hours=3)
             device.save()
+
             return JsonResponse({'success': True, 'message': 'Device updated successfully'})
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
@@ -333,6 +341,7 @@ def delete_device(request):
             return JsonResponse({'success': False, 'message': 'Device ID not provided'}, status=400)
         
         device = get_object_or_404(Device, pk=device_id)
+
         device.delete()
         
         return JsonResponse({'success': True, 'message': 'Device deleted successfully'})
@@ -353,11 +362,30 @@ class InventoryManagementView(BaseContextMixin,LoginRequiredMixin, TemplateView)
     template_name = 'devices/inventory_management.html'
 
     def get_context_data(self, **kwargs):
-        context = self.get_base_context(**kwargs)
+        inventory_id = self.kwargs.get('pk')
+        inventory = Inventory.objects.get(id=inventory_id)
+        print(inventory)
+        inventory_device_list = Device.objects.filter(inventory__id=inventory_id)
+
+        # Get the latest inventory_change timestamp for the current inventory
+        last_updated = InventoryChange.objects.filter(inventory_id=inventory_id).aggregate(Max('timestamp'))['timestamp__max']
+
+        # Calculate total devices and total rooms
+        total_devices = inventory_device_list.count()
+        rooms = Room.objects.filter(building__id=inventory_id)
+        total_rooms = rooms.count()
+
+        context = self.get_base_context()
         context.update({
+            'inventory': inventory,
             'inventorization_lists': InventorizationList.objects.all().order_by('-start_date'),
-            #'recent_activities': RecentActivity.objects.all().order_by('-timestamp')[:10],  # Adjust as needed
-            #'history_entries': HistoryEntry.objects.all().order_by('-timestamp'),  # Adjust as needed
+            'devices': inventory_device_list,
+            'total_devices': total_devices,
+            'rooms': rooms,
+            'total_rooms': total_rooms,
+            'last_updated': last_updated,
+            # 'recent_activities': RecentActivity.objects.all().order_by('-timestamp')[:10],  # Adjust as needed
+            # 'history_entries': HistoryEntry.objects.all().order_by('-timestamp'),  # Adjust as needed
         })
         return context
 

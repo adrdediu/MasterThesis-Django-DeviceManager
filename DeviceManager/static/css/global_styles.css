@@ -130,6 +130,9 @@ background: linear-gradient(to right, #4b6cb7, #182848);
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
   }
+  .card-shadow-light{
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
+  }
 
   .dev-man-bg-left{
     background: linear-gradient(to left, #00d2ff, #3a47d5);

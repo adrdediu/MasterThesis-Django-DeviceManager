@@ -3,221 +3,166 @@
 
 {% block content %}
 <div class="container-fluid h-100 overflow-auto mt-2">
-    
-    <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;;" aria-label="breadcrumb" class="sticky-top rounded" data-bs-theme="dark">
-        <ol class="breadcrumb  p-2 card-shadow rounded">
-          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Inventory Management</li>
+    <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;" aria-label="breadcrumb" class="sticky-top rounded" data-bs-theme="dark">
+        <ol class="breadcrumb p-2 card-shadow rounded">
+            <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Inventory Management</li>
         </ol>
     </nav>
+
     <div class="row p-1">
-        <div class="col">
+        <div class="col-12">
             <h3 class="mb-3">Inventory Management</h3>
-            <ul class="nav nav-tabs mb-2" id="inventoryTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="actions-tab" data-bs-toggle="tab" data-bs-target="#actions" type="button" role="tab" aria-controls="actions" aria-selected="true">Actions</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="recent-tab" data-bs-toggle="tab" data-bs-target="#recent" type="button" role="tab" aria-controls="recent" aria-selected="false">Recent Activity</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">History</button>
-                </li>
-            </ul>
-        
-            <div class="tab-content pb-3" id="inventoryTabsContent">
-                <!-- Actions Tab -->
-                <div class="tab-pane fade show active" id="actions" role="tabpanel" aria-labelledby="actions-tab">
-                    <div class="row mb-2">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2 class="h5 mb-0">Inventory Actions</h2>
+
+            <div class="row mb-3">
+                <div class="col-12 col-md-8 col-lg-8">
+                    <div class="card card-shadow" data-bs-theme="dark" >
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Display Preferences</h5>
+                            
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="showCurrentInventory">
+                                        <label class="form-check-label " for="showCurrentInventory">Current Inventory</label>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <button id="startInventory" class="btn btn-primary me-2">Start New Inventory</button>
+
+                                <div class="col-md-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="showInventoryHistory">
+                                        <label class="form-check-label " for="showInventoryHistory">Inventory History</label>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-        
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h2 class="h5 mb-0">Inventorization Lists</h2>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table id="inventorizationTable" class="table table-hover table-bordered table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Creator</th>
-                                                    <th>Start Date</th>
-                                                    <th>Status</th>
-                                                    <th>Building</th>
-                                                    <th>Scope</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                                <tr class="search-row">
-                                                    <th><input type="text" placeholder="&#128269; ID" class="form-control form-control-sm"></th>
-                                                    <th><input type="text" placeholder="Search Creator" class="form-control form-control-sm"></th>
-                                                    <th><input type="text" placeholder="Search Date" class="form-control form-control-sm"></th>
-                                                    <th>
-                                                        <select class="form-select form-select-sm">
-                                                            <option value="">All</option>
-                                                            <option value="ACTIVE">Active</option>
-                                                            <option value="PAUSED">Paused</option>
-                                                            <option value="CANCELED">Canceled</option>
-                                                            <option value="COMPLETED">Completed</option>
-                                                            <option value="UNKNOWN">Unknown</option>
-                                                        </select>
-                                                    </th>
-                                                    <th><input type="text" placeholder="Search Building" class="form-control form-control-sm"></th>
-                                                    <th>
-                                                        <select class="form-select form-select-sm">
-                                                            <option value="">All</option>
-                                                            <option value="ENTIRE">Entire</option>
-                                                            <option value="PARTIAL">Partial</option>
-                                                        </select>
-                                                    </th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                        <tbody>
-                                            {% for inventory in inventorization_lists %}
-                                            <tr>
-                                                <td>{{ inventory.id }}</td>
-                                                <td>{{ inventory.creator.username }}</td>
-                                                <td>{{ inventory.start_date|date:"Y-m-d H:i" }}</td>
-                                                <td>    
-                                                    {% if inventory.status == 'ACTIVE' %}
-                                                        <span class="badge text-success bg-light border border-success"><i class="bi bi-play-circle-fill me-1"></i>Active</span>
-                                                    {% elif inventory.status == 'PAUSED' %}
-                                                        <span class="badge bg-warning text-dark"><i class="bi bi-pause-circle-fill me-1"></i>Paused</span>
-                                                    {% elif inventory.status == 'CANCELED' %}
-                                                    <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Canceled</span>
-                                                    {% elif inventory.status == 'COMPLETED' %}
-                                                    <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
-                                                    {% elif inventory.status == 'UNKNOWN' %}
-                                                    <span class="badge bg-secondary"><i class="bi bi-question-circle-fill me-1"></i>Unknown</span>
-                                                    {% else %}
-                                                        <span class="badge bg-secondary">{{ inventory.get_status_display }}</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td>{{ inventory.building.name }}</td>
-                                                <td>{{ inventory.get_scope_display }}</td>
-                                                <td>
-                                                    <div class="container-fluid p-0">
-                                                        <div class="row g-1">
-                                                            <div class="col-12 mb-1">
-                                                                <button class="btn btn-sm btn-dark border border-primary w-100 view-details" onclick="window.location.href='{% url 'inventory_detail' inventory.id %}'" title="View Details">
-                                                                    <i class="bi bi-eye-fill"></i> View
-                                                                </button>
-                                                            </div>
-                                                            <div class="col-12">
-                                                                <div class="row">
-                                                                    
-                                                                        {% if inventory.status == 'ACTIVE' %}
-                                                                        <div class="col mb-1">
-                                                                            <button class="btn btn-sm btn-warning pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="pause" title="Pause">
-                                                                                <i class="bi bi-pause-fill"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                        {% elif inventory.status == 'PAUSED' %}
-                                                                        <div class="col mb-1">
-                                                                            <button class="btn btn-sm btn-success pause-resume w-100" data-inventory-id="{{ inventory.id }}" data-action="resume" title="Resume">
-                                                                                <i class="bi bi-play-fill"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                        {% endif %}
-                                                                    
-                                                                    <div class="col mb-1">
-                                                                        <button class="btn btn-sm btn-primary generate-report w-100" data-inventory-id="{{ inventory.id }}" title="Generate Report">
-                                                                            <i class="bi bi-file-earmark-text-fill"></i>
-                                                                        </button>
-        
-                                                                    </div>
-                                                                    <div class="col mb-1">
-                                                                        <button class="btn btn-sm btn-danger cancel w-100" data-inventory-id="{{ inventory.id }}" title="Cancel">
-                                                                            <i class="bi bi-trash3-fill"></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-        
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                <div class="col-md-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="showInventorizationLists">
+                                        <label class="form-check-label " for="showInventorizationLists">Inventorization Lists</label>
                                     </div>
                                 </div>
                             </div>
+                            
+                                
+
+                        
+                            <button id="saveDisplayPreferences" class="btn btn-primary mt-3"><i class="bi bi-star-fill"></i> Save Display Preferences</button>
+
+                        </div>
+
+                    </div>
+
+
+
+
+                </div>
+            </div>            
+            
+
+            <div id="currentInventoryCard" class="card card-shadow-light mb-4">
+                <div class="card-header card-shadow text-light bg-info">
+                    <h5 class="card-title mb-0">Current Inventory</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Statistics Section -->
+                    <div class="row mb-3">
+                        <div class="col-6 col-md-4 mb-1">
+                            <div class="card pb-1">
+                                <div class="card-body ">
+                                    <h5 class="card-title">Total Devices</h5>
+                                    <p class="card-text" id="totalDevices">{{ total_devices }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 mb-1">
+                            <div class="card pb-1">
+                                <div class="card-body">
+                                    <h5 class="card-title">Last Updated</h5>
+                                    <p class="card-text" id="lastUpdated">{{ last_updated }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Actions</h5>
+                                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
+                                        <i class="bi bi-plugin me-2"></i> Add Device
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3">Device List</h5>
+                                    {% include 'devices/current_inventory_table.html' %}
+                                </div>
+                            </div>
                         </div>
                     </div>
-            </div>
-        
-                <!-- Recent Activity Tab -->
-            <div class="tab-pane fade" id="recent" role="tabpanel" aria-labelledby="recent-tab">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="h5 mb-0">Recent Inventory Actions</h2>
-                    </div>
-                    <ul class="list-group list-group-flush" id="recentActivityList">
-                        {% for activity in recent_activities %}
-                        <li class="list-group-item">
-                            <span class="badge bg-primary me-2">{{ activity.timestamp|date:"Y-m-d H:i" }}</span>
-                            {{ activity.description }}
-                        </li>
-                        {% endfor %}
-                    </ul>
                 </div>
             </div>
-    
-                <!-- History Tab -->
-            <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
-                <div class="card">
-                    <div class="card-body">
-                        <table id="historyTable" class="table table-striped">
+
+            <div id="inventorizationListsCard" class="card card-shadow-light mb-4">
+                <div class="card-header card-shadow bg-primary text-white">
+                    <h5 class="card-title mb-0">Inventorization Lists</h5>
+                </div>
+                <div class="card-body">
+                    <button id="startInventory" class="btn btn-primary mb-3">Start New Inventorization</button>
+                    
+                    <div class="table-responsive">
+                        <table id="inventorizationListsTable" class="table table-hover table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Action</th>
-                                    <th>User</th>
-                                    <th>Date</th>
-                                    <th>Details</th>
+                                    <th>ID</th>
+                                    <th>Creator</th>
+                                    <th>Start Date</th>
+                                    <th>Status</th>
+                                    <th>Scope</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for entry in history_entries %}
-                                <tr>
-                                    <td>{{ entry.action }}</td>
-                                    <td>{{ entry.user.username }}</td>
-                                    <td>{{ entry.timestamp|date:"Y-m-d H:i" }}</td>
-                                    <td>{{ entry.details }}</td>
-                                </tr>
-                                {% endfor %}
+                                <!-- Data will be populated dynamically -->
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <div class="d-lg-none mb-5 pb-5 pt-5">
-
-            </div>
-
+            <div id="inventoryHistoryCard" class="card card-shadow mb-4" data-bs-theme="dark">
+                <div class="card-header bg-black text-white bg-info ">
+                    <h5 class="card-title mb-0">Inventory History</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="historyTable" class="table table-hover table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
- 
 </div>
+
+
+{% include 'devices/device_modals.html' %}
 
 <!-- Start Inventory Modal -->
 <div class="modal fade" id="startInventoryModal" tabindex="-1" aria-labelledby="startInventoryModalLabel" aria-hidden="true">
@@ -229,15 +174,6 @@
             </div>
             <div class="modal-body">
                 <form id="startInventoryForm">
-                    <div class="mb-3">
-                        <label for="buildingSelect" class="form-label">Building</label>
-                        <select class="form-select" id="buildingSelect" required>
-                            <option value="">Select a building</option>
-                            {% for building in buildings %}
-                                <option value="{{ building.id }}">{{ building.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
                     <div class="mb-3">
                         <label for="scopeSelect" class="form-label">Scope</label>
                         <select class="form-select" id="scopeSelect" required>
@@ -268,8 +204,6 @@
     </div>
 </div>
 
-
-
 <!-- Inventory Details Modal -->
 <div class="modal fade" id="inventoryDetailsModal" tabindex="-1" aria-labelledby="inventoryDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -285,488 +219,43 @@
     </div>
 </div>
 {% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css">
 {% endblock %}
 
 {% block extra_js %}
 {{ block.super }}
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<!-- DataTables -->
-<script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // View Details
-    document.querySelectorAll('.view-details').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const inventoryId = this.getAttribute('data-inventory-id');
-            fetchInventoryDetails(inventoryId);
-        });
-    });
-
-    // Pause/Resume
-    document.querySelectorAll('.pause-resume').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const inventoryId = this.getAttribute('data-inventory-id');
-            const action = this.getAttribute('data-action');
-            pauseResumeInventory(inventoryId, action, this);
-        });
-    });
-
-    // Add event listeners for the new Generate Report buttons
-    document.querySelectorAll('.generate-report').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const inventoryId = this.getAttribute('data-inventory-id');
-            generateReport(inventoryId);
-        });
-    });
-
-    // Cancel
-    document.querySelectorAll('.cancel').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const inventoryId = this.getAttribute('data-inventory-id');
-            cancelInventory(inventoryId);
-        });
-    });
-
-
-    
-    // Initialize DataTable
-    let table = new DataTable('#inventorizationTable', {
-        responsive: true,
-        pageLength: 10,
-        lengthMenu: [[5, 10, 15, 20, 25], [5, 10, 15, 20, 25]],
-        dom: '<"row"<"col-12 col-lg-6 text-center text-lg-start mb-1"li><"col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end p-0 mb-1"p>>rt<"clear">',
-        language: {
-            search: "_INPUT_",
-            searchPlaceholder: "Search...",
-            lengthMenu: "Show _MENU_ per page",
-            paginate: {
-                first: "First",
-                last: "Last",
-                next: ">",
-                previous: "<"
-            }
-        },
-        order:[[0,'desc']],
-        orderCellsTop: true,
-        scrollX: true,
-        autoWidth: true,
-        columnDefs: [
-            { width: '40px', targets: 0 },   // ID
-            { width: '100px', targets: 1 },  // Creator
-            { width: '100px', targets: 2 },  // Start Date
-            { width: '50px', targets: 3 },   // Status
-            
-            { width: '80px', targets: 5 },   // Scope
-            { width: '150px', targets: 6, orderable: false }  // Actions
-        ],
-        initComplete: function (settings, json) {
-            this.api().columns().every(function (index) {
-                let column = this;
-                let input = document.querySelector('.search-row th:nth-child(' + (index + 1) + ') input, .search-row th:nth-child(' + (index + 1) + ') select');
-                if (input) {
-                    input.addEventListener('keyup', () => {
-                        if (column.search() !== input.value) {
-                            column.search(input.value).draw();
-                        }
-                    });
-                    input.addEventListener('change', () => {
-                        if (column.search() !== input.value) {
-                            column.search(input.value).draw();
-                        }
-                    });
-                }
-            });
-        }
-    });
-
-    let historyTable = new DataTable("#historyTable", {
-        perPage: 10,
-        perPageSelect: [5, 10, 15, 20],
-        searchable: true,
-        sortable: true,
-        fixedHeight: false,
-        labels: {
-            placeholder: "Search...",
-            perPage: "{select} entries per page",
-            noRows: "No entries found",
-            info: "Showing {start} to {end} of {rows} entries",
-        }
-    });
-
-    // Start Inventory
-    const startInventoryBtn = document.getElementById('startInventory');
-    const startInventoryModal = document.getElementById('startInventoryModal');
-    let startInventoryModalInstance = null;
-
-    if (startInventoryBtn && startInventoryModal) {
-        startInventoryBtn.addEventListener('click', function() {
-            if (!startInventoryModalInstance) {
-                startInventoryModalInstance = new bootstrap.Modal(startInventoryModal);
-            }
-            startInventoryModalInstance.show();
-        });
-    }
-
-    // Confirm Start Inventory
-    document.getElementById('confirmStartInventory').addEventListener('click', startInventory);
-
-    function startInventory() {
-        const buildingId = document.getElementById('buildingSelect').value;
-        const scope = document.getElementById('scopeSelect').value;
-        
-        if (!buildingId) {
-            //alert('Please select a building.');
-            showAlert('Please select a building.','warning');
-            
-            return;
-        }
-
-        let selectedRooms = [];
-        if (scope === 'PARTIAL') {
-            selectedRooms = Array.from(document.querySelectorAll('.room-checkbox:checked')).map(cb => cb.dataset.roomId);
-            if (selectedRooms.length === 0) {
-                showAlert('Please select at least one room for partial inventory.','warning');
-                return;
-            }
+// DeviceTable - Pre - Overrides
+document.addEventListener('DOMContentLoaded', function () {
+//hideColumns(DeviceTable.table,[6]);
+let inventoryId = {{ inventory.id }};
+let buildingSelect = document.querySelector('#deviceTable .search-row th:nth-child(7) select');
+console.log(buildingSelect);
+if (buildingSelect) {
+    Array.from(buildingSelect.options).forEach(option => {
+        console.log(option.value == inventoryId,option.value,inventoryId);
+        if (option.value == inventoryId) {
+            option.selected = true;
         } else {
-            // If scope is ENTIRE, select all rooms in the building
-            selectedRooms = 'all'
-        }
-
-        const inventoryData = {
-            building_id: buildingId,
-            room_ids: selectedRooms,
-            scope: scope
-        };
-
-        fetch('{% url "api_start_inventory" %}', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(inventoryData),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert('Inventory started successfully','success');
-                if (startInventoryModalInstance) {
-                    startInventoryModalInstance.hide();
-                }
-                showConfirmation(
-                    'Inventory started successfully!',
-                    'Do you want to view the inventory details?',
-                    'Yes, view details',
-                    'No, return to list',
-                    'success',
-                ).then(result => {
-                    if (result.isConfirmed) {
-                        window.location.href = '{% url "inventory_detail" pk=0 %}'.replace('0', data.inventory_id);
-                    } else {
-                         window.location.href = '{% url "inventory_management" %}';
-                    }
-                });
-            } else {
-                showAlert(data.message || 'Failed to start inventory','danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showAlert('An error occurred while starting the inventory','danger');
-        });
-    }
-
-
-    const buildingSelect = document.getElementById('buildingSelect');
-    const scopeSelect = document.getElementById('scopeSelect');
-    const partialSelection = document.getElementById('partialSelection');
-    const selectAllFloors = document.getElementById('selectAllFloors');
-    const floorsList = document.getElementById('floorsList');
-
-    buildingSelect.addEventListener('change', loadFloors);
-    scopeSelect.addEventListener('change', togglePartialSelection);
-    selectAllFloors.addEventListener('change', toggleAllFloors);
-    
-    function togglePartialSelection() {
-        partialSelection.style.display = scopeSelect.value === 'PARTIAL' ? 'block' : 'none';
-        if (scopeSelect.value === 'PARTIAL' && buildingSelect.value) {
-            loadFloors();
-        }
-    }
-
-    function toggleAllFloors(e) {
-        const isChecked = e.target.checked;
-        const allRoomsCheckboxes = document.querySelectorAll('.select-all-rooms');
-        const roomCheckboxes = document.querySelectorAll('.room-checkbox');
-
-        allRoomsCheckboxes.forEach(checkbox => {
-            checkbox.checked = isChecked;
-        });
-
-        roomCheckboxes.forEach(checkbox => {
-            checkbox.checked = isChecked;
-        });
-
-        updateAllFloorsStatus();
-    }
-
-    
-    function loadFloors() {
-        const buildingId = buildingSelect.value;
-        floorsList.innerHTML = '';
-        selectAllFloors.checked = false;
-
-        if (buildingId && scopeSelect.value === 'PARTIAL') {
-            fetch(`{% url 'get_floors' %}?building_id=${buildingId}`)
-                .then(response => response.json())
-                .then(floors => {
-                    const accordion = document.createElement('div');
-                    accordion.className = 'accordion';
-                    accordion.id = 'floorsAccordion';
-
-                    floors.forEach((floor, index) => {
-                        const floorItem = document.createElement('div');
-                        floorItem.className = 'accordion-item';
-                        floorItem.innerHTML = `
-                            <h2 class="accordion-header" id="heading${floor.id}">
-                                <button class="accordion-button ${index === 0 ? '' : 'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${floor.id}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="collapse${floor.id}">
-                                    ${floor.name}
-                                    <div class="ms-auto">
-                                        <div class="form-check">
-                                            <input class="form-check-input select-all-rooms" type="checkbox" id="selectAllRooms${floor.id}" data-floor-id="${floor.id}">
-                                            <label class="form-check-label" for="selectAllRooms${floor.id}">
-                                                All Rooms
-                                            </label>
-                                        </div>
-                                    </div>
-                                </button>
-                            </h2>
-                            <div id="collapse${floor.id}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" aria-labelledby="heading${floor.id}" data-bs-parent="#floorsAccordion">
-                                <div class="accordion-body">
-                                    <div id="roomsList${floor.id}">
-                                        <!-- Rooms will be dynamically added here -->
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        accordion.appendChild(floorItem);
-
-                        const selectAllRooms = floorItem.querySelector(`#selectAllRooms${floor.id}`);
-                        selectAllRooms.addEventListener('change', (e) => toggleAllRooms(e, floor.id));
-                        
-                        loadRooms(floor.id);
-                    });
-
-                    floorsList.appendChild(accordion);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while loading floors');
-                });
-        }
-    }
-
-    function loadRooms(floorId) {
-        fetch(`{% url 'get_rooms' %}?floor_id=${floorId}`)
-            .then(response => response.json())
-            .then(rooms => {
-                const roomsList = document.getElementById(`roomsList${floorId}`);
-                roomsList.innerHTML = '';
-                rooms.forEach(room => {
-                    const roomDiv = document.createElement('div');
-                    roomDiv.className = 'form-check';
-                    roomDiv.innerHTML = `
-                        <input class="form-check-input room-checkbox" type="checkbox" id="room${room.id}" data-floor-id="${floorId}" data-room-id="${room.id}">
-                        <label class="form-check-label" for="room${room.id}">
-                            ${room.name}
-                        </label>
-                    `;
-                    roomsList.appendChild(roomDiv);
-                });
-
-                const roomCheckboxes = roomsList.querySelectorAll('.room-checkbox');
-                roomCheckboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', updateFloorStatus);
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while loading rooms');
-            });
-    }
-
-    function toggleAllRooms(e, floorId) {
-        const isChecked = e.target.checked;
-        const roomCheckboxes = document.querySelectorAll(`#roomsList${floorId} .room-checkbox`);
-        roomCheckboxes.forEach(checkbox => {
-            checkbox.checked = isChecked;
-        });
-        updateAllFloorsStatus();
-    }
-
-    function updateFloorStatus(e) {
-        const floorId = e.target.dataset.floorId;
-        const selectAllRooms = document.getElementById(`selectAllRooms${floorId}`);
-        const roomCheckboxes = document.querySelectorAll(`#roomsList${floorId} .room-checkbox`);
-        const allChecked = Array.from(roomCheckboxes).every(checkbox => checkbox.checked);
-        const someChecked = Array.from(roomCheckboxes).some(checkbox => checkbox.checked);
-        
-        selectAllRooms.checked = allChecked;
-        selectAllRooms.indeterminate = someChecked && !allChecked;
-        
-        updateAllFloorsStatus();
-    }
-
-    function updateAllFloorsStatus() {
-        const allRoomsCheckboxes = document.querySelectorAll('.select-all-rooms');
-        const allChecked = Array.from(allRoomsCheckboxes).every(checkbox => checkbox.checked);
-        const someChecked = Array.from(allRoomsCheckboxes).some(checkbox => checkbox.checked || checkbox.indeterminate);
-        
-        selectAllFloors.checked = allChecked;
-        selectAllFloors.indeterminate = someChecked && !allChecked;
-    }
-
-    function pauseResumeInventory(inventoryId, action) {
-    showConfirmation(
-        'Confirm Action',
-        `Are you sure you want to ${action} this inventory?`,
-        `Yes, ${action} it!`,
-        'Cancel'
-    ).then((result) => {
-        if (result.isConfirmed) {
-            fetch('{% url "api_pause_resume_inventory" %}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    inventory_id: inventoryId,
-                    action: action
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlertAndReload(`Inventory ${action}d successfully`, 'success');
-                } else {
-                    showAlertAndReload(data.message || `Failed to ${action} inventory`, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert(`An error occurred while ${action}ing the inventory`, 'error');
-            });
+            option.style.display = 'none';
         }
     });
 }
-
-    function cancelInventory(inventoryId) {
-        showConfirmation(
-            'Cancel Inventory',
-            'Are you sure you want to cancel this inventory? This action cannot be undone.',
-            'Yes, cancel it!',
-            'No, keep it'
-        ).then((result) => {
-            if (result.isConfirmed) {
-                fetch('{% url "api_cancel_inventory" %}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken'),
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        inventory_id: inventoryId
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showAlertAndReload('Inventory canceled successfully','success');
-                    } else {
-                        showAlert(data.message || 'Failed to cancel inventory', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('An error occurred while canceling the inventory', 'error');
-                });
-            }
-        });
-    }
-
-
-    function generateReport(inventoryId) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/api/inventory/${inventoryId}/generate-report/`;
-        
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = 'csrfmiddlewaretoken';
-        csrfInput.value = getCookie('csrftoken');
-        form.appendChild(csrfInput);
-
-        const typeInput = document.createElement('input');
-        typeInput.type = 'hidden';
-        typeInput.name = 'report_type';
-        typeInput.value = 'pdf'; // You can change this to 'excel' if needed
-
-        document.body.appendChild(form);
-        form.submit();
-        document.body.removeChild(form);
-    }
-
-    function updateStatus(button, newStatus) {
-        const row = button.closest('tr');
-        const statusCell = row.querySelector('td:nth-child(4)');
-        statusCell.innerHTML = getStatusBadge(newStatus);
-    }
-
-    function disableButtons(row) {
-        row.querySelectorAll('.pause-resume, .end, .cancel').forEach(btn => {
-            btn.disabled = true;
-            btn.classList.add('disabled');
-        });
-    }
-
-    function getStatusBadge(status) {
-        switch (status) {
-            case 'ACTIVE':
-                return '<span class="badge text-success bg-light border border-success"><i class="bi bi-play-circle-fill me-1"></i>Active</span>';
-            case 'PAUSED':
-                return '<span class="badge bg-warning text-dark"><i class="bi bi-pause-circle-fill me-1"></i>Paused</span>';
-            case 'CANCELED':
-                return '<span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Canceled</span>';
-            case 'COMPLETED':
-                return '<span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>';
-            default:
-                return `<span class="badge bg-secondary"><i class="bi bi-question-circle-fill me-1"></i>${status}</span>`;
-        }
-    }
-  
-    // Helper function to get CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        console.log(cookieValue);
-        return cookieValue;
-    }
 });
 </script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
+<script src="{% static 'js/inventory_management.js' %}"></script>
+<script src="{% static 'js/device_modals.js' %}"></script>
+<script src="{% static 'js/device_table.js' %}"></script>
+<script>
+    // DeviceTable - Post - Overrides
+    document.addEventListener('DOMContentLoaded', function () {
+        hideColumns(DeviceTable.table,[6,7]);
+    });
+</script>
 {% endblock %}
-
-

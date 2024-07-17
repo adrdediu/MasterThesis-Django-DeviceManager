@@ -168,10 +168,20 @@
               </ul>
             </li>
             <li class="list-group-item bg-transparent border-0">
-              <a href="{% url 'inventory_management' %}" class="text-light text-decoration-none hover-red">
+              <a href="#inventoryManagement" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
                 <i class="bi bi-gear-fill me-2"></i>Inventory Management
               </a>
+              <ul class="collapse ps-2" id="inventoryManagement" style="list-style: none;">
+                {% for inventory in inventories %}
+                  <li class="list-group-item bg-transparent border-0">
+                    <a href="{% url 'inventory_management' pk=inventory.id %}" class="text-white text-decoration-none hover-red">
+                      <i class="bi bi-clipboard-data me-2"></i>{{ inventory.name }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
             </li>
+            
           </ul>
           <!-- ... (additional content) ... -->
           
@@ -324,9 +334,18 @@
             </ul>
           </li>
           <li class="list-group-item bg-transparent border-0">
-            <a href="{% url 'inventory_management' %}" class="text-light text-decoration-none hover-red">
+            <a href="#inventoryManagement" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
               <i class="bi bi-gear-fill me-2"></i>Inventory Management
             </a>
+            <ul class="collapse ps-2" id="inventoryManagement" style="list-style: none;">
+              {% for inventory in inventories %}
+                <li class="list-group-item bg-transparent border-0">
+                  <a href="{% url 'inventory_management' pk=inventory.id %}" class="text-white text-decoration-none hover-red">
+                    <i class="bi bi-clipboard-data me-2"></i>{{ inventory.name }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
           </li>
         </ul>
         <!-- ... (additional content) ... -->

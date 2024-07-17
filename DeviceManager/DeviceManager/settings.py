@@ -14,6 +14,7 @@ import os
 
 from pathlib import Path
 
+# Timezone settings
 TIME_ZONE = 'Europe/Bucharest'
 USE_TZ = True
 
