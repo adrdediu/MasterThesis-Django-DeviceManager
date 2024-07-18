@@ -188,6 +188,7 @@ class Device(models.Model):
     
     def save(self, *args, **kwargs):
         is_new = self.pk is None
+        print(is_new)
         super().save(*args, **kwargs)
 
         if is_new:
@@ -254,7 +255,13 @@ class Device(models.Model):
 
         self.qrcode_path = img_path
         self.is_qrcode_applied = True
-        self.save(update_fields=['qrcode_path', 'qrcode_target_url', 'is_qrcode_applied'])
+
+        # Update only the QR code related fields to avoid triggering the save method again
+        Device.objects.filter(pk=self.pk).update(
+            qrcode_path=self.qrcode_path,
+            qrcode_target_url=self.qrcode_target_url,
+            is_qrcode_applied=self.is_qrcode_applied
+        )
 
     def regenerate_qr_code(self):
         if self.qrcode_path:
