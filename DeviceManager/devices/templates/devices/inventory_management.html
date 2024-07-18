@@ -65,6 +65,7 @@
                 </div>
                 <div class="card-body">
                     <!-- Statistics Section -->
+                     <h5 class="mb-3">Statistics</h5>
                     <div class="row mb-3">
                         <div class="col-6 col-md-4 mb-1">
                             <div class="card pb-1">
@@ -94,15 +95,11 @@
                         </div>
 
                     </div>
-                    
+                    <hr> 
                     <div class="row">
                         <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3">Device List</h5>
-                                    {% include 'devices/current_inventory_table.html' %}
-                                </div>
-                            </div>
+                            <h5 class="mb-3">Device List</h5>
+                            {% include 'devices/current_inventory_table.html' %}
                         </div>
                     </div>
                 </div>
@@ -113,24 +110,10 @@
                     <h5 class="card-title mb-0">Inventorization Lists</h5>
                 </div>
                 <div class="card-body">
-                    <button id="startInventory" class="btn btn-primary mb-3">Start New Inventorization</button>
+                    <button id="startInventory" class="btn btn-primary mb-3" data-inventory-id="{{inventory.id}}">Start New Inventorization</button>
                     
                     <div class="table-responsive">
-                        <table id="inventorizationListsTable" class="table table-hover table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Creator</th>
-                                    <th>Start Date</th>
-                                    <th>Status</th>
-                                    <th>Scope</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data will be populated dynamically -->
-                            </tbody>
-                        </table>
+                        {% include 'devices/inventorization_list_table.html' %}
                     </div>
                 </div>
             </div>
@@ -198,7 +181,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="confirmStartInventory">Start Inventory</button>
+                <button type="button" class="btn btn-primary" id="confirmStartInventory" data-inventory-id="{{inventory.id}}">Start Inventory</button>
             </div>
         </div>
     </div>
@@ -250,6 +233,7 @@ if (buildingSelect) {
 <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
 <script src="{% static 'js/inventory_management.js' %}"></script>
+<script src="{% static 'js/inventorization_list_table.js' %}"></script>
 <script src="{% static 'js/device_modals.js' %}"></script>
 <script src="{% static 'js/device_table.js' %}"></script>
 <script>

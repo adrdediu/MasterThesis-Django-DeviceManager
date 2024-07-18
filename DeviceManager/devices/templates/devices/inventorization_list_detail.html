@@ -6,8 +6,8 @@
     <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;;" aria-label="breadcrumb" class="sticky-top  rounded" data-bs-theme="dark">
         <ol class="breadcrumb  p-2 card-shadow rounded">
           <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-          <li class="breadcrumb-item"><a href="{% url 'inventory_management' %}" class="text-decoration-none">Inventory Management</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Inventory #{{ inventory.id }}</li>
+          <li class="breadcrumb-item"><a href="{% url 'inventory_management' inventory.id %}" class="text-decoration-none">Inventory Management</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Inventory #{{ inventory_list.id }}</li>
         </ol>
     </nav>
     
@@ -25,27 +25,27 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p><strong>ID:</strong> {{ inventory.id }}</p>
-                                    <p><strong>Creator:</strong> {{ inventory.creator.username }}</p>
-                                    <p><strong>Building:</strong> {{ inventory.building.name }}</p>
-                                    <p><strong>Start Date:</strong> {{ inventory.start_date }}</p>
-                                    <p><strong>End Date:</strong> {{ inventory.end_date|default:"Not ended" }}</p>
+                                    <p><strong>ID:</strong> {{ inventory_list.id }}</p>
+                                    <p><strong>Creator:</strong> {{ inventory_list.creator.username }}</p>
+                                    <p><strong>Building:</strong> {{ inventory_list.building.name }}</p>
+                                    <p><strong>Start Date:</strong> {{ inventory_list.start_date }}</p>
+                                    <p><strong>End Date:</strong> {{ inventory_list.end_date|default:"Not ended" }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p><strong>Status:</strong> 
-                                        {% if inventory.status == 'ACTIVE' %}
+                                        {% if inventory_list.status == 'ACTIVE' %}
                                             <span class="badge text-success bg-light border border-success"><i class="bi bi-play-circle-fill me-1"></i>Active</span>
-                                        {% elif inventory.status == 'PAUSED' %}
+                                        {% elif inventory_list.status == 'PAUSED' %}
                                             <span class="badge bg-warning text-dark"><i class="bi bi-pause-circle-fill me-1"></i>Paused</span>
-                                        {% elif inventory.status == 'CANCELED' %}
+                                        {% elif inventory_list.status == 'CANCELED' %}
                                             <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>Canceled</span>
-                                        {% elif inventory.status == 'COMPLETED' %}
+                                        {% elif inventory_list.status == 'COMPLETED' %}
                                             <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
-                                        {% elif inventory.status == 'UNKNOWN' %}
+                                        {% elif inventory_list.status == 'UNKNOWN' %}
                                             <span class="badge bg-secondary text-white"><i class="bi bi-question-circle-fill me-1"></i>Unknown</span>
                                         {% endif %}
                                     </p>
-                                    <p><strong>Scope:</strong> {{ inventory.get_scope_display }}</p>
+                                    <p><strong>Scope:</strong> {{ inventory_list.get_scope_display }}</p>
                                     <p><strong>Total Devices:</strong> {{ total_devices }}</p>
                                     <p><strong>Scanned Devices:</strong> {{ total_scanned }} / {{ total_devices }}</p>
                                 </div>
@@ -66,24 +66,27 @@
                             <h2 class="h5 mb-0">Actions</h2>
                         </div>
                         <div class="card-body d-flex flex-column justify-content-center">
-                            {% if inventory.status == 'ACTIVE' %}
-                                <button class="btn btn-warning mb-2 pause-resume" data-inventory-id="{{ inventory.id }}" data-action="pause">
+                            {% if inventory_list.status == 'ACTIVE' %}
+                                <button class="btn btn-warning mb-2 pause-resume" data-inventory-id="{{ inventory_list.id }}" data-action="pause">
                                     <i class="bi bi-pause-fill"></i> Pause Inventory
                                 </button>
-                            {% elif inventory.status == 'PAUSED' %}
-                                <button class="btn btn-success mb-2 pause-resume" data-inventory-id="{{ inventory.id }}" data-action="resume">
+                            {% elif inventory_list.status == 'PAUSED' %}
+                                <button class="btn btn-success mb-2 pause-resume" data-inventory-id="{{ inventory_list.id }}" data-action="resume">
                                     <i class="bi bi-play-fill"></i> Resume Inventory
                                 </button>
                             {% endif %}
-                            {% if inventory.status == 'ACTIVE' or inventory.status == 'PAUSED' %}
-                                <button class="btn btn-secondary mb-2 cancel" data-inventory-id="{{ inventory.id }}">
+                            {% if inventory_list.status == 'ACTIVE' or inventory_list.status == 'PAUSED' %}
+                                <button class="btn btn-danger mb-2 end-inventory" data-inventory-id="{{ inventory_list.id }}">
+                                    <i class="bi bi-stop-circle-fill"></i> End Inventory
+                                </button>
+                                <button class="btn btn-secondary mb-2 cancel" data-inventory-id="{{ inventory_list.id }}">
                                     <i class="bi bi-x-circle-fill"></i> Cancel Inventory
                                 </button>
-                                <button id="updateRoomDataBtn" class="btn btn-outline-success mb-2 update-room-data" data-inventory-id="{{ inventory.id }}">
+                                <button id="updateRoomDataBtn" class="btn btn-outline-success mb-2 update-room-data" data-inventory-id="{{ inventory_list.id }}">
                                     <i class="bi bi-arrow-repeat"></i> Update Devices to be Scanned
                                 </button>
                             {% endif %}
-                            <button class="btn btn-primary mb-2 generate-report" data-inventory-id="{{ inventory.id }}">
+                            <button class="btn btn-primary mb-2 generate-report" data-inventory-id="{{ inventory_list.id }}">
                                 <i class="bi bi-file-earmark-text"></i> Generate Report
                             </button>
                         </div>
@@ -421,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function updateRoomData(inventoryId) {
-        fetch(`{% url 'update_inventory_room_data' inventory_id=inventory.id %}`,
+        fetch(`{% url 'update_inventory_room_data' inventory_id=inventory_list.id %}`,
         {
             method: 'POST',
             headers: {
@@ -525,6 +528,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     console.error('Error:', error);
                     showAlert('An error occurred while canceling the inventory', 'error');
+                });
+            }
+        });
+    }
+
+    document.querySelector('.end-inventory').addEventListener('click', function() {
+        const inventoryId = this.getAttribute('data-inventory-id');
+        endInventory(inventoryId);
+    });
+
+    function endInventory(inventoryId) {
+        showConfirmation(
+            'End Inventory',
+            'Are you sure you want to end this inventory? This action cannot be undone.',
+            'Yes, end it!',
+            'No, keep it active'
+        ).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/inventory/end/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                            inventory_id: inventoryId
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showAlertAndReload('Inventory ended successfully', 'success');
+                    } else {
+                        showAlert(data.message || 'Failed to end inventory', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('An error occurred while ending the inventory', 'error');
                 });
             }
         });

@@ -1,4 +1,6 @@
 venv/
+DeviceManager/media/
+DeviceManager/devices/migrations/
 DeviceManager/static/js/next
 *__pycache__
 *db.sqlite3

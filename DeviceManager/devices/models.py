@@ -1,5 +1,6 @@
 # devices/models.py
 # devices/models.py
+import json
 from django.db import models
 from django.urls import reverse
 from django.contrib.sites.models import Site
@@ -204,6 +205,14 @@ class Device(models.Model):
                 change_type='EDIT',
                 user=self.owner
             )
+        
+
+
+        # Update associated InventorizationList
+        InventorizationList.objects.filter(
+            inventory=self.inventory, 
+            status__in=['ACTIVE', 'PAUSED']
+        ).update(total_devices=models.F('total_devices') + (1 if is_new else 0))
 
     def delete(self, *args, **kwargs):
         InventoryChange.objects.create(
@@ -213,6 +222,12 @@ class Device(models.Model):
             user=self.owner
         )
         super().delete(*args, **kwargs)
+
+        # Update associated InventorizationList
+        InventorizationList.objects.filter(
+            inventory=self.inventory, 
+            status__in=['ACTIVE', 'PAUSED']
+        ).update(total_devices=models.F('total_devices') - 1)
 
     def generate_qr_code(self):
         qr = qrcode.QRCode(
@@ -292,14 +307,13 @@ class InventorizationList(models.Model):
     start_date = models.DateTimeField(default=timezone.now)
     modified_date = models.DateTimeField(auto_now=True)
     end_date = models.DateTimeField(null=True, blank=True)
-    scope = models.CharField(max_length=10, choices=SCOPE_CHOICES)
     building = models.ForeignKey('Building', on_delete=models.CASCADE)
-    room_ids = JSONField(default=list)  # This will store the list of room IDs
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='ACTIVE')
-
+    
     total_devices = models.IntegerField(default=0)
     total_scanned = models.IntegerField(default=0)
-    room_data = JSONField(default=dict)
+
+    inventory_data_file = models.FileField(upload_to='inventorization_data/', null=True, blank=True)
 
     def __str__(self):
         return f"Inventorization {self.id} by {self.creator.username}"
@@ -311,37 +325,101 @@ class InventorizationList(models.Model):
             self.initialize_inventory_data()
 
     def initialize_inventory_data(self):
-        rooms = Room.objects.filter(id__in=self.room_ids)
-        self.room_data = {}
-        self.total_devices = 0
+        self.total_devices = Device.objects.filter(inventory=self.inventory).count()
+        self.total_scanned = 0
+        self.save(update_fields=['total_devices', 'total_scanned'])
 
-        for room in rooms:
-            devices = Device.objects.filter(room=room)
-            device_count = devices.count()
-            self.room_data[str(room.id)] = {
-                'total': device_count,
-                'scanned': 0,
-                'devices': list(devices.values('id'))  # Add devices information here
-            }
-            self.total_devices += device_count
+    def update_total_devices(self):
+        if self.status in ['ACTIVE', 'PAUSED']:
+            self.total_devices = Device.objects.filter(inventory=self.inventory).count()
+            self.save(update_fields=['total_devices'])
 
-        self.save(update_fields=['room_data', 'total_devices'])
-    
     def scan_device(self, device_id):
         device = Device.objects.get(id=device_id)
-        scan, created = DeviceScan.objects.get_or_create(inventory=self, device=device)
+        scan, created = DeviceScan.objects.get_or_create(inventory_list=self, device=device)
         print(device,scan,created)
         if created:
             self.total_scanned += 1
-            room_id = str(device.room.id)
-            if room_id in self.room_data:
-                self.room_data[room_id]['scanned'] += 1
-            self.save(update_fields=['total_scanned', 'room_data'])
+            self.save(update_fields=['total_scanned'])
 
         if self.total_scanned == self.total_devices:
             self.status = 'COMPLETED'
             self.end_date = datetime.datetime.now()
             self.save(update_fields=['status'])
+
+    def end_inventory_list(self):
+        self.status = 'COMPLETED'
+        self.end_date = timezone.now()
+        self.save()
+        self.complete_inventorization()
+
+    def complete_inventorization(self):
+        self.status = 'COMPLETED'
+        self.end_date = timezone.now()
+
+        # Find the most recent completed inventorization
+        previous_inventorization = InventorizationList.objects.filter(
+            inventory=self.inventory,
+            status='COMPLETED',
+            end_date__lt=self.start_date
+        ).order_by('-end_date').first()
+
+        start_date = previous_inventorization.end_date if previous_inventorization else self.start_date
+
+        devices = Device.objects.filter(inventory=self.inventory)
+        inventory_changes = InventoryChange.objects.filter(
+            inventory=self.inventory,
+            timestamp__gt=start_date,
+            timestamp__lte=self.end_date
+        )
+
+        inventory_data = {
+            'inventorization_id': self.id,
+            'start_date': self.start_date.isoformat(),
+            'end_date': self.end_date.isoformat(),
+            'previous_inventorization_id': previous_inventorization.id if previous_inventorization else None,
+            'devices': [self.device_to_dict(device) for device in devices],
+            'changes': [self.change_to_dict(change) for change in inventory_changes],
+        }
+
+        file_name = f'inventorization_{self.id}.json'
+        file_path = os.path.join(settings.MEDIA_ROOT, 'inventorization_data', file_name)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        with open(file_path, 'w') as f:
+            json.dump(inventory_data, f, indent=4)
+
+        self.inventory_data_file.name = f'inventorization_data/{file_name}'
+        self.save()
+
+    @staticmethod
+    def device_to_dict(device):
+        return {
+            'id': device.id,
+            'name': device.name,
+            'description': device.description,
+            'serial_number': device.serial_number,
+            'owner': device.owner.username if device.owner else None,
+            'category': device.category.name,
+            'subcategory': device.subcategory.name,
+            'is_qrcode_applied': device.is_qrcode_applied,
+            'qrcode_url': device.qrcode_url,
+            'building': device.building.name,
+            'floor': device.floor.name,
+            'room': device.room.name,
+            'created_at': device.created_at.isoformat(),
+            'updated_at': device.updated_at.isoformat(),
+        }
+
+    @staticmethod
+    def change_to_dict(change):
+        return {
+            'id': change.id,
+            'device_id': change.device.id,
+            'change_type': change.change_type,
+            'timestamp': change.timestamp.isoformat(),
+            'user': change.user.username if change.user else None,
+        }
 
     
     class Meta:
@@ -349,11 +427,11 @@ class InventorizationList(models.Model):
 
 
 class DeviceScan(models.Model):
-    inventory = models.ForeignKey(InventorizationList, on_delete=models.CASCADE)
+    inventory_list = models.ForeignKey(InventorizationList, on_delete=models.CASCADE)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     scanned_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('inventory', 'device')
+        unique_together = ('inventory_list', 'device')
 
 

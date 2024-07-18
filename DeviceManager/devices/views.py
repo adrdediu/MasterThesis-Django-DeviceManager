@@ -398,36 +398,33 @@ class InventorizationListDetailView(BaseContextMixin,LoginRequiredMixin,DetailVi
 
     model = InventorizationList
     template_name = 'devices/inventorization_list_detail.html'
-    context_object_name = 'inventory'
+    context_object_name = 'inventory_list'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(self.get_base_context())
-        inventory = self.object
 
+        inventory_list = self.object
+        inventory = inventory_list.inventory
+        print(inventory)
+
+        
         # Check for message in session
         if 'qr_scan_message' in self.request.session:
             context['qr_scan_message'] = self.request.session.pop('qr_scan_message')
         
-        # Use room_data from the inventory object
-        room_data = inventory.room_data
-
-        # Extract device IDs from room_data
-        device_ids = []
-        for room_info in room_data.values():
-            device_ids.extend(device['id'] for device in room_info['devices'])
-
         # Get devices and scanned devices based on the extracted device IDs
-        devices = Device.objects.filter(id__in=device_ids).select_related(
-            'category', 'subcategory', 'room', 'room__floor', 'room__building'
-        )    
-        scanned_devices = DeviceScan.objects.filter(inventory=inventory, device__in=device_ids)
+        devices = Device.objects.filter(inventory=inventory)
+        
+        scanned_devices = DeviceScan.objects.filter(inventory_list=inventory_list, device__in=devices)
         scanned_devices_set = set(scanned_devices.values_list('device_id', flat=True))
 
+        context['inventory'] = inventory
+        context['inventory_list'] = inventory_list
         context['devices'] = devices
         context['scanned_devices'] = scanned_devices_set
-        context['total_devices'] = inventory.total_devices
-        context['total_scanned'] = inventory.total_scanned
+        context['total_devices'] = inventory_list.total_devices
+        context['total_scanned'] = inventory_list.total_scanned
 
         return context
     
@@ -472,7 +469,7 @@ class DeviceDetailView(BaseContextMixin,LoginRequiredMixin, DetailView):
 
             if active_inventory:
                 # Check if the device's room is part of the inventory
-                if device.room.id in active_inventory.room_ids:
+                if device.inventory == active_inventory.inventory:
                     # Record the scan
                     active_inventory.scan_device(device.id)
 
