@@ -364,29 +364,22 @@ class InventorizationList(models.Model):
         self.status = 'COMPLETED'
         self.end_date = timezone.now()
 
-        # Find the most recent completed inventorization
-        previous_inventorization = InventorizationList.objects.filter(
-            inventory=self.inventory,
-            status='COMPLETED',
-            end_date__lt=self.start_date
-        ).order_by('-end_date').first()
-
-        start_date = previous_inventorization.end_date if previous_inventorization else self.start_date
-
-        devices = Device.objects.filter(inventory=self.inventory)
-        inventory_changes = InventoryChange.objects.filter(
-            inventory=self.inventory,
-            timestamp__gt=start_date,
-            timestamp__lte=self.end_date
-        )
+        devices = Device.objects.filter(inventory=self.inventory).select_related(
+            'category', 'subcategory', 'owner', 'room__building', 'room__floor'
+        )        
+        device_scans = DeviceScan.objects.filter(inventory_list=self)
 
         inventory_data = {
             'inventorization_id': self.id,
             'start_date': self.start_date.isoformat(),
             'end_date': self.end_date.isoformat(),
-            'previous_inventorization_id': previous_inventorization.id if previous_inventorization else None,
             'devices': [self.device_to_dict(device) for device in devices],
-            'changes': [self.change_to_dict(change) for change in inventory_changes],
+            'device_scans': [self.device_scan_to_dict(scan) for scan in device_scans],
+            'changes': [self.change_to_dict(change) for change in InventoryChange.objects.filter(
+                inventory=self.inventory,
+                timestamp__gte=self.start_date,
+                timestamp__lte=self.end_date
+            )],
         }
 
         file_name = f'inventorization_{self.id}.json'
@@ -404,18 +397,29 @@ class InventorizationList(models.Model):
         return {
             'id': device.id,
             'name': device.name,
-            'description': device.description,
             'serial_number': device.serial_number,
+            'category': {
+                'id': device.category.id,
+                'name': device.category.name
+            },
+            'subcategory': {
+                'id': device.subcategory.id,
+                'name': device.subcategory.name
+            },
             'owner': device.owner.username if device.owner else None,
-            'category': device.category.name,
-            'subcategory': device.subcategory.name,
-            'is_qrcode_applied': device.is_qrcode_applied,
-            'qrcode_url': device.qrcode_url,
-            'building': device.building.name,
-            'floor': device.floor.name,
-            'room': device.room.name,
-            'created_at': device.created_at.isoformat(),
-            'updated_at': device.updated_at.isoformat(),
+            'building': {
+                'id': device.building.id,
+                'name': device.building.name,
+                'acronym': device.building.acronym
+            },
+            'floor': {
+                'id': device.floor.id,
+                'name': device.floor.name
+            },
+            'room': {
+                'id': device.room.id,
+                'name': device.room.name
+            }
         }
 
     @staticmethod
@@ -428,6 +432,14 @@ class InventorizationList(models.Model):
             'user': change.user.username if change.user else None,
         }
 
+    @staticmethod
+    def device_scan_to_dict(scan):
+        return {
+            'id': scan.id,
+            'device_id': scan.device.id,
+            'timestamp': scan.timestamp.isoformat(),
+            'user': scan.user.username if scan.user else None,
+        }
     
     class Meta:
         ordering = ['-start_date']

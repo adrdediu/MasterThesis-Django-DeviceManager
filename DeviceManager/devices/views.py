@@ -404,21 +404,36 @@ class InventorizationListDetailView(BaseContextMixin,LoginRequiredMixin,DetailVi
         context = super().get_context_data(**kwargs)
         context.update(self.get_base_context())
 
+        # Get the inventory list object from the URL
         inventory_list = self.object
         inventory = inventory_list.inventory
-        print(inventory)
 
+        # Define Context Variables
+        devices = {}
+        scanned_devices_set = {}
         
-        # Check for message in session
-        if 'qr_scan_message' in self.request.session:
-            context['qr_scan_message'] = self.request.session.pop('qr_scan_message')
-        
-        # Get devices and scanned devices based on the extracted device IDs
-        devices = Device.objects.filter(inventory=inventory)
-        
-        scanned_devices = DeviceScan.objects.filter(inventory_list=inventory_list, device__in=devices)
-        scanned_devices_set = set(scanned_devices.values_list('device_id', flat=True))
+        # Get the devices associated with the inventory
+        if inventory_list.status == 'COMPLETED':
+            # Load data from the JSON file
+            with open(inventory_list.inventory_data_file.path, 'r') as f:
+                inventory_data = json.load(f)
+            devices = inventory_data['devices']
+            changes = inventory_data['changes']
+            device_scans = inventory_data['device_scans']
+            scanned_devices_set = set(scan['device_id'] for scan in device_scans)
 
+        else:
+            # Check for message in session
+            if 'qr_scan_message' in self.request.session:
+                context['qr_scan_message'] = self.request.session.pop('qr_scan_message')
+            
+            # Get devices and scanned devices based on the extracted device IDs
+            devices = Device.objects.filter(inventory=inventory)
+            
+            scanned_devices = DeviceScan.objects.filter(inventory_list=inventory_list, device__in=devices)
+            scanned_devices_set = set(scanned_devices.values_list('device_id', flat=True))
+
+        # Update the context with the calculated values
         context['inventory'] = inventory
         context['inventory_list'] = inventory_list
         context['devices'] = devices
