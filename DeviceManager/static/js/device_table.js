@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     DeviceTable.table = new DataTable('#deviceTable', {
         responsive: true,
-        pageLength: 10,
+        pageLength: 5,
         lengthMenu: [[5, 10, 15, 20, 25], [5, 10, 15, 20, 25]],
-        dom: '<"row"<"col-12 col-lg-6 text-center text-lg-start mb-1"li><"col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end p-0 mb-1"p>>rt<"clear">',
+        dom: '<"row pb-2"<"col-12 col-lg-6 text-center text-lg-start mb-1"li><"col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end p-0 mb-1"p>><"row"<"col-12"rt>><"clear">',
         language: {
             search: "_INPUT_",
             searchPlaceholder: "Search...",
