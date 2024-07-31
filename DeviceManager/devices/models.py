@@ -157,7 +157,7 @@ class Device(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
-    serial_number = models.CharField(max_length=50,unique=True)
+    serial_number = models.CharField(max_length=25,unique=True)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='owned_devices')
 
     inventory = models.ForeignKey(Inventory, on_delete=models.SET_NULL, null=True, blank=True)  # New field
@@ -176,6 +176,11 @@ class Device(models.Model):
 
     created_at = models.DateTimeField(default=datetime.datetime.now)
     updated_at = models.DateTimeField(default=datetime.datetime.now)
+
+    is_active = models.BooleanField(default=True)
+    deactivation_date = models.DateTimeField(null=True, blank=True)
+    deactivation_change = models.ForeignKey('InventoryChange', null=True, blank=True, on_delete=models.SET_NULL, related_name='deactivated_device')
+
 
     def __str__(self):
         return f"{self.id} - {self.name} - {self.serial_number}"
@@ -215,21 +220,29 @@ class Device(models.Model):
             status__in=['ACTIVE', 'PAUSED']
         ).update(total_devices=models.F('total_devices') + (1 if is_new else 0))
 
+    def soft_delete(self, inventory_change):
+        Device.objects.filter(pk=self.pk).update(
+            is_active=False,
+            deactivation_date=timezone.now(),
+            deactivation_change=inventory_change
+        )
+
     def delete(self, *args, **kwargs):
-        InventoryChange.objects.create(
-            inventory=self.inventory,
+        inventory = self.inventory
+        inventory_change = InventoryChange.objects.create(
+            inventory=inventory,
             device=self,
             change_type='REMOVE',
             user=self.owner
         )
-        super().delete(*args, **kwargs)
+        self.soft_delete(inventory_change)
 
         # Update associated InventorizationList
         InventorizationList.objects.filter(
-            inventory=self.inventory, 
+            inventory=inventory, 
             status__in=['ACTIVE', 'PAUSED']
-        ).update(total_devices=models.F('total_devices') - 1)
-
+        ).update(total_devices=models.F('total_devices') - 1,total_scanned=models.F('total_scanned') - 1)
+        
     def generate_qr_code(self):
         qr = qrcode.QRCode(
             version=1,
@@ -332,7 +345,7 @@ class InventorizationList(models.Model):
             self.initialize_inventory_data()
 
     def initialize_inventory_data(self):
-        self.total_devices = Device.objects.filter(inventory=self.inventory).count()
+        self.total_devices = Device.objects.filter(inventory=self.inventory,is_active=True).count()
         self.total_scanned = 0
         self.save(update_fields=['total_devices', 'total_scanned'])
 
@@ -349,10 +362,6 @@ class InventorizationList(models.Model):
             self.total_scanned += 1
             self.save(update_fields=['total_scanned'])
 
-        if self.total_scanned == self.total_devices:
-            self.status = 'COMPLETED'
-            self.end_date = datetime.datetime.now()
-            self.save(update_fields=['status'])
 
     def end_inventory_list(self):
         self.status = 'COMPLETED'
@@ -364,22 +373,39 @@ class InventorizationList(models.Model):
         self.status = 'COMPLETED'
         self.end_date = timezone.now()
 
-        devices = Device.objects.filter(inventory=self.inventory).select_related(
+        devices = Device.objects.filter(inventory=self.inventory,is_active=True).select_related(
             'category', 'subcategory', 'owner', 'room__building', 'room__floor'
         )        
-        device_scans = DeviceScan.objects.filter(inventory_list=self)
+        device_scans = DeviceScan.objects.filter(inventory_list=self, device__is_active=True)
 
+        # Get all the changes since the last completed inventorization
+        last_completed = InventorizationList.objects.filter(
+            inventory=self.inventory,
+            status='COMPLETED',
+            end_date__lt=self.start_date
+        ).order_by('-end_date').first()
+
+        start_date = last_completed.end_date if last_completed else self.inventory.created_at
+
+        changes = [self.change_to_dict(change) for change in InventoryChange.objects.filter(
+            inventory=self.inventory,
+            timestamp__gte=start_date,
+            timestamp__lte=self.end_date
+        ).select_related('device', 'user')]
+        
         inventory_data = {
             'inventorization_id': self.id,
+            'creator': self.creator.username,
+            'inventory': self.inventory.name,
+            'building': self.building.name,
             'start_date': self.start_date.isoformat(),
             'end_date': self.end_date.isoformat(),
+            'status': self.status,
+            'total_devices': self.total_devices,
+            'total_scanned': self.total_scanned,
             'devices': [self.device_to_dict(device) for device in devices],
             'device_scans': [self.device_scan_to_dict(scan) for scan in device_scans],
-            'changes': [self.change_to_dict(change) for change in InventoryChange.objects.filter(
-                inventory=self.inventory,
-                timestamp__gte=self.start_date,
-                timestamp__lte=self.end_date
-            )],
+            'changes': changes,
         }
 
         file_name = f'inventorization_{self.id}.json'
@@ -437,7 +463,7 @@ class InventorizationList(models.Model):
         return {
             'id': scan.id,
             'device_id': scan.device.id,
-            'timestamp': scan.timestamp.isoformat(),
+            'scanned_at': scan.scanned_at.isoformat(),
             'user': scan.user.username if scan.user else None,
         }
     
@@ -449,7 +475,7 @@ class DeviceScan(models.Model):
     inventory_list = models.ForeignKey(InventorizationList, on_delete=models.CASCADE)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     scanned_at = models.DateTimeField(auto_now_add=True)
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     class Meta:
         unique_together = ('inventory_list', 'device')
 

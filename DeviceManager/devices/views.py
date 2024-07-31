@@ -364,9 +364,12 @@ class InventoryManagementView(BaseContextMixin,LoginRequiredMixin, TemplateView)
     def get_context_data(self, **kwargs):
         inventory_id = self.kwargs.get('pk')
         inventory = Inventory.objects.get(id=inventory_id)
-        print(inventory)
-        inventory_device_list = Device.objects.filter(inventory__id=inventory_id)
+        inventory_device_list = Device.objects.filter(inventory__id=inventory_id,is_active=True)
 
+        # Get statistics for inventorization lists
+        total_lists = InventorizationList.objects.filter(inventory=inventory).count()
+        completed_lists = InventorizationList.objects.filter(inventory=inventory, status='COMPLETED').count()
+        
         # Get the latest inventory_change timestamp for the current inventory
         last_updated = InventoryChange.objects.filter(inventory_id=inventory_id).aggregate(Max('timestamp'))['timestamp__max']
 
@@ -379,6 +382,8 @@ class InventoryManagementView(BaseContextMixin,LoginRequiredMixin, TemplateView)
         context.update({
             'inventory': inventory,
             'inventorization_lists': InventorizationList.objects.all().order_by('-start_date'),
+            'total_lists': total_lists,
+            'completed_lists': completed_lists,
             'devices': inventory_device_list,
             'total_devices': total_devices,
             'rooms': rooms,
@@ -428,7 +433,7 @@ class InventorizationListDetailView(BaseContextMixin,LoginRequiredMixin,DetailVi
                 context['qr_scan_message'] = self.request.session.pop('qr_scan_message')
             
             # Get devices and scanned devices based on the extracted device IDs
-            devices = Device.objects.filter(inventory=inventory)
+            devices = Device.objects.filter(inventory=inventory,is_active=True)
             
             scanned_devices = DeviceScan.objects.filter(inventory_list=inventory_list, device__in=devices)
             scanned_devices_set = set(scanned_devices.values_list('device_id', flat=True))
@@ -577,28 +582,28 @@ class DownloadQRCodeView(LoginRequiredMixin, View):
 def generate_inventory_report_view(request, inventory_id):
     inventory = get_object_or_404(InventorizationList, id=inventory_id)
     
-    # Check permissions here if needed
-    if request.user != inventory.creator and not request.user.is_staff:
-        return HttpResponseForbidden("You don't have permission to generate this report.")
-    
-    report_type = request.POST.get('report_type', 'pdf')
-    
-    if report_type == 'pdf':
-        report_file = generate_inventory_pdf_report(inventory)
-        if report_file is None:
-            return HttpResponseServerError("Failed to generate PDF report")
-        filename = f'inventory_report_{inventory_id}.pdf'
-        content_type = 'application/pdf'
-    elif report_type == 'excel':
-        report_file = generate_inventory_excel_report(inventory)
-        filename = f'inventory_report_{inventory_id}.xlsx'
-        content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    else:
-        return HttpResponseBadRequest("Invalid report type")
-    
-    # Return the file
-    return FileResponse(report_file, as_attachment=True, filename=filename, content_type=content_type)
+    if request.method == 'POST':
+        report_type = request.POST.get('report_type')
+        
+        if report_type == 'pdf':
+            report_file = generate_inventory_pdf_report(inventory)
+            filename = f'inventory_report_{inventory_id}.pdf'
+            content_type = 'application/pdf'
 
+        if report_type == 'excel':
+            filename = f'inventory_report_{inventory_id}.xlsx'
+            file_path = os.path.join(settings.MEDIA_ROOT, 'inventory_reports', filename)
+            
+            if os.path.exists(file_path):
+                response = FileResponse(open(file_path, 'rb'))
+                response['Content-Disposition'] = f'attachment; filename="{filename}"'
+                return response
+
+        response = FileResponse(report_file)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
+    return render(request, 'devices/inventory_detail.html', {'inventory': inventory})
 
 #Include only Next JS Related Imports
 from django.utils.safestring import mark_safe

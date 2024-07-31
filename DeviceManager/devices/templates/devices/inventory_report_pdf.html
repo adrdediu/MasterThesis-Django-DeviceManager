@@ -2,7 +2,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <title>Inventory Report - {{ inventory.id }}</title>
+        <title>Inventory Report - {{ inventory.inventorization_id }}</title>
         <style type="text/css">
             @page {
                 size: A4 portrait;
@@ -98,38 +98,37 @@
             }
             .col-id { width: 5%; }
             .col-name { width: 15%; }
-            .col-serial { width: 10%; }
+            .col-serial { width: 20%; }
             .col-category { width: 10%; }
             .col-subcategory { width: 10%; }
             .col-building { width: 20%; }
-            .col-floor { width: 5%; }
+            .col-floor { width: 10%; }
             .col-room { width: 10%; }
-            .col-status { width: 7%; }
-            .col-updated { width: 8%; }
+            .col-status { width: 15%; }
+
         </style>
     </head>
     <body>
-        <h1>Inventory Report - ID: {{ inventory.id }}</h1>
+        <h1>Inventory Report - ID: {{ inventory.inventorization_id }}</h1>
         
         <h2>General Information</h2>
         <table>
-            <tr><th>ID</th><td>{{ inventory.id }}</td></tr>
-            <tr><th>Creator</th><td>{{ inventory.creator.username }}</td></tr>
-            <tr><th>Building</th><td>{{ inventory.building.name }}</td></tr>
+            <tr><th>ID</th><td>{{ inventory.inventorization_id }}</td></tr>
+            <tr><th>Creator</th><td>{{ inventory.creator }}</td></tr>
+            <tr><th>Building</th><td>{{ inventory.building }}</td></tr>
             <tr><th>Start Date</th><td>{{ inventory.start_date }}</td></tr>
             <tr><th>End Date</th><td>{{ inventory.end_date|default:"Not ended" }}</td></tr>
-            <tr><th>Status</th><td class="status-{{ inventory.status|lower }}">{{ inventory.get_status_display }}</td></tr>
-            <tr><th>Scope</th><td>{{ inventory.get_scope_display }}</td></tr>
-            <tr><th>Total Devices</th><td>{{ total_devices }}</td></tr>
-            <tr><th>Scanned Devices</th><td>{{ total_scanned }} / {{ total_devices }}</td></tr>
+            <tr><th>Status</th><td class="status-{{ inventory.status|lower }}">{{ inventory.status }}</td></tr>
+            <tr><th>Total Devices</th><td>{{ inventory.total_devices }}</td></tr>
+            <tr><th>Scanned Devices</th><td>{{ inventory.total_scanned }} / {{ inventory.total_devices }}</td></tr>
         </table>
 
         <h3>Progress</h3>
         <div class="progress-bar" style="width: 100%; background-color: 
-            {% if total_scanned == 0 %}#e74c3c
-            {% elif total_scanned == total_devices %}#2ecc71
+            {% if inventory.total_scanned == 0 %}#e74c3c
+            {% elif inventory.total_scanned == inventory.total_devices %}#2ecc71
             {% else %}#f39c12{% endif %};">
-            {% widthratio total_scanned total_devices 100 %}%
+            {% widthratio inventory.total_scanned inventory.total_devices 100 %}%
         </div>
 
         <h2>Rooms and Devices</h2>
@@ -146,7 +145,7 @@
                 {% endif %}
             ">
                 <tr class="room-header">
-                    <th colspan="10">Room: {{ room_data.room.name }} - Scanned Devices: {{ room_data.scanned_devices|length }} / {{ room_data.devices|length }}</th>
+                    <th colspan="9">Room: {{ room_data.room.name }} - Scanned Devices: {{ room_data.scanned_devices|length }} / {{ room_data.devices|length }}</th>
                 </tr>
                 <tr>
                     <th class="col-id">ID</th>
@@ -158,7 +157,6 @@
                     <th class="col-floor">Floor</th>
                     <th class="col-room">Room</th>
                     <th class="col-status">Status</th>
-                    <th class="col-updated">Last Updated</th>
                 </tr>
                 {% for device in room_data.devices %}
                 <tr>
@@ -177,10 +175,27 @@
                             Not Scanned
                         {% endif %}
                     </td>
-                    <td class="col-updated">{{ device.updated_at|date:"Y-m-d H:i" }}</td>
                 </tr>
                 {% endfor %}
             </table>
         {% endfor %}
+
+        <h2>Changes</h2>
+        <table>
+            <tr>
+                <th>Device ID</th>
+                <th>Change Type</th>
+                <th>Timestamp</th>
+                <th>User</th>
+            </tr>
+            {% for change in inventory.changes %}
+            <tr>
+                <td>{{ change.device_id }}</td>
+                <td>{{ change.change_type }}</td>
+                <td>{{ change.timestamp }}</td>
+                <td>{{ change.user }}</td>
+            </tr>
+            {% endfor %}
+        </table>
     </body>
 </html>

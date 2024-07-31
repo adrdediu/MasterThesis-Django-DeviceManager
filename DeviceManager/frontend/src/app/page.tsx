@@ -44,6 +44,7 @@ export default function Home() {
         />
 
       </div>
+      <Link href="/dashboard">Dashboard</Link>
       <CustomLink href="/dashboard">Dashboard</CustomLink>
       <CustomLink href="/">Homepage</CustomLink>
 

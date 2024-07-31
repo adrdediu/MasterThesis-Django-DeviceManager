@@ -15,7 +15,7 @@
             <h3 class="mb-3">Device #{{ device.id }} - {{ device.name }}</h3>
             <div class="row">
                 <!-- First Column: General Information and Location -->
-                <div class="col-md-8">
+                <div class="col-md-7">
                     <!-- General Information Card -->
                     <div class="card mb-3">
                         <div class="card-header">
@@ -54,22 +54,38 @@
                 </div>
         
                 <!-- Second Column: Device Actions and QR Code -->
-                <div class="col-md-4">
+                <div class="col-md-5">
+                    <!-- Device Status Card -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h2 class="h5 mb-0">Device Status</h2>
+                        </div>
+                        <div class="card-body">
+                    {% if device.is_active %}
+                                <p><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+                        </div>
+                    </div>
                     <!-- Device Actions Card -->
                     <div class="card mb-3">
                         <div class="card-header">
                             <h2 class="h5 mb-0">Device Actions</h2>
                         </div>
                         <div class="card-body">
-                            <button class="btn btn-warning edit-device mb-2 w-100" data-device-id="{{ device.id }}">
-                                <i class="bi bi-pencil-fill"></i> Edit Device
-                            </button>
-                            <button class="btn btn-danger delete-device mb-2 w-100" data-device-id="{{ device.id }}">
-                                <i class="bi bi-trash-fill"></i> Delete Device
-                            </button>
+                            <div class="row">
+                                <div class="col">
+                                    <button class="btn btn-warning edit-device mb-2 w-100" data-device-id="{{ device.id }}">
+                                        <i class="bi bi-pencil-fill"></i> Edit Device
+                                    </button>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-danger delete-device mb-2 w-100" data-device-id="{{ device.id }}">
+                                        <i class="bi bi-trash-fill"></i> Delete Device
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-        
+                            
                     <!-- QR Code Card -->
                     <div class="card mb-3">
                         <div class="card-header">
@@ -96,6 +112,14 @@
                             {% endif %}
                         </div>
                     </div>
+                    {% else %}
+                            <p><strong>Status:</strong> <span class="badge bg-danger">Removed</span></p>
+                            <p><strong>Removal Date:</strong> {{ device.deactivation_date }}</p>
+                            <p><strong>Removed By:</strong> {{ device.deactivation_change.user.username }}</p>
+                            <p><strong>Removal Reason:</strong> {{ device.deactivation_change.get_change_type_display }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="d-lg-none mb-3 pb-5">

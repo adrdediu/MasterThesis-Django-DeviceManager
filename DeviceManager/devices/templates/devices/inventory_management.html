@@ -22,20 +22,14 @@
                             
                             
                             <div class="row mt-4">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="showCurrentInventory">
                                         <label class="form-check-label " for="showCurrentInventory">Current Inventory</label>
                                     </div>
                                 </div>
 
-                                <div class="col-md-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="showInventoryHistory">
-                                        <label class="form-check-label " for="showInventoryHistory">Inventory History</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="showInventorizationLists">
                                         <label class="form-check-label " for="showInventorizationLists">Inventorization Lists</label>
@@ -70,7 +64,7 @@
                         <div class="col-6 col-md-4 mb-1">
                             <div class="card pb-1">
                                 <div class="card-body ">
-                                    <h5 class="card-title">Total Devices</h5>
+                                    <h6 class="card-title">Total Devices</h6>
                                     <p class="card-text" id="totalDevices">{{ total_devices }}</p>
                                 </div>
                             </div>
@@ -78,7 +72,7 @@
                         <div class="col-6 col-md-4 mb-1">
                             <div class="card pb-1">
                                 <div class="card-body">
-                                    <h5 class="card-title">Last Updated</h5>
+                                    <h6 class="card-title">Last Updated</h6>
                                     <p class="card-text" id="lastUpdated">{{ last_updated }}</p>
                                 </div>
                             </div>
@@ -86,7 +80,7 @@
                         <div class="col-md-4 mb-1">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Actions</h5>
+                                    <h6 class="card-title">Actions</h6>
                                     <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
                                         <i class="bi bi-plugin me-2"></i> Add Device
                                     </button>
@@ -110,36 +104,44 @@
                     <h5 class="card-title mb-0">Inventorization Lists</h5>
                 </div>
                 <div class="card-body">
-                    <button id="startInventory" class="btn btn-primary mb-3" data-inventory-id="{{inventory.id}}">Start New Inventorization</button>
-                    
+                    <h5 class="mb-3">Statistics</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-2">
+                            <div class="card pb-1">
+                                <div class="card-body">
+                                    <h6 class="card-title">Total Lists</h6>
+                                    <p class="card-text" id="totalLists">{{ total_lists }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="card pb-1">
+                                <div class="card-body">
+                                    <h6 class="card-title">Completed Lists</h6>
+                                    <p class="card-text" id="completedLists">{{ completed_lists }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Actions</h6>
+                                    <button id="startInventory" class="btn btn-sm btn-primary" data-inventory-id="{{inventory.id}}">
+                                        <i class="bi bi-plus-circle me-2"></i>Start New Inventorization
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr> 
                     <div class="table-responsive">
+                        <h5 class="mb-3">Lists</h5>
                         {% include 'devices/inventorization_list_table.html' %}
                     </div>
                 </div>
             </div>
 
-            <div id="inventoryHistoryCard" class="card card-shadow mb-4" data-bs-theme="dark">
-                <div class="card-header bg-black text-white bg-info ">
-                    <h5 class="card-title mb-0">Inventory History</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="historyTable" class="table table-hover table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Action</th>
-                                    <th>User</th>
-                                    <th>Details</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data will be populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -201,6 +203,23 @@
         </div>
     </div>
 </div>
+
+<!-- Add this modal for report type selection -->
+<div class="modal fade" id="reportTypeModal" tabindex="-1" aria-labelledby="reportTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportTypeModalLabel">Choose Report Type</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <button class="btn btn-primary generate-report-type" data-type="pdf">PDF</button>
+          <button class="btn btn-success generate-report-type" data-type="excel">Excel</button>
+        </div>
+      </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_css %}

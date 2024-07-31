@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const showCurrentInventory = document.getElementById('showCurrentInventory');
     const showInventorizationLists = document.getElementById('showInventorizationLists');
-    const showInventoryHistory = document.getElementById('showInventoryHistory');
     const saveDisplayPreferences = document.getElementById('saveDisplayPreferences');
 
     // Load saved preferences
@@ -11,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Toggle visibility
     showCurrentInventory.addEventListener('change', () => toggleVisibility('currentInventoryCard', showCurrentInventory.checked));
     showInventorizationLists.addEventListener('change', () => toggleVisibility('inventorizationListsCard', showInventorizationLists.checked));
-    showInventoryHistory.addEventListener('change', () => toggleVisibility('inventoryHistoryCard', showInventoryHistory.checked));
 
     // Save preferences
     saveDisplayPreferences.addEventListener('click', savePreferences);
@@ -23,18 +21,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function savePreferences() {
         localStorage.setItem('showCurrentInventory', showCurrentInventory.checked);
         localStorage.setItem('showInventorizationLists', showInventorizationLists.checked);
-        localStorage.setItem('showInventoryHistory', showInventoryHistory.checked);
-        alert('Display preferences saved!');
+        showAlert('Display preferences saved!', 'success');
     }
 
     function loadDisplayPreferences() {
         showCurrentInventory.checked = localStorage.getItem('showCurrentInventory') !== 'false';
         showInventorizationLists.checked = localStorage.getItem('showInventorizationLists') !== 'false';
-        showInventoryHistory.checked = localStorage.getItem('showInventoryHistory') !== 'false';
 
         toggleVisibility('currentInventoryCard', showCurrentInventory.checked);
         toggleVisibility('inventorizationListsCard', showInventorizationLists.checked);
-        toggleVisibility('inventoryHistoryCard', showInventoryHistory.checked);
     }
 
 
@@ -201,25 +196,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function generateReport(inventoryId) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/api/inventory/${inventoryId}/generate-report/`;
-        
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = 'csrfmiddlewaretoken';
-        csrfInput.value = getCookie('csrftoken');
-        form.appendChild(csrfInput);
-
-        const typeInput = document.createElement('input');
-        typeInput.type = 'hidden';
-        typeInput.name = 'report_type';
-        typeInput.value = 'pdf'; // You can change this to 'excel' if needed
-
-        document.body.appendChild(form);
-        form.submit();
-        document.body.removeChild(form);
+        const modal = new bootstrap.Modal(document.getElementById('reportTypeModal'));
+        modal.show();
+    
+        document.querySelectorAll('.generate-report-type').forEach(btn => {
+            btn.onclick = function() {
+                const reportType = this.getAttribute('data-type');
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/api/inventory/${inventoryId}/generate-report/`;
+                
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = getCookie('csrftoken');
+                form.appendChild(csrfInput);
+    
+                const typeInput = document.createElement('input');
+                typeInput.type = 'hidden';
+                typeInput.name = 'report_type';
+                typeInput.value = reportType;
+                form.appendChild(typeInput);
+    
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+                modal.hide();
+            };
+        });
     }
+    
 
   
     // Helper function to get CSRF token
