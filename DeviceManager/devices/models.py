@@ -193,7 +193,6 @@ class Device(models.Model):
     
     def save(self, *args, **kwargs):
         is_new = self.pk is None
-        print(is_new)
         super().save(*args, **kwargs)
 
         if is_new:

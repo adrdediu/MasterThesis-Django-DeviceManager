@@ -57,9 +57,21 @@ def check_device(device, endpoint):
         return device, False, f"Error connecting to device {device.name}: {str(e)}"
 
 class Command(BaseCommand):
-    help = 'Checks all IoT devices in the database concurrently'
+    help = 'Continuously checks all IoT devices at one-minute intervals'
 
     def handle(self, *args, **options):
+        while True:
+            start_time = time.time()
+            
+            self.check_all_devices()
+            
+            elapsed_time = time.time() - start_time
+            sleep_time = max(60 - elapsed_time, 0)
+            
+            logger.info(f"Sleeping for {sleep_time:.2f} seconds")
+            time.sleep(sleep_time)
+
+    def check_all_devices(self):
         logger.info("Starting IoT device check")
         devices = IoTDevice.objects.all().prefetch_related('endpoints')
         logger.info(f"Found {devices.count()} devices to check")
@@ -81,9 +93,8 @@ class Command(BaseCommand):
                 else:
                     logger.error(message)
                 
-                device.is_online = is_online
-                device.last_checked = timezone.now()
-                device.save()
+                IoTDevice.objects.filter(pk=device.pk).update(is_online=is_online, last_checked=timezone.now())
+
                 logger.info(f"Updated status for device {device.name} (ID: {device.id}): is_online={is_online}, last_checked={device.last_checked}")
 
         logger.info("Finished checking all devices")
