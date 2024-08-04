@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-u9gl0p-!@rtc#&q_ihmpbml6lj$0r^mrlc-833z5)*8vte)l!x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.105','127.0.0.1','192.168.214.7','192.168.80.132', 'localhost','192.168.0.141','192.168.220.7','192.168.199.7','192.168.193.7','192.168.50.7']
+ALLOWED_HOSTS = ['192.168.0.109','127.0.0.1','192.168.214.7','192.168.80.132', 'localhost','192.168.0.141','192.168.220.7','192.168.199.7','192.168.193.7','192.168.50.7']
 
 
 SITE_ID = 1  # You can choose any positive integer as the site ID
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'devices',
     'rest_framework',
+    'django_sse',
     
 ]
 
@@ -155,3 +156,29 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'iot_device_checks.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'iot_device_checker': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

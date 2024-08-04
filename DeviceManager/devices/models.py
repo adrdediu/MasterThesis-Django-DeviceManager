@@ -480,3 +480,40 @@ class DeviceScan(models.Model):
         unique_together = ('inventory_list', 'device')
 
 
+
+class IoTDevice(Device):
+    ip_address = models.GenericIPAddressField()
+    last_checked = models.DateTimeField(null=True, blank=True)
+    is_online = models.BooleanField(default=False)
+    token = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"IoT Device: {self.name}"
+
+class IoTDeviceEndpoint(models.Model):
+    device = models.ForeignKey(IoTDevice, on_delete=models.CASCADE, related_name='endpoints')
+    name = models.CharField(max_length=100)
+    url = models.CharField(max_length=255)
+    method = models.CharField(max_length=10, default='GET')
+
+    def __str__(self):
+        return f"{self.device.name} - {self.name}"
+
+    class Meta:
+        unique_together = ['device', 'name']
+
+class IoTDeviceResponse(models.Model):
+    device = models.ForeignKey(IoTDevice, on_delete=models.CASCADE, related_name='responses')
+    endpoint = models.ForeignKey(IoTDeviceEndpoint, on_delete=models.SET_NULL, null=True, related_name='responses')
+    timestamp = models.DateTimeField(auto_now_add=True)
+    status_code = models.IntegerField()
+    response_time = models.FloatField()  # in seconds
+    response_data = models.JSONField(null=True, blank=True)
+    error_message = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.device.name} - {self.endpoint.name if self.endpoint else 'Unknown'} response at {self.timestamp}"
+
+    class Meta:
+        ordering = ['-timestamp']
+

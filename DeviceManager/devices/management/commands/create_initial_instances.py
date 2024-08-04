@@ -55,6 +55,9 @@ class Command(BaseCommand):
             {'id': 52, 'name': 'SSDs', 'category': Category.objects.get(id=5)},
             {'id': 53, 'name': 'NAS', 'category': Category.objects.get(id=5)},
 
+            # Other
+            {'id': 61, 'name': 'Other', 'category': Category.objects.get(id=6)},
+
         ]
 
         self.create_instances(Subcategory, subcategories_data)
