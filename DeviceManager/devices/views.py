@@ -12,7 +12,7 @@ from django.contrib.auth.views import LoginView,LogoutView
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from .forms import LoginForm
 from django.views.generic import DetailView, TemplateView
-from .models import Device,Floor, Inventory, InventoryChange,Room,Building,Subcategory,Category
+from .models import Device,Floor, Inventory, InventoryChange, IoTDevice,Room,Building,Subcategory,Category
 from django.contrib import messages
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
@@ -460,6 +460,11 @@ class DeviceDetailView(BaseContextMixin,LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(self.get_base_context())
+        
+        iot_device = IoTDevice.objects.filter(device=self.object).first()
+
+        context['iot_device'] = iot_device
+        
         return context
 
     def get(self, request, *args, **kwargs):

@@ -480,14 +480,16 @@ class DeviceScan(models.Model):
 
 
 
-class IoTDevice(Device):
+class IoTDevice(models.Model):
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='iot_device',blank=True,null=True)
     ip_address = models.GenericIPAddressField()
     last_checked = models.DateTimeField(null=True, blank=True)
     is_online = models.BooleanField(default=False)
     token = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"IoT Device: {self.name}"
+        return f"IoT Device: {self.device.name}"
+
 
 class IoTDeviceEndpoint(models.Model):
     device = models.ForeignKey(IoTDevice, on_delete=models.CASCADE, related_name='endpoints')
@@ -496,23 +498,22 @@ class IoTDeviceEndpoint(models.Model):
     method = models.CharField(max_length=10, default='GET')
 
     def __str__(self):
-        return f"{self.device.name} - {self.name}"
+        return f"{self.device} - {self.name}"
 
     class Meta:
         unique_together = ['device', 'name']
 
 class IoTDeviceResponse(models.Model):
     device = models.ForeignKey(IoTDevice, on_delete=models.CASCADE, related_name='responses')
-    endpoint = models.ForeignKey(IoTDeviceEndpoint, on_delete=models.SET_NULL, null=True, related_name='responses')
-    timestamp = models.DateTimeField(auto_now_add=True)
-    status_code = models.IntegerField()
-    response_time = models.FloatField()  # in seconds
-    response_data = models.JSONField(null=True, blank=True)
-    error_message = models.TextField(null=True, blank=True)
+    endpoint = models.ForeignKey(IoTDeviceEndpoint, on_delete=models.CASCADE, related_name='responses')
+    is_success = models.BooleanField(default=True)
+    last_status_code = models.IntegerField()
+    last_checked = models.DateTimeField(auto_now=True)
+    response_time = models.FloatField(default=0)  # in seconds
+    response_file = models.FileField(upload_to='iot_responses/', null=True, blank=True)
 
     def __str__(self):
-        return f"{self.device.name} - {self.endpoint.name if self.endpoint else 'Unknown'} response at {self.timestamp}"
+        return f"{self.device.name} - {self.endpoint.name} - {'Success' if self.is_success else 'Other'} Response"
 
     class Meta:
-        ordering = ['-timestamp']
-
+        unique_together = ['device', 'endpoint', 'is_success']

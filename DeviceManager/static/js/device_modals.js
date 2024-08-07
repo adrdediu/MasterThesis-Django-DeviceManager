@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+
     // Add Device form submission
     const addDeviceForm = document.getElementById('addDeviceForm');
     if (addDeviceForm) {
@@ -77,8 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
         if (data.success) {
             window.editingDevice = data.device;
-            populateEditForm(data.device);
+        
             var editDeviceModal = new bootstrap.Modal(document.getElementById('editDeviceModal'));
+            populateEditForm(window.editingDevice);
             editDeviceModal.show();
         } else {
             Swal.fire('Error', data.message || 'Failed to load device data', 'error');
@@ -116,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateOptions(selectId, parentAttribute, parentValue) {
         const select = document.getElementById(selectId);
         Array.from(select.options).forEach(option => {
+            
             if (option.dataset[parentAttribute] === parentValue.toString()) {
                 option.style.display = '';
             } else {
@@ -171,9 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-
-
 
     // Delete Device
     document.querySelectorAll('.delete-device').forEach(btn => {
@@ -234,6 +234,88 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+
+
+
+    //////////////// QR Code Generation //////////////
+        // QR Code regeneration
+        var regenerateButton = document.getElementById('regenerateQRCode');
+
+        function handleQRCodeGeneration(action,deviceId) {
+            fetch(`/api/device/${deviceId}/qrcode/${action}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlertAndReload('QR code successfully '+ action + 'd!','success');
+                } else {
+                    showAlert('Failed to ' + action + ' QR code: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An error occurred while ' + action + 'ing the QR code', 'error');
+            });
+        }
+    
+        if (regenerateButton) {
+            regenerateButton.addEventListener('click', function() {
+                const deviceId = this.getAttribute("data-device-id");
+                showConfirmation('Regenerate QR Code', 'Are you sure you want to regenerate the QR code?', 'Yes, regenerate it', 'Cancel')
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        handleQRCodeGeneration('regenerate',deviceId);
+                    }
+                });
+            });
+        }
+    
+    
+        // Add event listener for the download QR code button
+        const downloadQRCodeBtn = document.getElementById('downloadQRCodeBtn');
+        if (downloadQRCodeBtn) {
+          downloadQRCodeBtn.addEventListener('click', function(event) {
+              event.preventDefault();
+              
+              showConfirmation('Download QR Code', 'Are you sure you want to download the QR code?', 'Yes, download it', 'Cancel')
+              .then((result) => {
+                  if (result.isConfirmed) {
+                      showAlert('Preparing QR code for download...', 'info');
+                      
+                      fetch(this.href)
+                          .then(response => {
+                              if (response.ok) {
+                                  // Trigger the download
+                                  window.location.href = this.href;
+                                  showAlert('QR code downloaded successfully!', 'success');
+                              } else {
+                                  return response.json().then(data => {
+                                      throw new Error(data.error || 'Unknown error occurred');
+                                  });
+                              }
+                          })
+                          .catch(error => {
+                              console.error('Error:', error);
+                              if (error.message === 'Device not found') {
+                                  showAlert('Device not found. Please check if the device exists.', 'error');
+                              } else if (error.message === 'Failed to fetch QR code image') {
+                                  showAlert('Failed to download QR code. Please regenerate it.', 'error');
+                              } else {
+                                  showAlert('An unexpected error occurred. Please try again later.', 'error');
+                              }
+                          });
+                  }
+              });
+          });
+      }
+    
+    
     
     
     // Function to get CSRF token

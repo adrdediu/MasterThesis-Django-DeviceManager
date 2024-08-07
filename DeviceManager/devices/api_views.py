@@ -148,7 +148,7 @@ def cancel_inventory(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
     
-@login_required
+@login_required(login_url='login')
 @require_POST
 def qrcode_action(request, device_id, action):
     try:
@@ -163,3 +163,111 @@ def qrcode_action(request, device_id, action):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
     
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from .models import Device, IoTDevice, IoTDeviceEndpoint
+
+@login_required(login_url='login')
+@require_http_methods(["GET"])
+def get_iot_settings(request, device_id):
+    try:
+        device = Device.objects.get(id=device_id)
+        iot_device = IoTDevice.objects.get(device=device)
+        
+        endpoints = [
+            {
+                'name': endpoint.name,
+                'url': endpoint.url
+            }
+            for endpoint in IoTDeviceEndpoint.objects.filter(device=iot_device)
+        ]
+        
+        return JsonResponse({
+            'success': True,
+            'ipAddress': iot_device.ip_address,
+            'token': iot_device.token,
+            'endpoints': endpoints
+        })
+    except (Device.DoesNotExist, IoTDevice.DoesNotExist):
+        return JsonResponse({
+            'success': False,
+            'error': 'IoT device not found'
+        }, status=404)
+
+@login_required(login_url='login')
+@require_http_methods(["POST"])
+def remove_iot_features(request):
+    data = json.loads(request.body)
+    device_id = data.get('deviceId')
+
+    try:
+        device = Device.objects.get(id=device_id)
+        iot_device = IoTDevice.objects.get(device=device)
+        
+        IoTDeviceEndpoint.objects.filter(device=iot_device).delete()
+        iot_device.delete()
+
+        return JsonResponse({'success': True})
+    except (Device.DoesNotExist, IoTDevice.DoesNotExist):
+        return JsonResponse({'success': False, 'error': 'IoT device not found'}, status=404)
+    
+@login_required
+@require_http_methods(["POST"])
+def activate_iot_features(request):
+    data = json.loads(request.body)
+    device_id = data.get('deviceId')
+    ip_address = data.get('ipAddress')
+    token = data.get('token')
+
+    try:
+        device = Device.objects.get(id=device_id)
+        iot_device, created = IoTDevice.objects.get_or_create(
+            device=device,
+            defaults={'ip_address': ip_address, 'token': token}
+        )
+        if not created:
+            iot_device.ip_address = ip_address
+            iot_device.token = token
+            iot_device.save()
+
+        # Create default 'status' endpoint
+        IoTDeviceEndpoint.objects.get_or_create(
+            device=iot_device,
+            name='status',
+            defaults={'url': f'http://{ip_address}/status'}
+        )
+
+        return JsonResponse({'success': True})
+    except Device.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Device not found'}, status=404)
+
+@require_http_methods(["POST"])
+@login_required
+def update_iot_settings(request):
+    data = json.loads(request.body)
+    device_id = data.get('deviceId')
+    ip_address = data.get('ipAddress')
+    token = data.get('token')
+    endpoints = data.get('endpoints', [])
+    print(endpoints)
+
+    try:
+        device = Device.objects.get(id=device_id)
+        iot_device = IoTDevice.objects.get(device=device)
+        
+        iot_device.ip_address = ip_address
+        iot_device.token = token
+        iot_device.save()
+
+        IoTDeviceEndpoint.objects.filter(device=iot_device).delete()
+        for endpoint in endpoints:
+            IoTDeviceEndpoint.objects.create(
+                device=iot_device,
+                name=endpoint['name'],
+                url=endpoint['url']
+            )
+
+        return JsonResponse({'success': True})
+    except (Device.DoesNotExist, IoTDevice.DoesNotExist):
+        return JsonResponse({'success': False, 'error': 'IoT device not found'}, status=404)

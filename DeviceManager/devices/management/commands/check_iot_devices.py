@@ -10,17 +10,17 @@ logger = logging.getLogger('iot_device_checker')
 import time
 import requests
 
-def check_device(device, endpoint):
-    logger.info(f"Checking device: {device.name} (ID: {device.id}) using endpoint: {endpoint.name}")
+def check_device(iotDevice, endpoint):
+    logger.info(f"Checking device: {iotDevice.device.name} (ID: {iotDevice.id}) using endpoint: {endpoint.name}")
     start_time = time.time()
     try:
         headers = {
-            'Authorization': f'Token {device.token}',
-            'X-IoTDeviceToken': device.token
+            'Authorization': f'Token {iotDevice.token}',
+            'X-IoTDeviceToken': iotDevice.token
         }
         response = requests.request(
             method=endpoint.method,
-            url=f"http://{device.ip_address}{endpoint.url}?token={device.token}",
+            url=f"http://{iotDevice.ip_address}{endpoint.url}?token={iotDevice.token}",
             headers=headers,
             timeout=5
         )
@@ -28,7 +28,7 @@ def check_device(device, endpoint):
         response_time = time.time() - start_time
         
         IoTDeviceResponse.objects.create(
-            device=device,
+            device=iotDevice,
             endpoint=endpoint,
             status_code=response.status_code,
             response_time=response_time,
@@ -37,24 +37,24 @@ def check_device(device, endpoint):
         )
         
         if response.status_code == 200:
-            logger.info(f"Device {device.name} (ID: {device.id}) is online. Response time: {response_time:.2f}s")
-            return device, True, f"Device {device.name} is online"
+            logger.info(f"Device {iotDevice.device.name} (ID: {iotDevice.id}) is online. Response time: {response_time:.2f}s")
+            return iotDevice, True, f"Device {iotDevice.device.name} is online"
         else:
-            logger.warning(f"Device {device.name} (ID: {device.id}) returned status code: {response.status_code}")
-            return device, False, f"Device {device.name} returned status code: {response.status_code}"
+            logger.warning(f"Device {iotDevice.device.name} (ID: {iotDevice.id}) returned status code: {response.status_code}")
+            return iotDevice, False, f"Device {iotDevice.device.name} returned status code: {response.status_code}"
     
     except requests.RequestException as e:
         response_time = time.time() - start_time
-        logger.error(f"Error connecting to device {device.name} (ID: {device.id}): {str(e)}")
+        logger.error(f"Error connecting to device {iotDevice.device.name} (ID: {iotDevice.id}): {str(e)}")
         IoTDeviceResponse.objects.create(
-            device=device,
+            device=iotDevice,
             endpoint=endpoint,
             status_code=0,
             response_time=response_time,
             response_data=None,
             error_message=str(e)
         )
-        return device, False, f"Error connecting to device {device.name}: {str(e)}"
+        return iotDevice, False, f"Error connecting to device {iotDevice.device.name}: {str(e)}"
 
 class Command(BaseCommand):
     help = 'Continuously checks all IoT devices at one-minute intervals'
@@ -65,36 +65,37 @@ class Command(BaseCommand):
             
             self.check_all_devices()
             
+
             elapsed_time = time.time() - start_time
-            sleep_time = max(60 - elapsed_time, 0)
-            
+            sleep_time = max(1 - elapsed_time, 0)
+
             logger.info(f"Sleeping for {sleep_time:.2f} seconds")
             time.sleep(sleep_time)
 
     def check_all_devices(self):
         logger.info("Starting IoT device check")
-        devices = IoTDevice.objects.all().prefetch_related('endpoints')
-        logger.info(f"Found {devices.count()} devices to check")
+        iotDevices = IoTDevice.objects.all().prefetch_related('endpoints')
+        logger.info(f"Found {iotDevices.count()} iotDevices to check")
         
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             futures = []
-            for device in devices:
-                status_endpoint = device.endpoints.filter(name='status').first()
+            for iotDevice in iotDevices:
+                status_endpoint = iotDevice.endpoints.filter(name='status').first()
                 if status_endpoint:
-                    futures.append(executor.submit(check_device, device, status_endpoint))
+                    futures.append(executor.submit(check_device, iotDevice, status_endpoint))
                 else:
-                    logger.warning(f"No status endpoint found for device {device.name} (ID: {device.id})")
+                    logger.warning(f"No status endpoint found for iotDevice {iotDevice.device.name} (ID: {iotDevice.id})")
             
             for future in concurrent.futures.as_completed(futures):
-                device, is_online, message = future.result()
+                iotDevice, is_online, message = future.result()
                 
                 if is_online:
                     logger.info(message)
                 else:
                     logger.error(message)
                 
-                IoTDevice.objects.filter(pk=device.pk).update(is_online=is_online, last_checked=timezone.now())
+                IoTDevice.objects.filter(pk=iotDevice.pk).update(is_online=is_online, last_checked=timezone.now())
 
-                logger.info(f"Updated status for device {device.name} (ID: {device.id}): is_online={is_online}, last_checked={device.last_checked}")
+                logger.info(f"Updated status for device {iotDevice.device.name} (ID: {iotDevice.id}): is_online={is_online}, last_checked={iotDevice.last_checked}")
 
         logger.info("Finished checking all devices")

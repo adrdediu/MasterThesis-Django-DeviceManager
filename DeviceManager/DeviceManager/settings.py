@@ -31,13 +31,15 @@ SECRET_KEY = 'django-insecure-u9gl0p-!@rtc#&q_ihmpbml6lj$0r^mrlc-833z5)*8vte)l!x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.109','127.0.0.1','192.168.214.7','192.168.80.132', 'localhost','192.168.0.141','192.168.220.7','192.168.199.7','192.168.193.7','192.168.50.7']
+ALLOWED_HOSTS = ['192.168.0.103','127.0.0.1','192.168.214.7','192.168.80.132', 'localhost','192.168.0.141','192.168.220.7','192.168.199.7','192.168.193.7','192.168.50.7']
 
 
 SITE_ID = 1  # You can choose any positive integer as the site ID
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 # Application definition
+
+MIGRATE = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
