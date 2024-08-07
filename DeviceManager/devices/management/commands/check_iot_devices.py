@@ -1,18 +1,44 @@
 import concurrent.futures
+import time
 import requests
 import logging
+import json
+import os
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from devices.models import IoTDevice, IoTDeviceEndpoint,IoTDeviceResponse
+from django.conf import settings
+from devices.models import IoTDevice, IoTDeviceEndpoint, IoTDeviceResponse
 
 logger = logging.getLogger('iot_device_checker')
 
-import time
-import requests
+def save_response_to_json(device_id, endpoint_name, status, response_data):
+    directory = os.path.join(settings.MEDIA_ROOT, 'iot_responses')
+    os.makedirs(directory, exist_ok=True)
+    
+    filename = f"{device_id}_{endpoint_name}_{status}.json"
+    filepath = os.path.join(directory, filename)
+
+    new_entry = {
+        'timestamp': timezone.now().isoformat(),
+        'data': response_data
+    }
+    
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as f:
+            existing_data = json.load(f)
+    else:
+        existing_data = {'responses': []}
+    
+    existing_data['responses'].append(new_entry)
+    
+    with open(filepath, 'w') as f:
+        json.dump(existing_data, f, indent=2)
+    
+    return filepath
 
 def check_device(iotDevice, endpoint):
     logger.info(f"Checking device: {iotDevice.device.name} (ID: {iotDevice.id}) using endpoint: {endpoint.name}")
-    start_time = time.time()
+    start_time = timezone.now()
     try:
         headers = {
             'Authorization': f'Token {iotDevice.token}',
@@ -20,20 +46,34 @@ def check_device(iotDevice, endpoint):
         }
         response = requests.request(
             method=endpoint.method,
-            url=f"http://{iotDevice.ip_address}{endpoint.url}?token={iotDevice.token}",
+            url=f"http://{iotDevice.ip_address}/{endpoint.url}?token={iotDevice.token}",
             headers=headers,
             timeout=5
         )
         
-        response_time = time.time() - start_time
+        end_time = timezone.now()
+        response_time = (end_time - start_time).total_seconds()
         
-        IoTDeviceResponse.objects.create(
+        if response.status_code == 200:
+            status = '200'
+            response_data = response.json()
+        else:
+            status = 'other'
+            response_data = response.text
+
+        last_checked = timezone.now()
+        file_path = save_response_to_json(iotDevice.id, endpoint.name, status, response_data)
+        
+        IoTDeviceResponse.objects.update_or_create(
             device=iotDevice,
             endpoint=endpoint,
-            status_code=response.status_code,
-            response_time=response_time,
-            response_data=response.json() if response.status_code == 200 else None,
-            error_message=None if response.status_code == 200 else response.text
+            last_status_code=response.status_code,
+            defaults={
+                'response_time': response_time,
+                'response_file': file_path,
+                'is_success': response.status_code == 200,
+                'last_checked': last_checked,
+            }
         )
         
         if response.status_code == 200:
@@ -44,15 +84,21 @@ def check_device(iotDevice, endpoint):
             return iotDevice, False, f"Device {iotDevice.device.name} returned status code: {response.status_code}"
     
     except requests.RequestException as e:
-        response_time = time.time() - start_time
+        end_time = timezone.now()
+        response_time = (end_time - start_time).total_seconds()
+        last_checked = timezone.now()
         logger.error(f"Error connecting to device {iotDevice.device.name} (ID: {iotDevice.id}): {str(e)}")
-        IoTDeviceResponse.objects.create(
+        file_path = save_response_to_json(iotDevice.id, endpoint.name, 'error', str(e))
+        IoTDeviceResponse.objects.update_or_create(
             device=iotDevice,
             endpoint=endpoint,
-            status_code=0,
-            response_time=response_time,
-            response_data=None,
-            error_message=str(e)
+            last_status_code=0,
+            defaults={
+                'response_time': response_time,
+                'response_file': file_path,
+                'is_success': False,
+                'last_checked': last_checked,
+            }
         )
         return iotDevice, False, f"Error connecting to device {iotDevice.device.name}: {str(e)}"
 
@@ -61,13 +107,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         while True:
-            start_time = time.time()
+            start_time = timezone.now()
             
             self.check_all_devices()
             
-
-            elapsed_time = time.time() - start_time
-            sleep_time = max(1 - elapsed_time, 0)
+            elapsed_time = (timezone.now() - start_time).total_seconds()
+            sleep_time = max(5 - elapsed_time, 0)
 
             logger.info(f"Sleeping for {sleep_time:.2f} seconds")
             time.sleep(sleep_time)

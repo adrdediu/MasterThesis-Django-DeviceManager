@@ -508,12 +508,11 @@ class IoTDeviceResponse(models.Model):
     endpoint = models.ForeignKey(IoTDeviceEndpoint, on_delete=models.CASCADE, related_name='responses')
     is_success = models.BooleanField(default=True)
     last_status_code = models.IntegerField()
-    last_checked = models.DateTimeField(auto_now=True)
+    last_checked = models.DateTimeField(null=True, blank=True)
     response_time = models.FloatField(default=0)  # in seconds
-    response_file = models.FileField(upload_to='iot_responses/', null=True, blank=True)
-
+    response_file = models.FileField(upload_to='iot_responses/', null=True, blank=True, max_length=255)
     def __str__(self):
-        return f"{self.device.name} - {self.endpoint.name} - {'Success' if self.is_success else 'Other'} Response"
+        return f"{self.device.device.name} - {self.endpoint.name} - {'Success' if self.is_success else 'Other'} Response"
 
     class Meta:
         unique_together = ['device', 'endpoint', 'is_success']

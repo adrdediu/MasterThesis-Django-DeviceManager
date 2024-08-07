@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const isOnline = data.status_code >= 200 && data.status_code < 300;
         document.getElementById('iotDeviceStatus').className = isOnline ? 'badge bg-success' : 'badge bg-danger';
         document.getElementById('iotDeviceStatus').innerHTML = `<i class="bi bi-circle-fill me-1"></i> ${isOnline ? 'Online' : 'Offline'}`;
-
+        console.log(data.time_elapsed)
         const lastResponseElement = document.querySelector('#iotDeviceStatus + div small');
         if (lastResponseElement) {
             lastResponseElement.innerHTML = `<i class="bi bi-clock"></i> Last response: ${formatTimeElapsed(data.time_elapsed)} ago`;
