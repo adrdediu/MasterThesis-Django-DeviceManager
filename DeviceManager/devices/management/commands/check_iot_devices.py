@@ -12,27 +12,28 @@ from devices.models import IoTDevice, IoTDeviceEndpoint, IoTDeviceResponse
 logger = logging.getLogger('iot_device_checker')
 
 def save_response_to_json(device_id, endpoint_name, status, response_data):
-    directory = os.path.join(settings.MEDIA_ROOT, 'iot_responses')
+    directory = f"media/iot_responses"
     os.makedirs(directory, exist_ok=True)
     
     filename = f"{device_id}_{endpoint_name}_{status}.json"
-    filepath = os.path.join(directory, filename)
+    filepath = f"iot_responses/{filename}"
+    media_path = f"media/{filepath}"
 
     new_entry = {
         'timestamp': timezone.now().isoformat(),
         'data': response_data
     }
     
-    if os.path.exists(filepath):
-        with open(filepath, 'r') as f:
+    if os.path.exists(media_path):
+        with open(media_path, 'r') as f:
             existing_data = json.load(f)
     else:
         existing_data = {'responses': []}
-    
-    existing_data['responses'].append(new_entry)
-    
-    with open(filepath, 'w') as f:
-        json.dump(existing_data, f, indent=2)
+
+    existing_data['responses'].insert(0, new_entry)
+
+    with open(media_path, 'w') as f:
+        json.dump(existing_data, f)
     
     return filepath
 
@@ -50,7 +51,7 @@ def check_device(iotDevice, endpoint):
             headers=headers,
             timeout=5
         )
-        
+
         end_time = timezone.now()
         response_time = (end_time - start_time).total_seconds()
         
@@ -58,12 +59,13 @@ def check_device(iotDevice, endpoint):
             status = '200'
             response_data = response.json()
         else:
-            status = 'other'
+            status = response.status_code
             response_data = response.text
 
         last_checked = timezone.now()
         file_path = save_response_to_json(iotDevice.id, endpoint.name, status, response_data)
         
+
         IoTDeviceResponse.objects.update_or_create(
             device=iotDevice,
             endpoint=endpoint,
@@ -73,10 +75,19 @@ def check_device(iotDevice, endpoint):
                 'response_file': file_path,
                 'is_success': response.status_code == 200,
                 'last_checked': last_checked,
+                'current_response': response_data
+
             }
         )
         
         if response.status_code == 200:
+            
+            # Update MAC address and uptime
+            iotDevice.mac_address = response_data.get('mac_address', iotDevice.mac_address)
+            iotDevice.uptime = response_data.get('uptime', iotDevice.uptime)
+            iotDevice.last_checked = last_checked
+            iotDevice.save()
+
             logger.info(f"Device {iotDevice.device.name} (ID: {iotDevice.id}) is online. Response time: {response_time:.2f}s")
             return iotDevice, True, f"Device {iotDevice.device.name} is online"
         else:
@@ -89,10 +100,12 @@ def check_device(iotDevice, endpoint):
         last_checked = timezone.now()
         logger.error(f"Error connecting to device {iotDevice.device.name} (ID: {iotDevice.id}): {str(e)}")
         file_path = save_response_to_json(iotDevice.id, endpoint.name, 'error', str(e))
+        status_code = 0
+
         IoTDeviceResponse.objects.update_or_create(
             device=iotDevice,
             endpoint=endpoint,
-            last_status_code=0,
+            last_status_code=status_code,
             defaults={
                 'response_time': response_time,
                 'response_file': file_path,

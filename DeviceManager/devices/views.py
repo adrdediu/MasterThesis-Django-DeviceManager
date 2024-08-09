@@ -460,10 +460,12 @@ class DeviceDetailView(BaseContextMixin,LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(self.get_base_context())
-        
-        iot_device = IoTDevice.objects.filter(device=self.object).first()
-
-        context['iot_device'] = iot_device
+        try:
+            iot_device = IoTDevice.objects.filter(device=self.object).first()
+            context['iot_device'] = iot_device
+            context['next_js_url'] = 'static/js/next/index.html'
+        except:
+            pass
         
         return context
 

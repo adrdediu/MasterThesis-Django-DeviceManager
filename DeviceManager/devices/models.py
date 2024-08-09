@@ -486,6 +486,8 @@ class IoTDevice(models.Model):
     last_checked = models.DateTimeField(null=True, blank=True)
     is_online = models.BooleanField(default=False)
     token = models.CharField(max_length=255, blank=True, null=True)
+    mac_address = models.CharField(max_length=17, blank=True, null=True)
+    uptime = models.BigIntegerField(default=0)
 
     def __str__(self):
         return f"IoT Device: {self.device.name}"
@@ -511,8 +513,10 @@ class IoTDeviceResponse(models.Model):
     last_checked = models.DateTimeField(null=True, blank=True)
     response_time = models.FloatField(default=0)  # in seconds
     response_file = models.FileField(upload_to='iot_responses/', null=True, blank=True, max_length=255)
+    current_response = models.JSONField(default=dict)
+    
     def __str__(self):
-        return f"{self.device.device.name} - {self.endpoint.name} - {'Success' if self.is_success else 'Other'} Response"
+        return f"{self.device.device.name} - {self.endpoint.name} - {self.last_status_code} Response"
 
     class Meta:
-        unique_together = ['device', 'endpoint', 'is_success']
+        unique_together = ['device', 'endpoint', 'last_status_code']

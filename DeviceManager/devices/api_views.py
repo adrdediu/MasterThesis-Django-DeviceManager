@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.decorators import login_required, user_passes_test
+import requests
 from devices.models import Building, Inventory,Room,InventorizationList,Device
 from django.db.models import Q
 from django.contrib.auth.models import Group
@@ -235,39 +236,45 @@ def activate_iot_features(request):
         IoTDeviceEndpoint.objects.get_or_create(
             device=iot_device,
             name='status',
-            defaults={'url': f'http://{ip_address}/status'}
+            defaults={'url': f'http://{ip_address}/api/status'}
         )
 
         return JsonResponse({'success': True})
     except Device.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Device not found'}, status=404)
 
-@require_http_methods(["POST"])
+
 @login_required
-def update_iot_settings(request):
+@require_http_methods(["POST"])
+def check_and_update_iot_device(request):
     data = json.loads(request.body)
     device_id = data.get('deviceId')
     ip_address = data.get('ipAddress')
     token = data.get('token')
-    endpoints = data.get('endpoints', [])
-    print(endpoints)
 
+
+    
     try:
         device = Device.objects.get(id=device_id)
         iot_device = IoTDevice.objects.get(device=device)
-        
-        iot_device.ip_address = ip_address
-        iot_device.token = token
-        iot_device.save()
+        status_endpoint = iot_device.endpoints.filter(name='status').first().url
+    except IoTDevice.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Device not found'}, status=404)
 
-        IoTDeviceEndpoint.objects.filter(device=iot_device).delete()
-        for endpoint in endpoints:
-            IoTDeviceEndpoint.objects.create(
-                device=iot_device,
-                name=endpoint['name'],
-                url=endpoint['url']
-            )
+    # Check device status
+    try:
+        response = requests.get(f"http://{ip_address}/{status_endpoint}?token={token}", 
+                                headers={'Authorization': f'Token {token}', 'X-IoTDeviceToken': token},
+                                timeout=5)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        return JsonResponse({'success': False, 'error': f'Failed to connect to device: {str(e)}'}, status=400)
 
-        return JsonResponse({'success': True})
-    except (Device.DoesNotExist, IoTDevice.DoesNotExist):
-        return JsonResponse({'success': False, 'error': 'IoT device not found'}, status=404)
+    # Update the device settings
+
+    
+    iot_device.ip_address = ip_address
+    iot_device.token = token
+    iot_device.save()
+
+    return JsonResponse({'success': True, 'message': 'Device checked and settings updated successfully'})

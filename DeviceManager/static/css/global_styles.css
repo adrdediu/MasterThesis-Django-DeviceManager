@@ -143,3 +143,71 @@ background: linear-gradient(to right, #4b6cb7, #182848);
   .dev-man-bg-right{
     background: linear-gradient(to right, #00d2ff, #3a47d5);
   }
+
+  
+  .skeleton-loader {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #2c2c2c 25%, #3a3a3a 50%, #2c2c2c 75%);    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.skeleton-header {
+  height: 30px;
+  background-color: #3a3a3a;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  width: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-item {
+  height: 20px;
+  background-color: #3a3a3a;
+  border-radius: 4px;
+  width: 100%;
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-item.short {
+  width: 60%;
+}
+
+.skeleton-item.medium {
+  width: 80%;
+}
+
+.skeleton-item.long {
+  width: 100%;
+}
+
+@keyframes loading {
+  0% {
+      background-position: 200% 0;
+  }
+  100% {
+      background-position: -200% 0;
+  }
+}
+
+@keyframes pulse {
+  0% {
+      opacity: 0.6;
+  }
+  50% {
+      opacity: 1;
+  }
+  100% {
+      opacity: 0.6;
+  }
+}
+

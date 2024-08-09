@@ -96,36 +96,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Add 'needs-validation' class to the form
+    document.getElementById('connectionSettingsForm').classList.add('needs-validation');
 
-    document.getElementById('submitConnectionSettings').addEventListener('click', function() {
-        const ipAddress = document.getElementById('currentIpAddress').value;
-        const token = document.getElementById('currentToken').value;
+    document.getElementById('submitConnectionSettings').addEventListener('click', function(event) {
+        const form = document.getElementById('connectionSettingsForm');
+        const ipAddress = document.getElementById('newIpAddress');
+        const token = document.getElementById('newToken');
         
-        fetch('/api/update_iot_settings/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken(),
-            },
-            body: JSON.stringify({
-                deviceId: deviceId,
-                ipAddress: ipAddress,
-                token: token,
+        // Prevent form from submitting
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Custom validation
+        if (!ipAddress.value.trim() && !token.value.trim()) {
+            ipAddress.setCustomValidity('Please enter either IP address or token');
+            token.setCustomValidity('Please enter either IP address or token');
+        } else {
+            ipAddress.setCustomValidity('');
+            token.setCustomValidity('');
+        }
+        
+        // Trigger Bootstrap validation
+        form.classList.add('was-validated');
+        
+        if (form.checkValidity()) {
+            const newIpAddress = ipAddress.value.trim();
+            const newToken = token.value.trim();
+    
+            // Make the request to the server, which will then communicate with the IoT device
+            fetch('/api/update_iot_settings/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
+                },
+                body: JSON.stringify({
+                    deviceId: deviceId,
+                    ipAddress: newIpAddress,
+                    token: newToken,
+                })
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                bootstrap.Modal.getInstance(document.getElementById('connectionSettingsModal')).hide();
-                showAlertAndReload ('IoT settings updated successfully', 'success');
-            } else {
-                showAlert('Failed to update IoT settings: ' + data.error, 'danger');
-            }
-        })
-        .catch(error => {
-            showAlert('An error occurred while updating IoT settings', 'danger');
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('connectionSettingsModal')).hide();
+                    showAlertAndReload('IoT settings updated successfully and device is online', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to update IoT settings');
+                }
+            })
+            .catch(error => {
+                showAlert(error.message || 'An error occurred while updating IoT settings', 'danger');
+            });
+        }
     });
+
 
     function getCsrfToken() {
         return document.querySelector('[name=csrfmiddlewaretoken]').value;

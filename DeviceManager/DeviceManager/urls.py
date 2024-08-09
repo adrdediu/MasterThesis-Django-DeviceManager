@@ -10,7 +10,7 @@ from devices.views import  DeviceDetailView, add_device,edit_device, delete_devi
 from devices.views import GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView
 from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
-from devices.api_views import activate_iot_features, remove_iot_features, start_inventory, pause_resume_inventory, end_inventory, edit_inventory,cancel_inventory,qrcode_action, update_inventory_room_data,get_iot_settings, update_iot_settings 
+from devices.api_views import activate_iot_features, remove_iot_features, start_inventory, pause_resume_inventory, end_inventory, edit_inventory,cancel_inventory,qrcode_action, update_inventory_room_data,get_iot_settings, check_and_update_iot_device 
 from devices.views import NextJSView,DashboardView
 from django.views.static import serve
 
@@ -52,7 +52,7 @@ urlpatterns = [
     # Add Paths used for IoT NextJS View
     path('api/activate_iot_features/', activate_iot_features, name='activate_iot_features'),
     path('api/get_iot_settings/<int:device_id>/',get_iot_settings, name='get_iot_settings'),
-    path('api/update_iot_settings/', update_iot_settings, name='update_iot_settings'),
+    path('api/update_iot_settings/', check_and_update_iot_device, name='update_iot_settings'),
     path('api/remove_iot_features/', remove_iot_features, name='remove_iot_features'),
 
 
