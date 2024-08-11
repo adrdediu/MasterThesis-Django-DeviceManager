@@ -38,7 +38,7 @@ const generateTemperatureData = (startDate: Date, days: number) => {
   return data;
 };
 
-const chartData = generateTemperatureData(new Date('2024-06-01'), 90);
+const chartData = generateTemperatureData(new Date('2024-08-11'), 1);
 
 const chartConfig = {
   min: {
@@ -72,18 +72,30 @@ export function TemperatureChart() {
   const [maxTemperature, setMaxTemperature] = React.useState(50);
 
   React.useEffect(() => {
-    console.log("fromDate:", fromDate);
-    console.log("toDate:", toDate);
+    const intervalMap = {
+      "1m": 60 * 1000,
+      "5m": 5 * 60 * 1000,
+      "15m": 15 * 60 * 1000,
+      "30m": 30 * 60 * 1000,
+      "hourly": 60 * 60 * 1000,
+      "daily": 24 * 60 * 60 * 1000,
+      "weekly": 7 * 24 * 60 * 60 * 1000,
+      "monthly": 30 * 24 * 60 * 60 * 1000,
+    };
+    const interval = intervalMap[timeRange];
+    
     let filteredData = chartData;
-    if (fromDate && toDate) {
+    const extendedFromDate = fromDate ? new Date(fromDate.getTime() - interval) : null;
+    
+    if (extendedFromDate && toDate) {
       filteredData = filteredData.filter(item => {
         const itemDate = new Date(item.date);
-        return itemDate >= fromDate && itemDate <= toDate;
+        return itemDate >= extendedFromDate && itemDate <= toDate;
       });
-    } else if (fromDate) {
+    } else if (extendedFromDate) {
       filteredData = filteredData.filter(item => {
         const itemDate = new Date(item.date);
-        return itemDate >= fromDate;
+        return itemDate >= extendedFromDate;
       });
     } else if (toDate) {
       filteredData = filteredData.filter(item => {
@@ -91,27 +103,24 @@ export function TemperatureChart() {
         return itemDate <= toDate;
       });
     }
-
+    
     if (timeRange) {
-      const intervalMap = {
-        "1m": 60 * 1000,
-        "5m": 5 * 60 * 1000,
-        "15m": 15 * 60 * 1000,
-        "30m": 30 * 60 * 1000,
-        "hourly": 60 * 60 * 1000,
-        "daily": 24 * 60 * 60 * 1000,
-        "weekly": 7 * 24 * 60 * 60 * 1000,
-        "monthly": 30 * 24 * 60 * 60 * 1000,
-      };
-      const interval = intervalMap[timeRange];
+      console.log(filteredData);
       
+      const filteredStart = new Date(filteredData[0].date).getTime();
+      const filteredEnd = new Date(filteredData[filteredData.length - 1].date).getTime();
+
+      const extendedStart = new Date(filteredStart - interval);
       const aggregatedData = {};
+      
       filteredData.forEach(item => {
         const date = new Date(item.date);
-        const intervalKey = Math.floor(date.getTime() / interval) * interval;
+        const intervalKey = Math.floor((date.getTime() - extendedStart.getTime()) / interval) * interval + extendedStart.getTime();
+        const displayDate = new Date(intervalKey + interval);
+
         if (!aggregatedData[intervalKey]) {
           aggregatedData[intervalKey] = { 
-            date: new Date(intervalKey), 
+            date: displayDate, 
             min: Infinity, 
             max: -Infinity, 
             sum: 0, 
@@ -123,13 +132,15 @@ export function TemperatureChart() {
         aggregatedData[intervalKey].sum += item.temperature;
         aggregatedData[intervalKey].count++;
       });
-    
+      
       filteredData = Object.values(aggregatedData).map(item => ({
         date: item.date,
         min: item.min,
         max: item.max,
         average: item.sum / item.count
       }));
+      
+      
     }
 
     const calculatedMinTemp = Math.floor(Math.min(...filteredData.map(item => 
@@ -139,6 +150,8 @@ export function TemperatureChart() {
     const calculatedMaxTemp = Math.ceil(Math.max(...filteredData.map(item =>
       Math.max(item.min, item.max, item.average)
     ))) + 2.5;
+
+    console.log( filteredData)
     setMinTemperature(calculatedMinTemp);
     setMaxTemperature(calculatedMaxTemp);
     setDisplayData(filteredData);
