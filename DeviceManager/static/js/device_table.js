@@ -59,9 +59,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     return data;
                 }
             },
-            { width: '75px', targets:6 },
-            { width: '25px', targets: 7 },  // S/N
-            { width: '25px',targets: 8},
+            { width: '80px', targets:6 },
+            { width: '50px', targets: 7 },  // S/N
+            { width: '50px',targets: 8},
             { width: '120px',targets: 9, orderable: false},
         ],
         initComplete: function (settings, json) {

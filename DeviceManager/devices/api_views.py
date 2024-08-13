@@ -278,3 +278,31 @@ def check_and_update_iot_device(request):
     iot_device.save()
 
     return JsonResponse({'success': True, 'message': 'Device checked and settings updated successfully'})
+
+@login_required
+@require_http_methods(["POST"])
+def led_control(request, device_id):
+
+
+    try :
+        iotDevice = IoTDevice.objects.get(id=device_id)
+        data = json.loads(request.body)
+
+        url = f"http://{iotDevice.ip_address}/api/leds"
+        params = {
+            'token': iotDevice.token,
+        }
+        print(data)
+        if (data['pattern']): 
+            params['pattern'] = data['pattern']
+            if(data['interval']):
+                params['interval'] = data['interval']
+        
+        print("hi")
+        response = requests.get(url, params=params)
+        print(response)
+        return JsonResponse({'success': True,'response':response.json(), 'message': 'LED control request sent successfully'})
+    except IoTDevice.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Device not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)

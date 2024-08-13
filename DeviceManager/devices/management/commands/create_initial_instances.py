@@ -13,7 +13,8 @@ class Command(BaseCommand):
             {'id': 3, 'name': 'Network'},
             {'id': 4, 'name': 'Peripherals'},
             {'id': 5, 'name': 'Storage'},
-            {'id': 6, 'name': 'Other'},
+            {'id': 6, 'name': 'IoT Device'},
+            {'id': 7, 'name': 'Other'},
             # Add more categories as needed
         ]
         
@@ -55,8 +56,11 @@ class Command(BaseCommand):
             {'id': 52, 'name': 'SSDs', 'category': Category.objects.get(id=5)},
             {'id': 53, 'name': 'NAS', 'category': Category.objects.get(id=5)},
 
+            # Smart Devices
+            {'id': 61, 'name': 'Smart Lamp', 'category': Category.objects.get(id=6)},
+            
             # Other
-            {'id': 61, 'name': 'Other', 'category': Category.objects.get(id=6)},
+            {'id': 71, 'name': 'Smart Lamp', 'category': Category.objects.get(id=7)},
 
         ]
 

@@ -54,5 +54,5 @@ document.addEventListener('DOMContentLoaded', function() {
     function setDefaultUI() {
         localStorage.setItem(`device_${deviceId}_defaultUI`, currentUI);
         showAlert('Default UI set successfully', 'success');
-    }
+    }  
 });

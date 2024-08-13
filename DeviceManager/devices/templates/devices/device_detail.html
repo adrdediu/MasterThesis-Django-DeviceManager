@@ -19,13 +19,15 @@
 
                     
                     <!-- General Information Card -->
-                    <div id="generalInfoCard" class="card card-shadow-light mb-3" {% if iot_device %} style="display:none;" {% endif %}>
+                    <div id="generalInfoCard" class="card card-shadow-light mb-3" >
                         <div class="card-header bg-success text-white card-shadow d-flex justify-content-between align-items-center">
                             <h2 class="h5 mb-0">General Information</h2>
                             <div>
+                                {% if iot_device %} 
                                 <button id="changeToIoTUI" class="btn btn-sm btn-dark me-1">
                                     <i class="bi bi-display"></i> Get IoT UI
                                 </button>
+                                {% endif %}
                                 <button  class="btn btn-sm btn-dark set-default-ui">
                                     <i class="bi bi-save"></i> Set Default
                                 </button>
@@ -140,15 +142,150 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <iframe 
-                            class="card-shadow-light rounded"
-                            src="/{{ next_js_url }}" 
-                            id="nextjs-frame" 
-                            style="width: 100%; height: 500px; border: none; overflow-y: hidden;"
-                            title="Next.js Application"
-                            data-context="{{ next_js_context|safe }}">
-                        </iframe>
+                        <div class="card-body px-0">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <div class="card card-shadow-light">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-center">Temperature</h5>
+                                            <canvas id="temperatureChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card card-shadow-light">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-center">Pressure</h5>
+                                            <canvas id="pressureChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card card-shadow-light" >
+                                        <div class="card-body  ">
+                                        <!-- LED controls -->
+                                        <div class="led-controls">
+                                            
+                                               
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <h5 class="mb-0">LED Controls</h5>
+                                                        <div class="d-flex align-items-center">
+                                                            <span id="current-led-pattern" class="me-3">Current State: <span class="fw-bold">...</span></span>
+                                                            <div id="led-spinner" class="spinner-border text-primary d-none" role="status">
+                                                                <span class="visually-hidden">Loading...</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row align-items-center">
+                                                        <div class="col-sm-6 mb-2">
+                                                            <h6 class="mb-0">Continuous LED Control</h6>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row mb-2">
+                                                        <div class="col-sm-6">
+                                                            <div class="input-group input-group-sm ">
+                                                                <span class="input-group-text bg-dark bg-gradient text-white">Interval:</span>
+                                                                <input type="number" id="ledInterval" name="ledInterval" class="form-control bg-dark text-white" value="1000" min="1" placeholder="Interval">
+                                                                <span class="input-group-text bg-dark bg-gradient text-white">ms</span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row g-2">
+                                                        <div class="col-6 col-md-3">
+                                                            <button onclick="sendLedCommand('{{iot_device.id}}','out_to_in')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
+                                                                <i class="bi bi-box-arrow-in-right me-2"></i>Out to In
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-6 col-md-3">
+                                                            <button onclick="sendLedCommand('{{iot_device.id}}','in_to_out')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
+                                                                <i class="bi bi-box-arrow-in-left me-2"></i>In to Out
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-6 col-md-3">
+                                                            <button onclick="sendLedCommand('{{iot_device.id}}','left_to_right')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
+                                                                <i class="bi bi-arrow-right me-2"></i>Left to Right
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-6 col-md-3">
+                                                            <button onclick="sendLedCommand('{{iot_device.id}}','right_to_left')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
+                                                                <i class="bi bi-arrow-left me-2"></i>Right to Left
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                
+                                            
+                                            
+                                            
+                                            <hr>
+                                            <h6 class="card-title mb-2">LED Matrix Control</h6>
+                                            <div class="row g-1 text-center">
+                                                <div class="col mb-2">
+                                                    <span id="badge-G1" class="badge bg-secondary">G1</span>
+                                                </div>
+                                                <div class="col mb-2">
+                                                    <span id="badge-G2" class="badge bg-secondary">G2</span>
+                                                </div>
+                                                <div class="col mb-2">
+                                                    <span id="badge-G3" class="badge bg-secondary">G3</span>
+                                                </div>
+                                                <div class="col mb-2">
+                                                    <span id="badge-G4" class="badge bg-secondary">G4</span>
+                                                </div>
+                                                <div class="col mb-2">
+                                                    <span id="badge-G5" class="badge bg-secondary">G5</span>
+                                                </div>
+                                                <div class="col mb-2">
+                                                    <span id="badge-G6" class="badge bg-secondary">G6</span>
+                                                </div>
+                                                <div class="col mb-2">
+                                                    <span id="badge-G7" class="badge bg-secondary">G7</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row text-center g-1">
+                                                <div class="col mb-2">
+                                                  <button type="button" class="btn btn-sm btn-light  w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g1','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                </div>
+                                                <div class="col mb-2">
+                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g2','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                </div>
+                                                <div class="col mb-2">
+                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g3','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                </div>
+                                                <div class="col mb-2">
+                                                  <button type="button" class="btn btn-sm btn-primary w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g4','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                </div>
+                                                <div class="col mb-2">
+                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g5','static')"disabled><i class="bi bi-lightbulb"></i></button>
+                                                </div>
+                                                <div class="col mb-2">
+                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g6','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                </div>
+                                                <div class="col mb-2">
+                                                  <button type="button" class="btn btn-sm btn-light w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g7','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                </div>
+                                              </div>
+                                              <div class="row mt-2">
+                                                <div class="col-6">
+                                                  <button type="button" class="btn btn-sm btn-outline-success w-100 led-control-btn " onclick="sendLedCommand('{{iot_device.id}}','g8','static')" disabled>All On</button>
+                                                </div>
+                                                <div class="col-6">
+                                                  <button type="button" class="btn btn-sm btn-outline-danger w-100 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g0','static')" disabled>All Off</button>
+                                                </div>
+                                              </div>
+                                              
+                                              
+                                              
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             
                         </div>
                     </div>
@@ -206,97 +343,19 @@
 
                                         </div>
                                         <div class="card-body">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <div class="text-center">
-                                                        <div class="row g-2 mb-3">
-                                                            <div class="col-sm-6">
-                                                                <div class="bg-light p-2 rounded text-black">
-                                                                    <span class="d-block mb-1"><i class="bi bi-globe"></i> IP</span>
-                                                                    <span id="iotIpAddress" class="fw-bold">N/A</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-sm-6">
-                                                                <div class="bg-light p-2 rounded text-black">
-                                                                    <span class="d-block mb-1"><i class="bi bi-cpu"></i> MAC</span>
-                                                                    <span id="iotMacAddress" class="fw-bold">N/A</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    
-                                                        <div class="bg-light p-2 rounded mb-3">
-                                                            <div class="row g-2">
-                                                                <div class="col-sm-6">
-                                                                    <span class="text-black"><i class="bi bi-activity"></i> Status:</span>
-                                                                    <span id="iotDeviceStatus" class="badge bg-danger">
-                                                                        <i class="bi bi-circle-fill me-1"></i>
-                                                                        Offline
-                                                                    </span>
-                                                                </div>
-                                                                <div class="col-sm-6">
-                                                                    <span class="text-black"><i class="bi bi-hash"></i> Code:</span>
-                                                                    <span id="iotStatusCode" class="badge bg-danger">404</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    
-                                                        <div class="bg-light p-2 rounded">
-                                                            <div class="row g-2">
-                                                                <div class="col-sm-4">
-                                                                    <small>
-                                                                        <i class="bi bi-clock"></i> Last Seen<br>
-                                                                        <span id="iotLastSeen" class="fw-bold">N/A</span>
-                                                                    </small>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <small>
-                                                                        <i class="bi bi-arrow-clockwise"></i> Uptime<br>
-                                                                        <span id="iotUptime" class="fw-bold">N/A</span>
-                                                                    </small>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <small>
-                                                                        <i class="bi bi-speedometer"></i> Response Time<br>
-                                                                        <span id="iotResponseTime" class="fw-bold">N/A</span>
-                                                                    </small>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+
                                                     
                                                     
-                                                    
-                                                    
-                                                    
-                                                    <hr class="my-2">
+                        
                                                     <div class="row">
-                                                        {% if iot_device %}
-                                                        <div class="col">
 
-                                                            <button id="connectionSettingsBtn" class="btn btn-secondary btn-secondary btn-sm w-100 " data-bs-toggle="modal" data-bs-target="#connectionSettingsModal" style="display: {% if iot_device %}block{% else %}none{% endif %};">
-                                                                <i class="bi bi-gear"></i> Connection
-                                                            </button>
-                                                            
-
-                                                        </div>
-                                                        <div class="col">
-                                                            <button id="removeIoTBtn" class="btn btn-danger btn-sm w-100" style="display: {% if iot_device %}block{% else %}none{% endif %};">
-                                                                <i class="bi bi-trash"></i> Remove Features
-                                                            </button>
-                                                        </div>
-                                                        {% else %}
                                                         <div class="col">
                                                             <button id="activateIoTBtn" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#activateIoTModal" style="display: {% if iot_device %}none{% else %}block{% endif %};">
                                                                 <i class="bi bi-lightning-charge"></i> Activate IoT Features
                                                             </button>
                                                         </div>
-                                                        {% endif %}
-                                                    </div>
 
-                                                    
-                                                </div>
-                                            </div>
-                                            
+                                                    </div>
                                         </div>
                                     </div>
                                 </div>
@@ -496,6 +555,8 @@
 
 {% block extra_js %}
 {{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/iot_device_charts.js' %}"></script>
 <script src="{% static 'js/iot_device_sse.js' %}"></script>
 <script src="{% static 'js/iot_device_detail.js' %}"></script>
 <script src="{% static 'js/device_modals.js' %}"></script>
