@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r127/build/three.module.js';
+import * as THREE from './three.module.js';
 
 // Get the homepageDisplayArea and the canvas
 var homepageDisplayArea = document.getElementById('homepageDisplayArea');

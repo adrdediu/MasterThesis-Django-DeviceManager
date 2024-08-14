@@ -555,7 +555,7 @@
 
 {% block extra_js %}
 {{ block.super }}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/chart.js' %}"></script>
 <script src="{% static 'js/iot_device_charts.js' %}"></script>
 <script src="{% static 'js/iot_device_sse.js' %}"></script>
 <script src="{% static 'js/iot_device_detail.js' %}"></script>
