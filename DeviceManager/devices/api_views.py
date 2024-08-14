@@ -266,6 +266,7 @@ def check_and_update_iot_device(request):
         response = requests.get(f"http://{ip_address}/{status_endpoint}?token={token}", 
                                 headers={'Authorization': f'Token {token}', 'X-IoTDeviceToken': token},
                                 timeout=5)
+        print(ip_address,status_endpoint);
         response.raise_for_status()
     except requests.RequestException as e:
         return JsonResponse({'success': False, 'error': f'Failed to connect to device: {str(e)}'}, status=400)
