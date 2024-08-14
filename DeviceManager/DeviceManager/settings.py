@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-u9gl0p-!@rtc#&q_ihmpbml6lj$0r^mrlc-833z5)*8vte)l!x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.106','127.0.0.1','192.168.214.7','192.168.80.132', 'localhost','192.168.0.141','192.168.220.7','192.168.199.7','192.168.193.7','192.168.50.7']
+ALLOWED_HOSTS = ['192.168.0.100','127.0.0.1','192.168.214.7','192.168.80.132', 'localhost','192.168.0.141','192.168.220.7','192.168.199.7','192.168.193.7','192.168.50.7']
 
 
 SITE_ID = 1  # You can choose any positive integer as the site ID
@@ -105,6 +105,9 @@ DATABASES = {
         'PASSWORD': 'i9@6W^j1',  # Replace with your MySQL password
         'HOST': 'localhost',              # Replace with your MySQL host, usually 'localhost' for local development
         'PORT': '3306',                   # Replace with your MySQL port, usually '3306'
+        'OPTIONS': {
+		'charset': 'utf8mb4',
+	}
     }
 }
 
