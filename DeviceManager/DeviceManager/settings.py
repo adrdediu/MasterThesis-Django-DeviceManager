@@ -175,7 +175,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'iot_device_checks.log',
+            'filename': os.path.join(BASE_DIR,'logs/iot_device_checks.log'),
             'formatter': 'verbose',
         },
     },

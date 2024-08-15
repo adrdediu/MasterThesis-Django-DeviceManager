@@ -528,51 +528,18 @@ class DownloadQRCodeView(LoginRequiredMixin, View):
             device = Device.objects.get(pk=device_id)
             # Construct the complete URL for the QR code image
             qr_code_url = request.build_absolute_uri(device.qrcode_url)
-
+            
             # Fetch the QR code image using requests
             response = requests.get(qr_code_url)
-            response = requests.get(qr_code_url)
+            
             response.raise_for_status()  # Check for request success
-            qr_code_image = Image.open(BytesIO(response.content))
-
-            # Resize the image to a smaller size
-            new_size = (100, 100)  # Adjust the size as needed
-            qr_code_image = qr_code_image.resize(new_size)
-
-            # Get a font for drawing text (adjust the font size and style as needed)
-            font = ImageFont.truetype("arial.ttf", size=12)
-
-            # Create a new image with a white background
-            image = Image.new('RGB', (new_size[0], new_size[1] + 30), 'white')
-
-
-            # Create a drawing object
-            draw = ImageDraw.Draw(image)
-            # Draw ID above QR code 
-            id_text = f"ID: {device.id}"
-            draw.text((10, 10), id_text, font=font, fill=(0, 0, 0))
-
-            # Draw serial number below ID, above QR code
-            #serial_text = f"Serial: {device.serial_number}" 
-            #draw.text((10, 50), serial_text, font=font, fill=(0, 0, 0)) 
-
-            # Draw name below QR code
-            #name_text = f"{device.name}"
-            #draw.text((10, 10), name_text, font=font, fill=(0, 0, 0))
-
-            # Draw QR code image
-            image.paste(qr_code_image, (0, 30))
-
-
-            # Save the modified image to an in-memory buffer
-            modified_image_buffer = BytesIO()
-            image.save(modified_image_buffer, format='PNG')
-            modified_image_buffer.seek(0)
-
+            
+            qr_code_image = response.content
+            
             # Prepare response
             response = HttpResponse(content_type='image/png')
             response['Content-Disposition'] = f'attachment; filename={device.id}_{device.serial_number}_qrcode.png'
-            response.write(modified_image_buffer.read())
+            response.write(qr_code_image)
 
             return response
     

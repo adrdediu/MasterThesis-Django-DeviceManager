@@ -12,27 +12,25 @@ from devices.models import IoTDevice, IoTDeviceEndpoint, IoTDeviceResponse
 logger = logging.getLogger('iot_device_checker')
 
 def save_response_to_json(device_id, endpoint_name, status, response_data):
-    directory = f"media/iot_responses"
+    directory = os.path.join(settings.BASE_DIR,f"media/iot_responses")
     os.makedirs(directory, exist_ok=True)
     
-    filename = f"{device_id}_{endpoint_name}_{status}.json"
-    filepath = f"iot_responses/{filename}"
-    media_path = f"media/{filepath}"
+    filepath = os.path.join(directory,f"{device_id}_{endpoint_name}_{status}.json")
 
     new_entry = {
         'timestamp': timezone.now().isoformat(),
         'data': response_data
     }
     
-    if os.path.exists(media_path):
-        with open(media_path, 'r') as f:
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as f:
             existing_data = json.load(f)
     else:
         existing_data = {'responses': []}
 
     existing_data['responses'].insert(0, new_entry)
 
-    with open(media_path, 'w') as f:
+    with open(filepath, 'w') as f:
         json.dump(existing_data, f)
     
     return filepath
