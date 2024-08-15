@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`/api/device/${deviceId}/qrcode/${action}/`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-CSRFToken': getCsrfToken(),
                     'Content-Type': 'application/json',
                 },
             })
