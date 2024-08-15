@@ -6,3 +6,4 @@ DeviceManager/static/js/next
 *db.sqlite3
 DeviceManager/iot_device_checks.log
 DeviceManager/iot_device_checker.log
+/DeviceManager/media/*

@@ -278,6 +278,8 @@ class Device(models.Model):
     def regenerate_qr_code(self):
         if self.qrcode_path:
             old_path = os.path.join(settings.MEDIA_ROOT, self.qrcode_path)
+            print(old_path)
+            old_path = os.path.join(settings.BASE_DIR,'/media/',self.qrcode_path)
             if os.path.exists(old_path):
                 os.remove(old_path)
 
@@ -384,7 +386,7 @@ class InventorizationList(models.Model):
             end_date__lt=self.start_date
         ).order_by('-end_date').first()
 
-        start_date = last_completed.end_date if last_completed else self.inventory.created_at
+        start_date = last_completed.end_date if last_completed else self.start_date
 
         changes = [self.change_to_dict(change) for change in InventoryChange.objects.filter(
             inventory=self.inventory,
