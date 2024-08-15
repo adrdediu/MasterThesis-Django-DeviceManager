@@ -26366,3 +26366,379 @@ INFO 2024-08-15 14:48:23,643 check_iot_devices Sleeping for 1.91 seconds
 INFO 2024-08-15 14:48:25,552 check_iot_devices Starting IoT device check
 INFO 2024-08-15 14:48:25,553 check_iot_devices Found 1 iotDevices to check
 INFO 2024-08-15 14:48:25,562 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:48:28,666 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c31f40>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:48:28,685 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c31f40>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:48:28,697 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:48:23.629038+00:00
+INFO 2024-08-15 14:48:28,697 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:48:28,697 check_iot_devices Sleeping for 1.85 seconds
+INFO 2024-08-15 14:48:30,553 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:48:30,554 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:48:30,561 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:48:33,658 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c04a70>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:48:33,679 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c04a70>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:48:33,691 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:48:28.685691+00:00
+INFO 2024-08-15 14:48:33,692 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:48:33,692 check_iot_devices Sleeping for 1.86 seconds
+INFO 2024-08-15 14:48:35,555 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:48:35,555 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:48:35,560 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:48:38,653 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c06c00>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:48:38,673 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c06c00>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:48:38,684 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:48:33.679612+00:00
+INFO 2024-08-15 14:48:38,685 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:48:38,685 check_iot_devices Sleeping for 1.87 seconds
+INFO 2024-08-15 14:48:40,555 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:48:40,556 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:48:40,562 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:48:43,642 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afc800>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:48:43,677 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afc800>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:48:43,688 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:48:38.673228+00:00
+INFO 2024-08-15 14:48:43,688 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:48:43,689 check_iot_devices Sleeping for 1.87 seconds
+INFO 2024-08-15 14:48:45,555 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:48:45,556 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:48:45,563 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:48:48,636 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbf920>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:48:48,655 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbf920>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:48:48,668 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:48:43.678143+00:00
+INFO 2024-08-15 14:48:48,668 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:48:48,669 check_iot_devices Sleeping for 1.89 seconds
+INFO 2024-08-15 14:48:50,556 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:48:50,557 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:48:50,562 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:48:53,626 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afe990>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:48:53,662 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afe990>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:48:53,673 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:48:48.655267+00:00
+INFO 2024-08-15 14:48:53,674 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:48:53,674 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:48:55,556 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:48:55,557 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:48:55,562 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:48:58,618 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbcb90>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:48:58,635 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbcb90>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:48:58,649 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:48:53.662949+00:00
+INFO 2024-08-15 14:48:58,649 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:48:58,649 check_iot_devices Sleeping for 1.91 seconds
+INFO 2024-08-15 14:49:00,557 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:00,558 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:00,565 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:03,674 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7238617e7410>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:03,691 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7238617e7410>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:03,753 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:48:58.636081+00:00
+INFO 2024-08-15 14:49:03,754 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:03,754 check_iot_devices Sleeping for 1.80 seconds
+INFO 2024-08-15 14:49:05,557 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:05,559 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:05,566 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:08,667 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723861783950>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:08,692 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723861783950>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:08,706 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:03.691975+00:00
+INFO 2024-08-15 14:49:08,707 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:08,707 check_iot_devices Sleeping for 1.85 seconds
+INFO 2024-08-15 14:49:10,558 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:10,559 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:10,564 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:13,659 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c7af30>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:13,678 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c7af30>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:13,692 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:08.693184+00:00
+INFO 2024-08-15 14:49:13,692 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:13,692 check_iot_devices Sleeping for 1.87 seconds
+INFO 2024-08-15 14:49:15,559 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:15,560 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:15,566 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:18,651 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860ce2b70>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:18,666 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860ce2b70>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:18,683 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:13.678600+00:00
+INFO 2024-08-15 14:49:18,683 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:18,683 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:49:20,559 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:20,561 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:20,566 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:23,642 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723861746d80>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:23,661 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723861746d80>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:23,677 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:18.667201+00:00
+INFO 2024-08-15 14:49:23,677 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:23,678 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:49:25,560 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:25,562 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:25,574 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:28,634 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c78530>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:28,651 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c78530>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:28,666 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:23.661916+00:00
+INFO 2024-08-15 14:49:28,667 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:28,667 check_iot_devices Sleeping for 1.89 seconds
+INFO 2024-08-15 14:49:30,561 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:30,561 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:30,566 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:33,627 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860be2d20>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:33,643 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860be2d20>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:33,664 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:28.652099+00:00
+INFO 2024-08-15 14:49:33,665 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:33,665 check_iot_devices Sleeping for 1.90 seconds
+INFO 2024-08-15 14:49:35,561 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:35,563 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:35,568 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:38,619 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbeed0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:38,643 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbeed0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:38,656 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:33.644168+00:00
+INFO 2024-08-15 14:49:38,656 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:38,656 check_iot_devices Sleeping for 1.91 seconds
+INFO 2024-08-15 14:49:40,561 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:40,563 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:40,568 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:43,675 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbf740>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:43,699 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbf740>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:43,711 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:38.644050+00:00
+INFO 2024-08-15 14:49:43,713 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:43,713 check_iot_devices Sleeping for 1.85 seconds
+INFO 2024-08-15 14:49:45,562 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:45,563 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:45,568 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:48,668 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c07e30>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:48,685 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c07e30>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:48,696 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:43.700026+00:00
+INFO 2024-08-15 14:49:48,697 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:48,697 check_iot_devices Sleeping for 1.86 seconds
+INFO 2024-08-15 14:49:50,562 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:50,563 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:50,568 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:53,659 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afe4e0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:53,677 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afe4e0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:53,690 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:48.685330+00:00
+INFO 2024-08-15 14:49:53,690 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:53,690 check_iot_devices Sleeping for 1.87 seconds
+INFO 2024-08-15 14:49:55,563 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:49:55,564 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:49:55,569 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:49:58,652 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c31f40>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:49:58,666 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c31f40>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:49:58,681 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:53.677473+00:00
+INFO 2024-08-15 14:49:58,682 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:49:58,682 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:50:00,563 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:00,565 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:00,570 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:03,644 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860b45b20>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:03,662 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860b45b20>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:03,677 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:49:58.666897+00:00
+INFO 2024-08-15 14:50:03,678 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:03,678 check_iot_devices Sleeping for 1.89 seconds
+INFO 2024-08-15 14:50:05,564 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:05,565 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:05,572 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:08,634 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d3c800>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:08,656 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d3c800>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:08,671 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:03.663015+00:00
+INFO 2024-08-15 14:50:08,672 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:08,672 check_iot_devices Sleeping for 1.89 seconds
+INFO 2024-08-15 14:50:10,564 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:10,565 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:10,571 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:13,627 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d3e4b0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:13,644 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d3e4b0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:13,659 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:08.657199+00:00
+INFO 2024-08-15 14:50:13,659 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:13,659 check_iot_devices Sleeping for 1.90 seconds
+INFO 2024-08-15 14:50:15,565 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:15,566 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:15,573 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:18,682 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d65370>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:18,698 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d65370>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:18,714 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:13.644438+00:00
+INFO 2024-08-15 14:50:18,715 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:18,715 check_iot_devices Sleeping for 1.85 seconds
+INFO 2024-08-15 14:50:20,565 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:20,566 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:20,572 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:23,677 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d64bc0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:23,695 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d64bc0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:23,710 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:18.699357+00:00
+INFO 2024-08-15 14:50:23,710 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:23,710 check_iot_devices Sleeping for 1.86 seconds
+INFO 2024-08-15 14:50:25,566 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:25,566 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:25,574 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:28,667 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d3e7e0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:28,685 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d3e7e0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:28,704 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:23.696666+00:00
+INFO 2024-08-15 14:50:28,705 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:28,705 check_iot_devices Sleeping for 1.86 seconds
+INFO 2024-08-15 14:50:30,566 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:30,568 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:30,572 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:33,658 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860b46c00>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:33,674 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860b46c00>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:33,690 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:28.685763+00:00
+INFO 2024-08-15 14:50:33,690 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:33,690 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:50:35,567 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:35,568 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:35,572 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:38,651 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afd850>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:38,670 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afd850>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:38,685 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:33.674938+00:00
+INFO 2024-08-15 14:50:38,686 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:38,686 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:50:40,577 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:40,582 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:40,589 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:43,643 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afe9f0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:43,668 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afe9f0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:43,687 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:38.670752+00:00
+INFO 2024-08-15 14:50:43,687 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:43,687 check_iot_devices Sleeping for 1.89 seconds
+INFO 2024-08-15 14:50:45,577 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:45,578 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:45,582 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:48,634 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c05310>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:48,651 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c05310>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:48,662 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:43.669035+00:00
+INFO 2024-08-15 14:50:48,662 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:48,662 check_iot_devices Sleeping for 1.91 seconds
+INFO 2024-08-15 14:50:50,578 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:50,578 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:50,583 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:53,690 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbeab0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:53,709 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbeab0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:53,722 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:48.651598+00:00
+INFO 2024-08-15 14:50:53,722 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:53,722 check_iot_devices Sleeping for 1.86 seconds
+INFO 2024-08-15 14:50:55,582 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:50:55,582 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:50:55,587 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:50:58,682 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723861782450>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:50:58,700 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723861782450>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:50:58,711 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:53.710088+00:00
+INFO 2024-08-15 14:50:58,712 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:50:58,713 check_iot_devices Sleeping for 1.87 seconds
+INFO 2024-08-15 14:51:00,582 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:00,583 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:00,589 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:03,675 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c7b140>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:03,691 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c7b140>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:03,706 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:50:58.700737+00:00
+INFO 2024-08-15 14:51:03,706 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:03,706 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:51:05,582 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:05,583 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:05,588 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:08,666 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d649b0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:08,686 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d649b0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:08,700 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:03.692460+00:00
+INFO 2024-08-15 14:51:08,700 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:08,700 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:51:10,608 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:10,613 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:10,620 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:13,724 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d678c0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:13,741 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d678c0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:13,754 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:08.686752+00:00
+INFO 2024-08-15 14:51:13,754 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:13,754 check_iot_devices Sleeping for 1.85 seconds
+INFO 2024-08-15 14:51:15,609 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:15,610 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:15,615 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:18,715 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d03ce0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:18,734 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d03ce0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:18,750 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:13.741890+00:00
+INFO 2024-08-15 14:51:18,751 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:18,751 check_iot_devices Sleeping for 1.86 seconds
+INFO 2024-08-15 14:51:20,609 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:20,610 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:20,615 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:23,706 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d00a10>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:23,729 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d00a10>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:23,741 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:18.735150+00:00
+INFO 2024-08-15 14:51:23,741 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:23,742 check_iot_devices Sleeping for 1.87 seconds
+INFO 2024-08-15 14:51:25,610 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:25,611 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:25,618 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:28,698 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d644d0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:28,725 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d644d0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:28,737 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:23.729891+00:00
+INFO 2024-08-15 14:51:28,737 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:28,738 check_iot_devices Sleeping for 1.87 seconds
+INFO 2024-08-15 14:51:30,611 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:30,612 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:30,621 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:33,691 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c79dc0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:33,710 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c79dc0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:33,724 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:28.725772+00:00
+INFO 2024-08-15 14:51:33,724 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:33,724 check_iot_devices Sleeping for 1.89 seconds
+INFO 2024-08-15 14:51:35,611 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:35,612 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:35,619 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:38,682 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860be2c90>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:38,707 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860be2c90>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:38,723 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:33.711023+00:00
+INFO 2024-08-15 14:51:38,724 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:38,724 check_iot_devices Sleeping for 1.89 seconds
+INFO 2024-08-15 14:51:40,613 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:40,615 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:40,622 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:43,674 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbfda0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:43,697 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860dbfda0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:43,715 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:38.708019+00:00
+INFO 2024-08-15 14:51:43,715 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:43,715 check_iot_devices Sleeping for 1.90 seconds
+INFO 2024-08-15 14:51:45,614 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:45,615 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:45,621 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:48,731 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c05cd0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:48,750 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c05cd0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:48,762 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:43.698073+00:00
+INFO 2024-08-15 14:51:48,763 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:48,763 check_iot_devices Sleeping for 1.85 seconds
+INFO 2024-08-15 14:51:50,616 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:50,617 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:50,623 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:53,722 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afd2e0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:53,741 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860afd2e0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:53,757 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:48.750992+00:00
+INFO 2024-08-15 14:51:53,758 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:53,758 check_iot_devices Sleeping for 1.86 seconds
+INFO 2024-08-15 14:51:55,616 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:51:55,617 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:51:55,624 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:51:58,714 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c31ac0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:51:58,732 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860c31ac0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:51:58,745 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:53.742000+00:00
+INFO 2024-08-15 14:51:58,745 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:51:58,745 check_iot_devices Sleeping for 1.87 seconds
+INFO 2024-08-15 14:52:00,616 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:52:00,617 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:52:00,626 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:52:03,707 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860b46030>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:52:03,725 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860b46030>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:52:03,737 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:51:58.732541+00:00
+INFO 2024-08-15 14:52:03,738 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:52:03,738 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:52:05,617 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:52:05,618 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:52:05,624 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:52:08,698 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d3c0b0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:52:08,715 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d3c0b0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:52:08,730 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:52:03.725736+00:00
+INFO 2024-08-15 14:52:08,730 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:52:08,731 check_iot_devices Sleeping for 1.89 seconds
+INFO 2024-08-15 14:52:10,617 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:52:10,619 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:52:10,624 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:52:13,692 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d036e0>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:52:13,709 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d036e0>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:52:13,735 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:52:08.715720+00:00
+INFO 2024-08-15 14:52:13,736 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:52:13,736 check_iot_devices Sleeping for 1.88 seconds
+INFO 2024-08-15 14:52:15,617 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:52:15,618 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:52:15,624 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status
+ERROR 2024-08-15 14:52:18,682 check_iot_devices Error connecting to device Node_MCU (ID: 1): HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d7b710>: Failed to establish a new connection: [Errno 113] No route to host'))
+ERROR 2024-08-15 14:52:18,700 check_iot_devices Error connecting to device Node_MCU: HTTPConnectionPool(host='192.168.0.105', port=80): Max retries exceeded with url: /api/status?token=token (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x723860d7b710>: Failed to establish a new connection: [Errno 113] No route to host'))
+INFO 2024-08-15 14:52:18,716 check_iot_devices Updated status for device Node_MCU (ID: 1): is_online=False, last_checked=2024-08-15 14:52:13.710014+00:00
+INFO 2024-08-15 14:52:18,717 check_iot_devices Finished checking all devices
+INFO 2024-08-15 14:52:18,717 check_iot_devices Sleeping for 1.90 seconds
+INFO 2024-08-15 14:52:20,618 check_iot_devices Starting IoT device check
+INFO 2024-08-15 14:52:20,619 check_iot_devices Found 1 iotDevices to check
+INFO 2024-08-15 14:52:20,624 check_iot_devices Checking device: Node_MCU (ID: 1) using endpoint: status

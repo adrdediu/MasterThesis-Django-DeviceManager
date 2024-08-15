@@ -7,3 +7,4 @@ DeviceManager/static/js/next
 DeviceManager/iot_device_checks.log
 DeviceManager/iot_device_checker.log
 /DeviceManager/media/*
+DeviceManager/logs
