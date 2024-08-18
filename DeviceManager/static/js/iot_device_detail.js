@@ -56,26 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
         showAlert('Default UI set successfully', 'success');
     }
     
-    function saveCurrentState(deviceId) {
-        fetch(`/api/devices/${deviceId}/save_state/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'ok') {
-                showAlert('State saved successfully!', 'success');
-            } else {
-                showAlert('Failed to save state: ' + data.message, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showAlert('An error occurred while saving the state', 'error');
-        });
-    }
+
     
 });
