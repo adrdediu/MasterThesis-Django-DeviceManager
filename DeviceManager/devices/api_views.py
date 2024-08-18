@@ -307,3 +307,24 @@ def led_control(request, device_id):
         return JsonResponse({'success': False, 'error': 'Device not found'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@login_required
+@require_POST
+def save_iot_device_state(request, device_id, token):
+    try:
+        iot_device = IoTDevice.objects.get(id=device_id)
+        
+        # Make a request to the IoT device to save its state
+        response = requests.post(f"http://{iot_device.ip_address}/api/save_state", 
+                                 headers={'Authorization': token}, 
+                                 timeout=5)
+        
+        if response.status_code == 200:
+            return JsonResponse({'status': 'ok', 'message': 'State saved successfully'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Failed to save state on device'}, status=500)
+    
+    except IoTDevice.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Device not found'}, status=404)
+    except requests.RequestException as e:
+        return JsonResponse({'status': 'error', 'message': f'Error communicating with device: {str(e)}'}, status=500)

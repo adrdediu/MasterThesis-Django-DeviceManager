@@ -169,8 +169,10 @@
                                         <div class="led-controls">
                                             
                                                
-                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
                                                         <h5 class="mb-0">LED Controls</h5>
+
+                                                        
                                                         <div class="d-flex align-items-center">
                                                             <span id="current-led-pattern" class="me-3">Current State: <span class="fw-bold">...</span></span>
                                                             <div id="led-spinner" class="spinner-border text-primary d-none" role="status">
@@ -278,6 +280,10 @@
                                                   <button type="button" class="btn btn-sm btn-outline-danger w-100 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g0','static')" disabled>All Off</button>
                                                 </div>
                                               </div>
+                                              <hr>
+                                              <button id="saveStateBtn" class="btn btn-sm btn-success led-control-btn" onclick="saveCurrentState('{{iot_device.id}}')" disabled>
+                                                <i class="bi bi-save"></i> Set Pattern as Default
+                                            </button>
                                               
                                               
                                               
@@ -548,19 +554,23 @@
 <!-- Edit Device Modal -->
  
 {% include 'devices/device_modals.html' %}
-{% include 'devices/iot_device_modals.html' %}
 
+{% if iot_device %}
+{% include 'devices/iot_device_modals.html' %}
+{% endif %}
 
 {% endblock %}
 
 {% block extra_js %}
 {{ block.super }}
+<script src="{% static 'js/device_modals.js' %}"></script>
+
+{% if iot_device %}
 <script src="{% static 'js/chart.js' %}"></script>
 <script src="{% static 'js/iot_device_charts.js' %}"></script>
 <script src="{% static 'js/iot_device_sse.js' %}"></script>
 <script src="{% static 'js/iot_device_detail.js' %}"></script>
-<script src="{% static 'js/device_modals.js' %}"></script>
 <script src="{% static 'js/iot_device_modals.js' %}"></script>
-
+{% endif %}
 
 {% endblock %}
