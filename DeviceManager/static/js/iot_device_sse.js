@@ -226,7 +226,7 @@ function updateBadgeColors(ledPattern) {
 }
 
 function saveCurrentState(deviceId) {
-    fetch(`/api/devices/${deviceId}/save_state/`, {
+    fetch(`/api/iot_device/${deviceId}/save_state/`, {
         method: 'POST',
         headers: {
             'X-CSRFToken': getCookie('csrftoken'),

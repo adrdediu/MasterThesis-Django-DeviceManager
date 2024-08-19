@@ -293,15 +293,15 @@ def led_control(request, device_id):
         params = {
             'token': iotDevice.token,
         }
-        print(data)
+        
         if (data['pattern']): 
             params['pattern'] = data['pattern']
             if(data['interval']):
                 params['interval'] = data['interval']
         
-        print("hi")
+        
         response = requests.get(url, params=params)
-        print(response)
+        
         return JsonResponse({'success': True,'response':response.json(), 'message': 'LED control request sent successfully'})
     except IoTDevice.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Device not found'}, status=404)
@@ -310,14 +310,16 @@ def led_control(request, device_id):
 
 @login_required
 @require_POST
-def save_iot_device_state(request, device_id, token):
+def save_iot_device_state(request, device_id):
     try:
         iot_device = IoTDevice.objects.get(id=device_id)
         
+        url=f"http://{iot_device.ip_address}/api/save_state"
+        params = {
+             'token' : iot_device.token
+        }
         # Make a request to the IoT device to save its state
-        response = requests.post(f"http://{iot_device.ip_address}/api/save_state", 
-                                 headers={'Authorization': token}, 
-                                 timeout=5)
+        response = requests.get(url, params=params)
         
         if response.status_code == 200:
             return JsonResponse({'status': 'ok', 'message': 'State saved successfully'})

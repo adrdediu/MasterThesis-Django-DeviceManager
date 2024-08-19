@@ -5,6 +5,7 @@ DeviceManager/static/js/next
 *__pycache__
 *db.sqlite3
 DeviceManager/iot_device_checks.log
+DeviceManager/logs/iot_device_checks.log
 DeviceManager/iot_device_checker.log
 /DeviceManager/media/*
-DeviceManager/logs
+DeviceManager/logs/*
