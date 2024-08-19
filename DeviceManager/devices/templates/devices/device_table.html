@@ -59,17 +59,17 @@
     <tbody>
         {% for device in devices %}
         <tr>
-            <td>{{ device.id }}</td>
+            <td {% if not device.is_active %} class="text-muted fst-italic" {% endif %}>{{ device.id }}</td>
             <td>
-                <a href='{% url 'device_detail' device.id %}' class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{{ device.name }}</a>
+                <a href='{% url 'device_detail' device.id %}' class="{% if device.is_active %}link-primary{% else %} link-danger {% endif %} link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{{ device.name }}</a>
             </td>
-            <td>{{ device.serial_number }}</td>
-            <td>{{ device.category.name }}</td>
-            <td>{{ device.subcategory.name }}</td>
-            <td>{{ device.owner}}</td>
-            <td>{{ device.building.acronym }}</td>
-            <td>{{ device.floor.name }}</td>
-            <td>{{ device.room.name }}</td>
+            <td {% if not device.is_active %} class="text-muted fst-italic" {% endif %}>{{ device.serial_number }}</td>
+            <td {% if not device.is_active %} class="text-muted fst-italic" {% endif %}>{{ device.category.name }}</td>
+            <td {% if not device.is_active %} class="text-muted fst-italic" {% endif %}>{{ device.subcategory.name }}</td>
+            <td {% if not device.is_active %} class="text-muted fst-italic" {% endif %}>{{ device.owner}}</td>
+            <td {% if not device.is_active %} class="text-muted fst-italic" {% endif %}>{{ device.building.acronym }}</td>
+            <td {% if not device.is_active %} class="text-muted fst-italic" {% endif %}>{{ device.floor.name }}</td>
+            <td {% if not device.is_active %} class="text-muted fst-italic" {% endif %}>{{ device.room.name }}</td>
             <td>
                 <div class="container-fluid p-0">
                     <div class="row g-1">

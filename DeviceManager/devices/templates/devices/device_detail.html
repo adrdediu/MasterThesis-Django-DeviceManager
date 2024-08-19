@@ -20,7 +20,7 @@
                     
                     <!-- General Information Card -->
                     <div id="generalInfoCard" class="card card-shadow-light mb-3" >
-                        <div class="card-header bg-success text-white card-shadow d-flex justify-content-between align-items-center">
+                        <div class="card-header  {% if not device.is_active %} bg-danger {% else %} bg-success{% endif %} text-white card-shadow d-flex justify-content-between align-items-center">
                             <h2 class="h5 mb-0">General Information</h2>
                             <div>
                                 {% if iot_device %} 
@@ -338,11 +338,9 @@
                                     <div class="card card-shadow-light  ">
                                         <div class="card-header bg-dark bg-gradient text-white card-shadow d-flex justify-content-between align-items-center">
                                             <h2 class="h6 mb-0">IoT Features</h2>
-                                            {% if iot_device %}
-                                            <span id="iotStatusBadge" class="badge bg-success">Activated</span>
-                                            {% else %}
+
                                             <span id="iotStatusBadge" class="badge bg-danger">Not Available</span>
-                                            {% endif %}
+                                            
 
                                         </div>
                                         <div class="card-body">
@@ -353,7 +351,7 @@
                                                     <div class="row">
 
                                                         <div class="col">
-                                                            <button id="activateIoTBtn" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#activateIoTModal" style="display: {% if iot_device %}none{% else %}block{% endif %};">
+                                                            <button id="activateIoTBtn" class="btn btn-primary btn-sm w-100 {% if not device.is_active %} disabled {% endif %}" data-bs-toggle="modal" data-bs-target="#activateIoTModal">
                                                                 <i class="bi bi-lightning-charge"></i> Activate IoT Features
                                                             </button>
                                                         </div>
@@ -371,11 +369,9 @@
                                     <div class="card card-shadow-light  ">
                                         <div class="card-header bg-dark bg-gradient text-white card-shadow d-flex justify-content-between align-items-center">
                                             <h2 class="h6 mb-0">IoT Features</h2>
-                                            {% if iot_device %}
+                                          
                                             <span id="iotStatusBadge" class="badge bg-success">Activated</span>
-                                            {% else %}
-                                            <span id="iotStatusBadge" class="badge bg-danger">Not Available</span>
-                                            {% endif %}
+
 
                                         </div>
                                         <div class="card-body">
@@ -443,7 +439,7 @@
                                                     
                                                     <hr class="my-2">
                                                     <div class="row">
-                                                        {% if iot_device %}
+                                                        
                                                         <div class="col">
 
                                                             <button id="connectionSettingsBtn" class="btn btn-secondary btn-secondary btn-sm w-100 " data-bs-toggle="modal" data-bs-target="#connectionSettingsModal" style="display: {% if iot_device %}block{% else %}none{% endif %};">
@@ -457,13 +453,7 @@
                                                                 <i class="bi bi-trash"></i> Remove Features
                                                             </button>
                                                         </div>
-                                                        {% else %}
-                                                        <div class="col">
-                                                            <button id="activateIoTBtn" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#activateIoTModal" style="display: {% if iot_device %}none{% else %}block{% endif %};">
-                                                                <i class="bi bi-lightning-charge"></i> Activate IoT Features
-                                                            </button>
-                                                        </div>
-                                                        {% endif %}
+
                                                     </div>
 
                                                     
