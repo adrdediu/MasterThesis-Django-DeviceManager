@@ -516,8 +516,6 @@
                                             </div>
                                         </div>
                                         <div class="col-7 col-sm-7">
-                                            <h6 class="text-decoration-underline">Last Scanned</h6>
-                                            <p class="text-center"> {{last_scanned}}</p>
                                             <hr>
                                                     <a id="downloadQRCodeBtn" href="{% url 'download_qrcode' device.id %}" class="btn btn-sm btn-primary mb-2 w-100">
                                                         <i class="bi bi-download"></i> Download
@@ -527,6 +525,7 @@
                                                     <button id="regenerateQRCode" class="btn btn-sm btn-warning mb-2 w-100" data-device-id="{{device.id}}">
                                                         <i class="bi bi-arrow-clockwise"></i> Regenerate
                                                     </button>
+                                                    <hr>
                                           
                                         </div>
                                     </div>
