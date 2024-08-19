@@ -563,21 +563,21 @@ def generate_inventory_report_view(request, inventory_id):
             report_file = generate_inventory_pdf_report(inventory)
             filename = f'inventory_report_{inventory_id}.pdf'
             content_type = 'application/pdf'
-
-        if report_type == 'excel':
+        elif report_type == 'excel':
+            report_file = generate_inventory_excel_report(inventory)
             filename = f'inventory_report_{inventory_id}.xlsx'
-            file_path = os.path.join(settings.MEDIA_ROOT, 'inventory_reports', filename)
-            
-            if os.path.exists(file_path):
-                response = FileResponse(open(file_path, 'rb'))
-                response['Content-Disposition'] = f'attachment; filename="{filename}"'
-                return response
+            content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        else:
+            return HttpResponseBadRequest("Invalid report type")
 
-        response = FileResponse(report_file)
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        return response
+        if report_file:
+            response = FileResponse(report_file, content_type=content_type)
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        else:
+            return HttpResponseServerError("Failed to generate report")
 
-    return render(request, 'devices/inventory_detail.html', {'inventory': inventory})
+    return HttpResponseBadRequest("Invalid request method")
 
 #Include only Next JS Related Imports
 from django.utils.safestring import mark_safe

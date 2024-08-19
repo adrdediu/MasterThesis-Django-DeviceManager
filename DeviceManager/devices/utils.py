@@ -76,9 +76,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def generate_inventory_excel_report(inventory):
     try:
-        json_file_path = os.path.join(settings.MEDIA_ROOT, inventory.inventory_data_file.name)
+        json_file_path = os.path.join(inventory.inventory_data_file.name)
         with open(json_file_path, 'r') as f:
             data = json.load(f)
 
@@ -128,14 +129,12 @@ def generate_inventory_excel_report(inventory):
         for col in range(1, 11):
             ws.column_dimensions[get_column_letter(col)].width = 15
 
-        # Save the workbook
-        excel_file = f'inventory_report_{data["inventorization_id"]}.xlsx'
-        excel_file_path = os.path.join(settings.MEDIA_ROOT, 'inventory_reports', excel_file)
-        os.makedirs(os.path.dirname(excel_file_path), exist_ok=True)
-        wb.save(excel_file_path)
-        logger.info(f"Excel report generated successfully: {excel_file_path}")
-        return excel_file_path
+        # Save to BytesIO object
+        excel_file = io.BytesIO()
+        wb.save(excel_file)
+        excel_file.seek(0)
+        
+        return excel_file
     except Exception as e:
         logger.error(f"Error generating Excel report: {str(e)}")
-        raise
-
+        return None
