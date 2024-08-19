@@ -6,7 +6,7 @@
     <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;;" aria-label="breadcrumb" class="sticky-top  rounded" data-bs-theme="dark">
         <ol class="breadcrumb  p-2 card-shadow rounded">
           <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-          <li class="breadcrumb-item"><a href="{% url 'inventory_management' inventory.id %}" class="text-decoration-none">Inventory Management</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'inventory_management' inventory.id %}" class="text-decoration-none">Inventory Management - {{ inventory.building.acronym}}</a></li>
           <li class="breadcrumb-item active" aria-current="page">Inventory #{{ inventory_list.id }}</li>
         </ol>
     </nav>

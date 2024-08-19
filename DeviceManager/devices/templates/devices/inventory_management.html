@@ -6,7 +6,7 @@
     <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;" aria-label="breadcrumb" class="sticky-top rounded" data-bs-theme="dark">
         <ol class="breadcrumb p-2 card-shadow rounded">
             <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Inventory Management</li>
+            <li class="breadcrumb-item active" aria-current="page">Inventory Management - {{ inventory.building.acronym}}</li>
         </ol>
     </nav>
 

@@ -381,7 +381,7 @@ class InventoryManagementView(BaseContextMixin,LoginRequiredMixin, TemplateView)
         context = self.get_base_context()
         context.update({
             'inventory': inventory,
-            'inventorization_lists': InventorizationList.objects.all().order_by('-start_date'),
+            'inventorization_lists': InventorizationList.objects.filter(inventory=inventory).order_by('-start_date'),
             'total_lists': total_lists,
             'completed_lists': completed_lists,
             'devices': inventory_device_list,
