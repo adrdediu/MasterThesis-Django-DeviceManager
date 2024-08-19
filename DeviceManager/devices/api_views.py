@@ -223,6 +223,11 @@ def activate_iot_features(request):
 
     try:
         device = Device.objects.get(id=device_id)
+        
+        # Check if the IP address is already in use
+        if IoTDevice.objects.filter(ip_address=ip_address).exists():
+            return JsonResponse({'success': False, 'error': 'This IP address is already in use by another IoT device'}, status=400)
+
         iot_device, created = IoTDevice.objects.get_or_create(
             device=device,
             defaults={'ip_address': ip_address, 'token': token}
