@@ -74,7 +74,7 @@
                 <div class="container-fluid p-0">
                     <div class="row g-1">
                         <div class="col-12 text-center">
-                            {% if device.owner  == user %}
+                            {% if device.owner  == user and device.is_active %}
                             <div class="row">
                                 <div class="col mb-1">
                                     <button class="btn btn-sm btn-warning edit-device w-100" data-device-id="{{ device.id }}" title="Edit">
