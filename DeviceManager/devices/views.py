@@ -462,7 +462,9 @@ class DeviceDetailView(BaseContextMixin,LoginRequiredMixin, DetailView):
         context.update(self.get_base_context())
         try:
             iot_device = IoTDevice.objects.filter(device=self.object).first()
+            last_scan = DeviceScan.objects.filter(device=self.object).order_by('-timestamp').first()
             context['iot_device'] = iot_device
+            context['last_scan'] = last_scan
         except:
             pass
         

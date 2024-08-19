@@ -517,6 +517,7 @@
                                         </div>
                                         <div class="col-7 col-sm-7">
                                             <h6 class="text-decoration-underline">Last Scanned</h6>
+                                            <p class="text-center"> {{last_scanned}}</p>
                                             <hr>
                                                     <a id="downloadQRCodeBtn" href="{% url 'download_qrcode' device.id %}" class="btn btn-sm btn-primary mb-2 w-100">
                                                         <i class="bi bi-download"></i> Download
@@ -552,22 +553,20 @@
  
 {% include 'devices/device_modals.html' %}
 
-{% if iot_device %}
 {% include 'devices/iot_device_modals.html' %}
-{% endif %}
+
 
 {% endblock %}
 
 {% block extra_js %}
 {{ block.super }}
 <script src="{% static 'js/device_modals.js' %}"></script>
-
+<script src="{% static 'js/iot_device_modals.js' %}"></script>
 {% if iot_device %}
 <script src="{% static 'js/chart.js' %}"></script>
 <script src="{% static 'js/iot_device_charts.js' %}"></script>
 <script src="{% static 'js/iot_device_sse.js' %}"></script>
 <script src="{% static 'js/iot_device_detail.js' %}"></script>
-<script src="{% static 'js/iot_device_modals.js' %}"></script>
 {% endif %}
 
 {% endblock %}
