@@ -22,18 +22,24 @@ def save_response_to_json(device_id, endpoint_name, status, response_data):
         'data': response_data
     }
     
-    if os.path.exists(filepath):
-        with open(filepath, 'r') as f:
-            existing_data = json.load(f)
-    else:
-        existing_data = {'responses': []}
 
-    existing_data['responses'].insert(0, new_entry)
+    if os.path.exists(filepath) and os.path.getsize(filepath) > 1_000_000:  # 1 MB
+
+        data = {'responses': [new_entry]}
+    else:
+     
+        if os.path.exists(filepath):
+            with open(filepath, 'r') as f:
+                data = json.load(f)
+        else:
+            data = {'responses': []}
+        data['responses'].insert(0, new_entry)
 
     with open(filepath, 'w') as f:
-        json.dump(existing_data, f)
+        json.dump(data, f)
     
     return filepath
+
 
 def check_device(iotDevice, endpoint):
     logger.info(f"Checking device: {iotDevice.device.name} (ID: {iotDevice.id}) using endpoint: {endpoint.name}")
@@ -123,7 +129,7 @@ class Command(BaseCommand):
             self.check_all_devices()
             
             elapsed_time = (timezone.now() - start_time).total_seconds()
-            sleep_time = max(5 - elapsed_time, 0)
+            sleep_time = max(30 - elapsed_time, 0)
 
             logger.info(f"Sleeping for {sleep_time:.2f} seconds")
             time.sleep(sleep_time)

@@ -157,14 +157,11 @@ class UserDevicesListView(BaseContextMixin,LoginRequiredMixin,View):
 def update_profile(request):
     user = request.user
     password = request.POST.get('password')
-    print(password)
-    print(user.check_password(password))
     if not user.check_password(password):
         return JsonResponse({'success': False, 'message': 'Incorrect password'})
     
     # Validate email
     email = request.POST.get('email')
-    print(email)
     try:
         validate_email(email)
     except ValidationError:
