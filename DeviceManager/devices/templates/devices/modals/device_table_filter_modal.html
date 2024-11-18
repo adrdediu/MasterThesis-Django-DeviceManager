@@ -1,0 +1,57 @@
+<div class="modal fade" id="filtersModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Advanced Filters</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <!-- Category Filters -->
+                    <div class="col-md-6">
+                        <label class="form-label">Category</label>
+                        <select id="deviceCategory" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Subcategory</label>
+                        <select id="deviceSubcategory" class="form-select">
+                            <option value="">All Subcategories</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Location Filters -->
+                    <div class="col-md-4">
+                        <label class="form-label">Building</label>
+                        <select id="deviceBuilding" class="form-select">
+                            <option value="">All Buildings</option>
+                            {% for building in buildings %}
+                                <option value="{{ building.id }}">{{ building.acronym }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Floor</label>
+                        <select id="deviceFloor" class="form-select">
+                            <option value="">All Floors</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Room</label>
+                        <select id="deviceRoom" class="form-select">
+                            <option value="">All Rooms</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+</div>

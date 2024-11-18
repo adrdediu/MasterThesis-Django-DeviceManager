@@ -116,33 +116,37 @@ class HomePageView(BaseContextMixin,LoginRequiredMixin,View):
 class DeviceListView(BaseContextMixin,LoginRequiredMixin,View):
     login_url = 'login'
     def get(self, request, category=None, subcategory=None, building=None, floor=None, room=None):
-        devices = Device.objects.all().order_by('-id')
-
-        selected_category = selected_subcategory = selected_building = selected_floor = selected_room = ""
-
-        if category:
-            selected_category_object = get_object_or_404(Category, name=category)
-            selected_category = selected_category_object.name
-            if subcategory:
-                selected_subcategory = get_object_or_404(Subcategory, name=subcategory, category=selected_category_object.id).name
-
-        if building:
-            selected_building_object = get_object_or_404(Building, name=building)
-            selected_building = selected_building_object.name
-            if floor:
-                selected_floor_object = get_object_or_404(Floor, building=selected_building_object.id, name=floor).name
-                selected_floor = selected_floor_object.name
-                if room:
-                    selected_room = get_object_or_404(Room, building=selected_building_object.id, floor=selected_floor_object.id, name=room).name
+        devices = Device.objects.all().filter(is_active=True).order_by('-id')
 
         context = self.get_base_context()
         context.update({
             'devices': devices,
-            'selected_category': selected_category,
-            'selected_subcategory': selected_subcategory,
-            'selected_building': selected_building,
-            'selected_floor': selected_floor,
-            'selected_room': selected_room,
+        })
+
+        return render(request, 'devices/device_list.html', context)
+
+class DeletedDevicesListView(BaseContextMixin,LoginRequiredMixin,View):
+    login_url = 'login'
+    def get(self, request, category=None, subcategory=None, building=None, floor=None, room=None):
+        devices = Device.objects.all().filter(is_active=False).order_by('-id')
+
+        context = self.get_base_context()
+        context.update({
+            'devices': devices,
+            'deleted_devices': True,
+        })
+
+        return render(request, 'devices/device_list.html', context)
+    
+class UserDevicesListView(BaseContextMixin,LoginRequiredMixin,View):
+    login_url = 'login'
+    def get(self, request, category=None, subcategory=None, building=None, floor=None, room=None):
+        devices = Device.objects.all().filter(owner=request.user,is_active=True).order_by('-id')
+
+        context = self.get_base_context()
+        context.update({
+            'devices': devices,
+            'user_devices': True,
         })
 
         return render(request, 'devices/device_list.html', context)
@@ -463,7 +467,7 @@ class DeviceDetailView(BaseContextMixin,LoginRequiredMixin, DetailView):
         try:
             iot_device = IoTDevice.objects.filter(device=self.object).first()
             context['iot_device'] = iot_device
-           
+            context['user_device'] = self.request.user == self.object.owner
         except:
             pass
         
@@ -517,7 +521,7 @@ class DeviceDetailView(BaseContextMixin,LoginRequiredMixin, DetailView):
                 }
                 return redirect('inventory_detail', pk=paused_inventory.id)
 
-        context = self.get_context_data(object=device)
+        context = self.get_context_data(object=device,user=user)
         return response
 
 class DownloadQRCodeView(LoginRequiredMixin, View):

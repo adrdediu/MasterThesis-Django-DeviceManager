@@ -1,0 +1,94 @@
+<!-- Edit Device Modal -->
+<div class="modal fade" id="editDeviceModal" tabindex="-1" aria-labelledby="editDeviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 dev-man-bg-center card-shadow">
+                <h5 class="modal-title text-white" id="editDeviceModalLabel">Edit Device</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editDeviceForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="editDeviceId" name="device_id">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="bg-black p-3 rounded">
+                                <h6 class="text-white mb-3">Device Information</h6>
+                                <div class="mb-3">
+                                    <label for="editDeviceName" class="form-label text-light">Name</label>
+                                    <input type="text" class="form-control bg-dark text-light" id="editDeviceName" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editDeviceDescription" class="form-label text-light">Description</label>
+                                    <textarea class="form-control bg-dark text-light" id="editDeviceDescription" name="description" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editDeviceSerialNumber" class="form-label text-light">Serial Number</label>
+                                    <input type="text" class="form-control bg-dark text-light" id="editDeviceSerialNumber" name="serial_number" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="bg-black p-3 rounded">
+                                <h6 class="text-white mb-3">Device Location</h6>
+                                <div class="mb-3">
+                                    <label for="editDeviceBuildingModal" class="form-label text-light">Building</label>
+                                    <select class="form-select bg-dark text-light" id="editDeviceBuildingModal" name="building" required>
+                                        {% for building in buildings %}
+                                            <option value="{{ building.id }}">{{ building.acronym }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editDeviceFloorModal" class="form-label text-light">Floor</label>
+                                    <select class="form-select bg-dark text-light" id="editDeviceFloorModal" name="floor" required>
+                                        <option value="">Select a Floor</option>
+                                        {% for floor in floors %}
+                                            <option value="{{ floor.id }}" data-building="{{ floor.building_id }}" style="display:none;">{{ floor.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editDeviceRoomModal" class="form-label text-light">Room</label>
+                                    <select class="form-select bg-dark text-light" id="editDeviceRoomModal" name="room" required>
+                                        <option value="">Select a Floor first</option>
+                                        {% for room in rooms %}
+                                            <option value="{{ room.id }}" data-floor="{{ room.floor_id }}" style="display:none;">{{ room.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-black p-3 rounded mt-3">
+                        <h6 class="text-white mb-3">Device Classification</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editDeviceCategoryModal" class="form-label text-light">Category</label>
+                                <select class="form-select bg-dark text-light" id="editDeviceCategoryModal" name="category" required>
+                                    <option value="">Select a category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editDeviceSubcategoryModal" class="form-label text-light">Subcategory</label>
+                                <select class="form-select bg-dark text-light" id="editDeviceSubcategoryModal" name="subcategory" required>
+                                    <option value="">Select a Category first</option>
+                                    {% for subcategory in subcategories %}
+                                        <option value="{{ subcategory.id }}" data-category="{{ subcategory.category_id }}" style="display:none;">{{ subcategory.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" id="resetEditForm">Reset</button>
+                <button type="submit" form="editDeviceForm" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>

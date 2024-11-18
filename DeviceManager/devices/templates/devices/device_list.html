@@ -2,39 +2,86 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid h-100 overflow-auto mt-2">
-    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="sticky-top  rounded" data-bs-theme="dark">
+<div class="container-fluid h-100 overflow-auto">
+
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="d-none d-lg-block sticky-top  rounded mt-2" data-bs-theme="dark">
         <ol class="breadcrumb  p-2 rounded card-shadow" style="background-color: #343a40;">
-          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Devices</li>
+          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page"><i class="bi bi-lightning-charge me-2"></i>{% if deleted_devices %}Deleted {% elif user_devices%}My {%endif%}Devices</li>
         </ol>
     </nav>
-    <div class="row p-1">
-        <div class="col">
-            <h3 class="mb-3">Device Management</h3>
 
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="h5 mb-0">Device Actions</h2>
-                        </div>
-                        <div class="card-body">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
-                                <i class="bi bi-plugin me-2"></i> Add Device
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="d-block d-lg-none rounded pt-2" data-bs-theme="dark">
+        <ol class="breadcrumb  p-2 rounded card-shadow" style="background-color: #343a40;">
+          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page"><i class="bi bi-lightning-charge me-2"></i>{% if deleted_devices %}Deleted {% elif user_devices%}My {%endif%}Devices</li>
+        </ol>
+    </nav>
+    <div id="skeletonLoader" class="skeleton-loader">
+        <div class="skeleton-header"></div>
+        <div class="skeleton-content">
+            <div class="skeleton-item short"></div>
+            <div class="skeleton-item medium"></div>
+            <div class="skeleton-item long"></div>
+        </div>
+    </div>
+    <div id="deviceListContent" class="row p-1" style="display: none;">
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <!-- View Toggle Buttons -->
+                        <div class="col-xl-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-primary active" id="listViewBtn">
+                                    <i class="bi bi-list-ul"></i> List View
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary" id="cardViewBtn">
+                                    <i class="bi bi-grid-3x3-gap"></i> Card View
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark border" data-bs-toggle="modal" data-bs-target="#filtersModal">
+                                <i class="bi bi-filter"></i> Filters
                             </button>
+                            </div>
+                        </div>
+                        <hr class="d-xl-none my-2">
+                        <!-- Search Fields -->
+                        <div class="col-xl-9">
+                            <div class="row g-2">
+                                <div class="col-12 col-md-3">
+                                    <input type="text" class="form-control form-control-sm" id="nameSearch" placeholder="Search by name...">
+                                </div>
+                                <div class="col-6 col-md-2">
+                                    <input type="text" class="form-control form-control-sm" id="serialSearch" placeholder="Search by serial...">
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <input type="text" id="ownerSearch" placeholder="Search by owner..." class="form-control form-control-sm"></th>
+                                </div>
+                                <div class="col-md-4">
+                                    <div id="cardPagination" class="mb-0"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h2 class="h5 mb-0">Device List</h2>
+    
+            <div id="listViewContainer">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">{%if deleted_devices%}Deleted {%endif%}Devices List</h2>
+                    </div>
+                    <div class="card-body p-0">
+                        {% include 'devices/device_table.html' %}
+                    </div>
                 </div>
-                <div class="card-body">
-                    {% include 'devices/device_table.html' %}
-                </div>
+            </div>
+
+            <div id="cardViewContainer" style="display: none;">
+                <!-- Card view content will go here -->
+                 {% include 'devices/device_cards.html' %}
             </div>
 
             <div class="d-lg-none mb-3 pb-5">
@@ -44,8 +91,8 @@
 
 </div>
 
-{% include 'devices/device_modals.html' %}
-
+{% include 'devices/modals/device_edit_modal.html' %}
+{% include 'devices/modals/device_table_filter_modal.html' %}
 
 {% endblock %}
 
@@ -59,7 +106,8 @@
 <!-- DataTables -->
 <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
-<script src="{% static 'js/device_modals.js' %}"></script>
-<script src="{% static 'js/device_table.js' %}"></script>
+<script src="{% static 'js/device_table_no_search.js' %}"></script>
+<script src="{% static 'js/device_views.js' %}"></script>
+<script src="{% static 'js/device_cards.js' %}"></script>
 {% endblock %}
 

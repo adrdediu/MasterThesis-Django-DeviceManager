@@ -1,0 +1,83 @@
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
+    {% for device in devices %}
+    <div class="col">
+        <div class="card h-100 card-shadow-light {% if deleted_devices %} border-danger {%endif%}" style="max-width: 300px; margin: 0 auto;">
+            <div class="card-body p-3">
+                <!-- Icon and Name -->
+                <div class="text-center mb-2">
+                    {% if device.category.name == 'Computers' %}
+                        <i class="bi bi-pc-display h3"></i>
+                    {% elif device.category.name == 'Labware' %}
+                        <i class="bi bi-tools h3"></i>
+                    {% elif device.category.name == 'Network' %}
+                        <i class="bi bi-router h3"></i>
+                    {% elif device.category.name == 'Peripherals' %}
+                        <i class="bi bi-keyboard h3"></i>
+                    {% elif device.category.name == 'Storage' %}
+                        <i class="bi bi-device-hdd h3"></i>
+                    {% elif device.category.name == 'IoT Device' %}
+                        <i class="bi bi-cpu h3"></i>
+                    {% else %}
+                        <i class="bi bi-question-circle h3"></i>
+                    {% endif %}
+                    <div class="text-center mb-2">
+                        <h6 class="card-title mt-2 mb-0">{{ device.name }}</h6>
+                        <small class="text-muted d-block" data-owner="{{device.owner}}">Owner: {{ device.owner }}</small>
+                        <small class="text-muted d-block" data-serial="{{device.serial_number}}">S/N: {{ device.serial_number }}</small>
+                    </div>
+                </div>
+
+                <hr class="my-2">
+
+                <!-- Category Info -->
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <small class="text-muted">Category</small>
+                        <p class="mb-0" data-category="{{ device.category.name }}">{{ device.category.name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">Subcategory</small>
+                        <p class="mb-0" data-subcategory="{{ device.subcategory.name }}">{{ device.subcategory.name }}</p>
+                    </div>
+                </div>
+
+                <!-- Location Info -->
+                <div class="row">
+                    <div class="col-4">
+                        <small class="text-muted">Building</small>
+                        <p class="mb-0" data-building="{{ device.building.acronym }}">{{ device.building.acronym }}</p>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted">Floor</small>
+                        <p class="mb-0" data-floor="{{ device.floor.name }}">{{ device.floor.name }}</p>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted">Room</small>
+                        <p class="mb-0" data-room="{{ device.room.name }}">{{ device.room.name }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer p-2">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'device_detail' device.id %}" class="btn btn-primary btn-sm">View</a>
+                    {% if device.owner == user and device.is_active %}
+                    <div class="btn-group">
+                        <button class="btn btn-warning btn-sm edit-device" data-device-id="{{ device.id }}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-device" data-device-id="{{ device.id }}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                    {% elif deleted_devices %}
+                    <button class="btn btn-danger btn-sm disabled"><i class="bi bi-trash"></i> Deleted</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination container -->
+<div id="cardPagination" class="mt-3"></div>

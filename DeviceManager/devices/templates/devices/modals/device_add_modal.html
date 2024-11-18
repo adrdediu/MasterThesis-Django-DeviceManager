@@ -1,0 +1,93 @@
+<!-- Add Device Modal -->
+<div class="modal fade" id="addDeviceModal" tabindex="-1" aria-labelledby="addDeviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 card-shadow dev-man-bg-center">
+                <h5 class="modal-title text-white" id="addDeviceModalLabel">Add Device</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addDeviceForm" method="post" action="{% url 'add_device' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="bg-black p-3 rounded">
+                                <h6 class="text-white mb-3">Device Information</h6>
+                                <div class="mb-3">
+                                    <label for="deviceName" class="form-label text-light">Name</label>
+                                    <input type="text" class="form-control bg-dark text-light" id="deviceName" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deviceDescription" class="form-label text-light">Description</label>
+                                    <textarea class="form-control bg-dark text-light" id="deviceDescription" name="description" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deviceSerialNumber" class="form-label text-light">Serial Number</label>
+                                    <input type="text" class="form-control bg-dark text-light" id="deviceSerialNumber" name="serial_number" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="bg-black p-3 rounded">
+                                <h6 class="text-white mb-3">Device Location</h6>
+                                <div class="mb-3">
+                                    <label for="deviceBuildingModal" class="form-label text-light">Building</label>
+                                    <select class="form-select bg-dark text-light" id="deviceBuildingModal" name="building" required>
+                                        {% if buildings %}
+                                        <option value="">Select a building</option>
+                                        {% for building in buildings %}
+                                            <option value="{{ building.id }}">{{ building.acronym }}</option>
+                                        {% endfor %}
+                                        {% else %}
+                                            <option value="">Please add a building first</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deviceFloorModal" class="form-label text-light">Floor</label>
+                                    <select class="form-select bg-dark text-light" id="deviceFloorModal" name="floor" required>
+                                        <option value="">Select a Building first</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deviceRoomModal" class="form-label text-light">Room</label>
+                                    <select class="form-select bg-dark text-light" id="deviceRoomModal" name="room" required>
+                                        <option value="">Select a Building and a Floor first</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-black p-3 rounded mt-3">
+                        <h6 class="text-white mb-3">Device Classification</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="deviceCategoryModal" class="form-label text-light">Category</label>
+                                <select class="form-select bg-dark text-light" id="deviceCategoryModal" name="category" required>
+                                    {% if categories %}
+                                    <option value="">Select a category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                    {% else %}
+                                        <option value="">Please add a category first</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="deviceSubcategoryModal" class="form-label text-light">Subcategory</label>
+                                <select class="form-select bg-dark text-light" id="deviceSubcategoryModal" name="subcategory" required>
+                                    <option value="">Select a Category first</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="addDeviceForm" class="btn btn-primary">Save Device</button>
+            </div>
+        </div>
+    </div>
+</div>

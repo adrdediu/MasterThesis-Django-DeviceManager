@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-
     // Add Device form submission
     const addDeviceForm = document.getElementById('addDeviceForm');
     if (addDeviceForm) {
@@ -49,6 +48,67 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Category and subcategory handling in the modal
+    const deviceCategoryModal = document.getElementById('deviceCategoryModal');
+    if (deviceCategoryModal) {
+        deviceCategoryModal.addEventListener('change', function() {
+            selectorHandler([deviceCategoryModal, document.getElementById('deviceSubcategoryModal')], "/get_subcategories/?category_id", ["Category", "Subcategory"], true);
+        });
+    }
+
+    // Building, floor, and room handling in the modal
+    const deviceBuildingModal = document.getElementById('deviceBuildingModal');
+    const deviceFloorModal = document.getElementById('deviceFloorModal');
+    if (deviceBuildingModal) {
+        deviceBuildingModal.addEventListener('change', function() {
+            selectorHandler([deviceBuildingModal, deviceFloorModal, document.getElementById('deviceRoomModal')], "/get_floors/?building_id", ["Building", "Floor", "Room"], true);
+        });
+    }
+    if (deviceFloorModal) {
+        deviceFloorModal.addEventListener('change', function() {
+            selectorHandler([deviceFloorModal, document.getElementById('deviceRoomModal')], "/get_rooms/?floor_id", ["Floor", "Room"], true);
+        });
+    }
+
+        // Selector handlers
+    function selectorHandler(selectors, url, modelNames, detailed_options) {
+        for (var i = 1; i < selectors.length; i++) {
+            if (detailed_options)
+                selectors[i].innerHTML = `<option value="">Select a ${modelNames[0]} first</option>`;
+            else
+                selectors[i].innerHTML = `<option value="">All</option><option value="">Choose a ${modelNames[0]} first...</option>`;
+        }
+
+        let value = selectors[0].value;
+        if(value){
+            fetch(`${url}=${value}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                if (!(Array.isArray(data) && data.length === 0)) {
+                    if (detailed_options)
+                        selectors[1].innerHTML = `<option value="">Select a ${modelNames[1]}</option>`;
+                    else 
+                        selectors[1].innerHTML = `<option value="">All</option><o value="">Choose a ${modelNames[1]} first...</o`;
+
+                    for (var i = 2; i < selectors.length; i++) {
+                        if (detailed_options) 
+                            selectors[i].innerHTML = `<option value="">Please select a ${modelNames[i-1]} first.</option>`;
+                        else
+                            selectors[i].innerHTML = `<option value="">All</option><option value="">Choose a ${modelNames[i-1]} first...</option>`;
+                    }
+                    data.forEach(model => {
+                        selectors[1].innerHTML += `<option value="${model.id}">${model.name}</option>`;
+                    });
+                } else {
+                    if (detailed_options)
+                        selectors[1].innerHTML = `<option value="">Please add a ${modelNames[1]} first</option>`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        } 
+    }
+
     // Edit Device
     document.querySelectorAll('.edit-device').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -83,12 +143,12 @@ document.addEventListener('DOMContentLoaded', function() {
             populateEditForm(window.editingDevice);
             editDeviceModal.show();
         } else {
-            Swal.fire('Error', data.message || 'Failed to load device data', 'error');
+            showAlert('Error', data.message || 'Failed to load device data', 'danger');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        Swal.fire('Error', 'An unexpected error occurred', 'error');
+        showAlert('Error', 'An unexpected error occurred', 'danger');
     });
     }
     
@@ -118,12 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateOptions(selectId, parentAttribute, parentValue) {
         const select = document.getElementById(selectId);
         Array.from(select.options).forEach(option => {
-            
-            if (option.dataset[parentAttribute] === parentValue.toString()) {
-                option.style.display = '';
-            } else {
-                option.style.display = 'none';
-            }
+            option.style.display = option.dataset[parentAttribute] === parentValue.toString() ? '' : 'none';
         });
     }
 
@@ -137,11 +192,13 @@ document.addEventListener('DOMContentLoaded', function() {
         updateOptions('editDeviceFloorModal', 'building', this.value);
         document.getElementById('editDeviceFloorModal').value = '';
         document.getElementById('editDeviceRoomModal').value = '';
+        document.getElementById('editDeviceRoomModal').options[0].text = 'Select a Floor first...';
     });
 
     document.getElementById('editDeviceFloorModal').addEventListener('change', function() {
         updateOptions('editDeviceRoomModal', 'floor', this.value);
         document.getElementById('editDeviceRoomModal').value = '';
+        document.getElementById('editDeviceRoomModal').options[0].text = 'Select a Room';
     });
 
     // Edit Device form submission
@@ -161,16 +218,14 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    Swal.fire('Success', 'Device updated successfully', 'success').then(() => {
-                        location.reload();
-                    });
+                    showAlertAndReload( 'Device updated successfully','success');
                 } else {
-                    Swal.fire('Error', data.message || 'Failed to update device', 'error');
+                    showAlert(data.message || 'Failed to update device', 'danger');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire('Error', 'An unexpected error occurred', 'error');
+                showAlert(data.message || 'Failed to update device', 'danger');
             });
         });
     }

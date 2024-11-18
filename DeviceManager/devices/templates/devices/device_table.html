@@ -13,48 +13,6 @@
             <th>Room</th>
             <th>Actions</th>
         </tr>
-        <tr class="search-row">
-            <th><input type="text" placeholder="&#128269; ID" class="form-control form-control-sm"></th>
-            <th><input type="text" placeholder="Search Name" class="form-control form-control-sm"></th>
-            <th><input type="text" placeholder="Search S/N" class="form-control form-control-sm"></th>
-            <th>
-                <select id="deviceCategory" class="form-select form-select-sm">
-                    <option value="">All</option>
-                    {% for category in categories %}
-                        <option value="{{ category.id }}">{{ category.name }}</option>
-                    {% endfor %}
-                </select>
-            </th>
-            <th>
-                <select id="deviceSubcategory" class="form-select form-select-sm">
-                    <option value="">All</option>
-                    <option value="">Choose Category first...</option>
-                </select>
-            </th>
-            <th><input type="text" placeholder="Search Owner" class="form-control form-control-sm"></th>
-
-            <th>
-                <select id="deviceBuilding" class="form-select form-select-sm">
-                    <option value="">All</option>
-                    {% for building in buildings %}
-                        <option value="{{ building.id }}">{{ building.acronym }}</option>
-                    {% endfor %}
-                </select>
-            </th>
-            <th>
-                <select id="deviceFloor" class="form-select form-select-sm">
-                    <option value="">All</option>
-                    <option value="">Choose Building first...</option>
-                </select>
-            </th>
-            <th>
-                <select id="deviceRoom" class="form-select form-select-sm">
-                    <option value="">All</option>
-                    <option value="">Choose Building and Floor first...</option>
-                </select>
-            </th>
-            <th></th>
-        </tr>
     </thead>
     <tbody>
         {% for device in devices %}

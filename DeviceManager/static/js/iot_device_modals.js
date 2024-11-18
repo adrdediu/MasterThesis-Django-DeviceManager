@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    
+    if(removeIoTBtn) {
     removeIoTBtn.addEventListener('click', function() {
         Swal.fire({
             title: 'Are you sure?',
@@ -81,20 +83,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
+    }
  
-    
-    connectionSettingsBtn.addEventListener('click', function() {
-        fetch(`/api/get_iot_settings/${deviceId}/`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('currentIpAddress').value = data.ipAddress;
-            document.getElementById('currentToken').value = data.token;
-        })
-        .catch(error => {
-            showAlert('An error occurred while fetching IoT settings', 'danger');
+    if (connectionSettingsBtn) {
+        connectionSettingsBtn.addEventListener('click', function() {
+            fetch(`/api/get_iot_settings/${deviceId}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('currentIpAddress').value = data.ipAddress;
+                document.getElementById('currentToken').value = data.token;
+            })
+            .catch(error => {
+                showAlert('An error occurred while fetching IoT settings', 'danger');
+            });
         });
-    });
+    }
     
     // Add 'needs-validation' class to the form
     document.getElementById('connectionSettingsForm').classList.add('needs-validation');

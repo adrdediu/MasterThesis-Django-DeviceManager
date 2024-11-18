@@ -7,6 +7,7 @@
   <title>Device Manager</title>
 
     {% load static %}
+    <script src="{% static 'js/themetoggler.js' %}"></script>
 
     <!-- Include CSS Styles-->
       <!-- Bootstrap 5.3.2 -->
@@ -27,16 +28,16 @@
       <div class="col-12 d-lg-none d-flex justify-content-between align-items-center py-1" style="background-color:  #343a40">
         <!-- Hamburger button for the left -->
         <div class="d-flex align-items-center p-2">
-          <button class="btn btn-dark text-light" style="width: 40px; height: 40px; padding: 5px;" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+          <button class="btn btn-dark text-light" style="width: 30px; height: 30px; padding: 0px;" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
             <i class="bi bi-list"></i>
           </button>
         </div>
 
         <!-- Logo Row (centered) -->
-        <div id="topbarLogo" class="d-flex justify-content-center align-items-center p-2 px-4 mt-2 mb-2 card-shadow" style="border-radius: 10px; overflow: hidden;">
+        <div id="topbarLogo" class="d-flex justify-content-center align-items-center p-1 px-4 mt-1 mb-1 card-shadow-text" style="border-radius: 10px; overflow: hidden;">
           <!-- Text with Animation -->
           <a href="{% url 'homepage' %}" style="text-decoration: none;">
-            <div style="color: #fff; font-size: 16px; font-weight: bold;text-align: center; padding: 0px 20px; ">
+            <div style="color: #fff; font-size: 16px; font-weight: bold;text-align: center; padding: 0px 10px; ">
               Device Manager
             </div>
           </a>
@@ -45,7 +46,7 @@
         <!-- Profile pic button on the right -->
         <div class="d-flex align-items-center  p-1">
           <button class="btn btn-dark py-0 px-2 border-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#profileOffcanvas" aria-controls="profileOffcanvas" style="border-radius:50%">
-            <i class="bi bi-person-circle rounded-circle" style=" font-size: 35px; color: #00d2ff;"></i>
+            <i class="bi bi-person-circle rounded-circle" style=" font-size: 20px; color: #00d2ff;"></i>
 
             <span class="visually-hidden">User profile</span>
           </button>
@@ -54,12 +55,12 @@
       </div>
 
       <!-- Sidebar -->
-      <div class="col-lg-3 text-light vh-100 d-none d-lg-flex flex-column sidebar" data-bs-theme="dark">
+      <div class="col-lg-3 col-xl-2 text-light vh-100 d-none d-lg-flex flex-column sidebar" data-bs-theme="dark">
       
         <!-- Logo -->
         <div id="sidebarLogo" class="d-flex h-20 justify-content-center align-items-center rounded card-shadow p-2" style="height: 20%; overflow: hidden;">
           <a href="{% url 'homepage' %}" style="text-decoration: none;">
-            <div  style="color: #fff; font-size: 25px; font-weight: bold;  text-align: center; padding: 0 10px 0 10px;">
+            <div  style="color: #fff; font-size: 20px; font-weight: bold;  text-align: center; padding: 0 10px 0 10px;">
             Device Manager
             </div>
           </a>
@@ -74,19 +75,41 @@
                 <h5 class="text-white ms-2 mt-2">Navigation</h5>
             </li>
             <li class="list-group-item bg-transparent border-0">
-                  <a href="{% url 'device_list' %}" class="text-white text-decoration-none hover-red">
-                <i class="bi bi-lightning-charge me-2"></i>Device Overview
+              <a href="#deviceManagement" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                <i class="bi bi-lightning-charge me-2"></i>Devices
               </a>
+              <ul class="collapse ps-2" id="deviceManagement" style="list-style: none;">
+                <li class="list-group-item bg-transparent border-0">
+                  <a href="{% url 'device_list' %}" class="text-white text-decoration-none hover-red">
+                    <i class="bi bi-list-ul me-2"></i>Overview
+                  </a>
+                </li>
+                <li class="list-group-item bg-transparent border-0">
+                  <a href="{% url 'my_devices' %}" class="text-white text-decoration-none hover-red">
+                    <i class="bi bi-person-gear me-2"></i>My Devices
+                  </a>
+                </li>
+                <li class="list-group-item bg-transparent border-0">
+                  <a href="#" class="text-white text-decoration-none hover-red" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
+                    <i class="bi bi-plus-circle me-2"></i>Register
+                  </a>
+                </li>
+                <li class="list-group-item bg-transparent border-0">
+                  <a href="{% url 'deleted_devices_list' %}" class="text-white text-decoration-none hover-red">
+                    <i class="bi bi-trash me-2"></i>Deleted
+                  </a>
+                </li>
+              </ul>
             </li>
             <li class="list-group-item bg-transparent border-0">
               <a href="#inventoryManagement" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
-                <i class="bi bi-gear-fill me-2"></i>Inventory Management
+                <i class="bi bi-clipboard me-2"></i>Inventory Management
               </a>
               <ul class="collapse ps-2" id="inventoryManagement" style="list-style: none;">
                 {% for inventory in inventories %}
                   <li class="list-group-item bg-transparent border-0">
                     <a href="{% url 'inventory_management' pk=inventory.id %}" class="text-white text-decoration-none hover-red">
-                      <i class="bi bi-clipboard-data me-2"></i>{{ inventory.name }}
+                      <i class="bi bi-clipboard-data me-2"></i>{{ inventory.building.acronym }}
                     </a>
                   </li>
                 {% endfor %}
@@ -115,7 +138,7 @@
       </div>
 
       <!-- Display Area -->
-      <div class="col-lg-9 display-area p-0 m-0">
+      <div class="col-lg-9 col-xl-10 display-area p-0 m-0">
         {% block content %}
             <!-- Homepage Display Area -->
             <div id="homepageDisplayArea">
@@ -425,6 +448,9 @@
     </div>
   </div>
 
+  {% include 'devices/modals/device_add_modal.html' %}
+
+
 
   {% block extra_js %}
   <!-- Three JS Stars-->
@@ -432,8 +458,8 @@
   <!-- Bootstrap JS 5.3.2 -->
   <script src="{% static 'js/bootstrap.js' %}" async></script>
   <script src="{% static 'js/sweetalert2@11.js' %}" async></script>
-  <script src="{% static 'js/themetoggler.js' %}" async></script>
   <script  src="{% static 'js/home.js' %}" async></script>
+  <script src="{% static 'js/device_modals.js' %}"></script>
   {% endblock %}
 </body>
 </html>

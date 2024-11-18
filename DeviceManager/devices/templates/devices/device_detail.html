@@ -5,8 +5,12 @@
 <div class="container-fluid h-100 overflow-auto mt-2">
     <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;" aria-label="breadcrumb" class="sticky-top rounded" data-bs-theme="dark">
         <ol class="breadcrumb p-2 card-shadow rounded">
-            <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'device_list' %}" class="text-decoration-none">Devices</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
+            {% if user_device %}
+                <li class="breadcrumb-item"><a href="{% url 'my_devices' %}" class="text-decoration-none"><i class="bi bi-lightning-charge"></i> My Devices</a></li>
+            {% else %}
+                <li class="breadcrumb-item"><a href="{% url 'device_list' %}" class="text-decoration-none"><i class="bi bi-lightning-charge"></i> Devices</a></li>
+            {% endif %}
             <li class="breadcrumb-item active" aria-current="page">Device #{{ device.id }} - {{ device.name }}</li>
         </ol>
     </nav>
@@ -312,11 +316,6 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col">
-                                            <button type="button" class="btn btn-sm btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
-                                                <i class="bi bi-plugin me-2"></i> Add
-                                            </button>
-                                        </div>
-                                        <div class="col">
                                             <button class="btn btn-warning btn-sm edit-device w-100 {% if not device.is_active %} disabled {% endif %}" data-device-id="{{ device.id }}">
                                                 <i class="bi bi-pencil-fill"></i> Edit
                                             </button>
@@ -540,7 +539,7 @@
 
 <!-- Edit Device Modal -->
  
-{% include 'devices/device_modals.html' %}
+{% include 'devices/modals/device_edit_modal.html' %}
 
 {% include 'devices/iot_device_modals.html' %}
 
@@ -549,8 +548,9 @@
 
 {% block extra_js %}
 {{ block.super }}
-<script src="{% static 'js/device_modals.js' %}"></script>
 <script src="{% static 'js/iot_device_modals.js' %}"></script>
+<script src="{% static 'js/network_scanner.js' %}"></script>
+
 {% if iot_device %}
 <script src="{% static 'js/chart.js' %}"></script>
 <script src="{% static 'js/iot_device_charts.js' %}"></script>
