@@ -125,19 +125,30 @@ class DeviceListView(BaseContextMixin,LoginRequiredMixin,View):
 
         return render(request, 'devices/device_list.html', context)
 
-class DeletedDevicesListView(BaseContextMixin,LoginRequiredMixin,View):
+class DeletedDevicesListView(BaseContextMixin, LoginRequiredMixin, View):
     login_url = 'login'
-    def get(self, request, category=None, subcategory=None, building=None, floor=None, room=None):
-        devices = Device.objects.all().filter(is_active=False).order_by('-id')
-
+    def get(self, request):
+        devices_query = Device.objects.filter(is_active=False)
+        if 'my' in request.GET:
+            devices_query = devices_query.filter(owner=request.user)
+            title = 'My Deleted Devices'
+            user_devices = True
+        else:
+            title = 'Deleted Devices'
+            user_devices = False
+            
+        devices = devices_query.order_by('-id')
+        
         context = self.get_base_context()
         context.update({
             'devices': devices,
             'deleted_devices': True,
+            'user_devices': user_devices,
+            'title': title
         })
-
         return render(request, 'devices/device_list.html', context)
-    
+
+
 class UserDevicesListView(BaseContextMixin,LoginRequiredMixin,View):
     login_url = 'login'
     def get(self, request, category=None, subcategory=None, building=None, floor=None, room=None):
@@ -149,6 +160,119 @@ class UserDevicesListView(BaseContextMixin,LoginRequiredMixin,View):
             'user_devices': True,
         })
 
+        return render(request, 'devices/device_list.html', context)
+
+class CategoryDevicesListView(BaseContextMixin, LoginRequiredMixin, View):
+    login_url = 'login'
+    def get(self, request, category_id):
+        category = Category.objects.get(id=category_id)
+        devices_query = Device.objects.filter(subcategory__category_id=category_id, is_active=True)
+        
+        if 'my' in request.GET:
+            devices_query = devices_query.filter(owner=request.user)
+            title_prefix = 'My '
+            user_devices = True
+        else:
+            title_prefix = ''
+            user_devices = False
+            
+        devices = devices_query.order_by('-id')
+        category_subcategories = Subcategory.objects.filter(category=category)
+        
+        context = self.get_base_context()
+        context.update({
+            'devices': devices,
+            'view_type': 'category',
+            'current_category': category,
+            'category_subcategories': category_subcategories,
+            'title': f'{title_prefix}Devices in Category: {category.name}',
+            'user_devices': user_devices
+        })
+        return render(request, 'devices/device_list.html', context)
+
+
+class SubcategoryDevicesListView(BaseContextMixin, LoginRequiredMixin, View):
+    login_url = 'login'
+    def get(self, request, subcategory_id):
+        subcategory = Subcategory.objects.get(id=subcategory_id)
+        devices_query = Device.objects.filter(subcategory_id=subcategory_id, is_active=True)
+        
+        if 'my' in request.GET:
+            devices_query = devices_query.filter(owner=request.user)
+            title_prefix = 'My '
+            user_devices = True
+        else:
+            title_prefix = ''
+            user_devices = False
+            
+        devices = devices_query.order_by('-id')
+        
+        context = self.get_base_context()
+        context.update({
+            'devices': devices,
+            'view_type': 'subcategory',
+            'current_subcategory': subcategory,
+            'current_category': subcategory.category,
+            'title': f'{title_prefix}Devices in Subcategory: {subcategory.name}',
+            'user_devices': user_devices
+        })
+        return render(request, 'devices/device_list.html', context)
+
+
+class BuildingDevicesListView(BaseContextMixin, LoginRequiredMixin, View):
+    login_url = 'login'
+    def get(self, request, building_id):
+        building = Building.objects.get(id=building_id)
+        devices_query = Device.objects.filter(building_id=building_id, is_active=True)
+        
+        if 'my' in request.GET:
+            devices_query = devices_query.filter(owner=request.user)
+            title_prefix = 'My '
+            user_devices = True
+        else:
+            title_prefix = ''
+            user_devices = False
+            
+        devices = devices_query.order_by('-id')
+        building_floors = Floor.objects.filter(building=building)
+        
+        context = self.get_base_context()
+        context.update({
+            'devices': devices,
+            'view_type': 'building',
+            'current_building': building,
+            'building_floors': building_floors,
+            'title': f'{title_prefix}Devices in Building: {building.acronym}',
+            'user_devices': user_devices
+        })
+        return render(request, 'devices/device_list.html', context)
+
+class RoomDevicesListView(BaseContextMixin, LoginRequiredMixin, View):
+    login_url = 'login'
+    def get(self, request, room_id):
+        room = Room.objects.get(id=room_id)
+        devices_query = Device.objects.filter(room_id=room_id, is_active=True)
+        
+        if 'my' in request.GET:
+            devices_query = devices_query.filter(owner=request.user)
+            title_prefix = 'My '
+            user_devices = True
+        else:
+            title_prefix = ''
+            user_devices = False
+            
+        devices = devices_query.order_by('-id')
+        
+        context = self.get_base_context()
+        context.update({
+            'devices': devices,
+            'view_type': 'room',
+            'current_room': room,
+            'current_building': room.building,
+            'current_floor': room.floor,
+            'title': f'{title_prefix}Devices in Room: {room.name}',
+            'user_devices': user_devices
+        })
         return render(request, 'devices/device_list.html', context)
 
 
@@ -580,7 +704,7 @@ def generate_inventory_report_view(request, inventory_id):
 
     return HttpResponseBadRequest("Invalid request method")
 
-#Include only Next JS Related Imports
+
 from django.utils.safestring import mark_safe
 from .serializers import DeviceSerializer, CategorySerializer, UserSerializer
 

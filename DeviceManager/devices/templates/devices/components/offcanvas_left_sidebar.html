@@ -1,0 +1,233 @@
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+    <div class="offcanvas-header text-white card-shadow dev-man-bg-left">
+        <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Menu</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="d-flex bg-black card-shadow rounded p-1" style="overflow-y: auto;">
+            <ul class="list-group bg-transparent border-0">
+                <li>
+                    <h5 class="text-white ms-2 mt-2">Navigation</h5>
+                </li>
+                <li class="list-group-item pe-0 bg-transparent ps-2 border-0">
+                    <a href="#deviceManagement" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                        <i class="bi bi-lightning-charge me-2"></i>Devices
+                    </a>
+                    <ul class="collapse ps-2" id="deviceManagement" style="list-style: none;">
+                        <li class="list-group-item pe-0 bg-transparent border-0">
+                            <a href="{% url 'device_list' %}" class="text-white text-decoration-none hover-red">
+                                <i class="bi bi-list-ul me-2"></i>Overview
+                            </a>
+                        </li>
+                        
+                        <!-- By Category -->
+                        <li class="list-group-item pe-0 bg-transparent border-0">
+                            <a href="#categorySubmenu" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                <i class="bi bi-grid me-2"></i>By Category
+                            </a>
+                            <ul class="collapse ps-2" id="categorySubmenu">
+                                {% for category in categories %}
+                                    <li class="list-group-item pe-0 bg-transparent border-0">
+                                        <a href="#category{{ category.id }}" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                            {% if category.name == 'Computers' %}
+                                                <i class="bi bi-pc-display me-1"></i>
+                                            {% elif category.name == 'Labware' %}
+                                                <i class="bi bi-tools me-1"></i>
+                                            {% elif category.name == 'Network' %}
+                                                <i class="bi bi-router me-1"></i>
+                                            {% elif category.name == 'Peripherals' %}
+                                                <i class="bi bi-keyboard me-1"></i>
+                                            {% elif category.name == 'Storage' %}
+                                                <i class="bi bi-device-hdd me-1"></i>
+                                            {% elif category.name == 'IoT Device' %}
+                                                <i class="bi bi-cpu me-1"></i>
+                                            {% else %}
+                                                <i class="bi bi-question-circle me-1"></i>
+                                            {% endif %}
+                                            {{ category.name }}
+                                        </a>
+                                        <ul class="collapse ps-2" id="category{{ category.id }}">
+                                            <li class="list-group-item  pe-0 bg-transparent border-0">
+                                                <a href="{% url 'category_devices' category.id %}" class="text-white text-decoration-none hover-red">
+                                                    <i class="bi bi-collection"></i> All
+                                                </a>
+                                            </li>
+                                            {% for subcategory in category.subcategory_set.all %}
+                                                <li class="list-group-item pe-0 bg-transparent border-0">
+                                                    <a href="{% url 'subcategory_devices' subcategory.id %}" class="text-white text-decoration-none hover-red">
+                                                        <i class="bi bi-box me-1"></i>{{ subcategory.name }}
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+
+                        <!-- By Location -->
+                        <li class="list-group-item bg-transparent border-0">
+                            <a href="#locationSubmenu" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                <i class="bi bi-geo-alt me-2"></i>By Location
+                            </a>
+                            <ul class="collapse ps-2" id="locationSubmenu">
+                                {% for building in buildings %}
+                                    <li class="list-group-item pe-0 bg-transparent border-0">
+                                        <a href="#building{{ building.id }}" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                            <i class="bi bi-building me-1"></i>{{ building.acronym }}
+                                        </a>
+                                        <ul class="collapse ps-1" id="building{{ building.id }}">
+                                            <li class="list-group-item pe-0 bg-transparent border-0">
+                                                <a href="{% url 'building_devices' building.id %}" class="text-white text-decoration-none hover-red">
+                                                    <i class="bi bi-door-open me-1"></i>All Rooms
+                                                </a>
+                                            </li>
+                                            {% for floor in building.floor_set.all %}
+                                                <li class="list-group-item pe-0 bg-transparent border-0">
+                                                    <a href="#floor{{ floor.id }}" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                                        <i class="bi bi-layers me-1"></i>Floor {{ floor.name }}
+                                                    </a>
+                                                    <ul class="collapse ps-2" id="floor{{ floor.id }}">
+                                                        {% for room in floor.room_set.all %}
+                                                            <li class="list-group-item pe-0 bg-transparent border-0">
+                                                                <a href="{% url 'room_devices' room.id %}" class="text-white text-decoration-none hover-red">
+                                                                    <i class="bi bi-door-closed me-1"></i>{{ room.name }}
+                                                                </a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="list-group-item bg-transparent border-0">
+                            <a href="{% url 'deleted_devices_list' %}" class="text-white text-decoration-none hover-red">
+                                <i class="bi bi-trash me-2"></i>Deleted
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-group-item bg-transparent ps-2 border-0">
+                    <a href="#myDevicesManagement" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                        <i class="bi bi-person-workspace me-2"></i>My Devices
+                    </a>
+                    <ul class="collapse ps-2" id="myDevicesManagement" style="list-style: none;">
+                        <li class="list-group-item bg-transparent border-0">
+                            <a href="{% url 'my_devices' %}" class="text-white text-decoration-none hover-red">
+                                <i class="bi bi-list-ul me-2"></i>Overview
+                            </a>
+                        </li>
+                        <li class="list-group-item bg-transparent border-0">
+                            <a href="#myDevicesCategorySubmenu" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                <i class="bi bi-grid me-2"></i>By Category
+                            </a>
+                            <ul class="collapse ps-2" id="myDevicesCategorySubmenu">
+                                {% for category in categories %}
+                                    <li class="list-group-item bg-transparent border-0">
+                                        <a href="#myCategory{{ category.id }}" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                            {% if category.name == 'Computers' %}
+                                                <i class="bi bi-pc-display me-1"></i>
+                                            {% elif category.name == 'Labware' %}
+                                                <i class="bi bi-tools me-1"></i>
+                                            {% elif category.name == 'Network' %}
+                                                <i class="bi bi-router me-1"></i>
+                                            {% elif category.name == 'Peripherals' %}
+                                                <i class="bi bi-keyboard me-1"></i>
+                                            {% elif category.name == 'Storage' %}
+                                                <i class="bi bi-device-hdd me-1"></i>
+                                            {% elif category.name == 'IoT Device' %}
+                                                <i class="bi bi-cpu me-1"></i>
+                                            {% else %}
+                                                <i class="bi bi-question-circle me-1"></i>
+                                            {% endif %}
+                                            {{ category.name }}
+                                        </a>
+                                        <ul class="collapse ps-2" id="myCategory{{ category.id }}">
+                                            <li class="list-group-item bg-transparent border-0">
+                                                <a href="{% url 'category_devices' category.id %}?my=true" class="text-white text-decoration-none hover-red">
+                                                    <i class="bi bi-collection"></i> All
+                                                </a>
+                                            </li>
+                                            {% for subcategory in category.subcategory_set.all %}
+                                                <li class="list-group-item bg-transparent border-0">
+                                                    <a href="{% url 'subcategory_devices' subcategory.id %}?my=true" class="text-white text-decoration-none hover-red">
+                                                        <i class="bi bi-box me-1"></i>{{ subcategory.name }}
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="list-group-item bg-transparent border-0">
+                            <a href="#myDevicesLocationSubmenu" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                <i class="bi bi-geo-alt me-2"></i>By Location
+                            </a>
+                            <ul class="collapse ps-2" id="myDevicesLocationSubmenu">
+                                {% for building in buildings %}
+                                    <li class="list-group-item bg-transparent border-0">
+                                        <a href="#myBuilding{{ building.id }}" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                            <i class="bi bi-building me-1"></i>{{ building.acronym }}
+                                        </a>
+                                        <ul class="collapse ps-1" id="myBuilding{{ building.id }}">
+                                            <li class="list-group-item bg-transparent border-0">
+                                                <a href="{% url 'building_devices' building.id %}?my=true" class="text-white text-decoration-none hover-red">
+                                                    <i class="bi bi-door-open me-1"></i>All Rooms
+                                                </a>
+                                            </li>
+                                            {% for floor in building.floor_set.all %}
+                                                <li class="list-group-item bg-transparent border-0">
+                                                    <a href="#myFloor{{ floor.id }}" class="text-white text-decoration-none hover-red" data-bs-toggle="collapse">
+                                                        <i class="bi bi-layers me-1"></i>Floor {{ floor.name }}
+                                                    </a>
+                                                    <ul class="collapse ps-2" id="myFloor{{ floor.id }}">
+                                                        {% for room in floor.room_set.all %}
+                                                            <li class="list-group-item bg-transparent border-0">
+                                                                <a href="{% url 'room_devices' room.id %}?my=true" class="text-white text-decoration-none hover-red">
+                                                                    <i class="bi bi-door-closed me-1"></i>{{ room.name }}
+                                                                </a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="list-group-item bg-transparent border-0">
+                            <a href="#" class="text-white text-decoration-none hover-red" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
+                                <i class="bi bi-plus-circle me-2"></i>Register
+                            </a>
+                        </li>
+                        <li class="list-group-item bg-transparent border-0">
+                            <a href="{% url 'deleted_devices_list' %}?my=true" class="text-white text-decoration-none hover-red">
+                                <i class="bi bi-trash me-2"></i>Deleted
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-group-item bg-transparent ps-2 border-0">
+                    <a href="#inventoryManagement" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
+                        <i class="bi bi-clipboard me-2"></i>Inventory Management
+                    </a>
+                    <ul class="collapse ps-2" id="inventoryManagement" style="list-style: none;">
+                        {% for inventory in inventories %}
+                            <li class="list-group-item bg-transparent border-0">
+                                <a href="{% url 'inventory_management' pk=inventory.id %}" class="text-white text-decoration-none hover-red">
+                                    <i class="bi bi-clipboard-data me-2"></i>{{ inventory.building.acronym }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+

@@ -4,10 +4,18 @@
 {% block content %}
 <div class="container-fluid h-100 overflow-auto">
 
-    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="d-none d-lg-block sticky-top  rounded mt-2" data-bs-theme="dark">
-        <ol class="breadcrumb  p-2 rounded card-shadow" style="background-color: #343a40;">
-          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page"><i class="bi bi-lightning-charge me-2"></i>{% if deleted_devices %}Deleted {% elif user_devices%}My {%endif%}Devices</li>
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="d-none d-lg-block sticky-top rounded mt-2" data-bs-theme="dark">
+        <ol class="breadcrumb p-2 rounded card-shadow" style="background-color: #343a40;">
+            <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="bi bi-lightning-charge"></i>
+                {% if title %} 
+                    {{ title }}
+                {% else %}
+                    {% if user_devices %} My {% endif %}
+                    Devices
+                {% endif %}
+            </li>
         </ol>
     </nav>
 
@@ -71,7 +79,13 @@
             <div id="listViewContainer">
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h2 class="h5 mb-0">{%if deleted_devices%}Deleted {%endif%}Devices List</h2>
+                        <h2 class="h5 mb-0">
+                            {% if view_type %}
+                                {{ title }}
+                            {% else %}
+                                {% if deleted_devices %}Deleted {% endif %}{% if user_devices %}My {% endif %}Devices List
+                            {% endif %}
+                        </h2>
                     </div>
                     <div class="card-body p-0">
                         {% include 'devices/device_table.html' %}
@@ -84,7 +98,7 @@
                  {% include 'devices/device_cards.html' %}
             </div>
 
-            <div class="d-lg-none mb-3 pb-5">
+            <div class="d-lg-none" style="padding-bottom:120px;">
 
             </div>
         </div>

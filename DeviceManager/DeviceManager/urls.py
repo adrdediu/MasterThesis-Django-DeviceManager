@@ -8,7 +8,7 @@ from django.urls import path,re_path
 from devices.sse_views import SSEDeviceUpdateView
 from devices.views import  DeviceDetailView, add_device,edit_device, delete_device, update_profile, change_password
 from devices.views import GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
-from devices.views import DownloadQRCodeView, HomePageView, DeviceListView,DeletedDevicesListView, UserDevicesListView
+from devices.views import DownloadQRCodeView, HomePageView, DeviceListView,DeletedDevicesListView, UserDevicesListView, CategoryDevicesListView, SubcategoryDevicesListView, BuildingDevicesListView, RoomDevicesListView
 from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
 from devices.api_views import activate_iot_features,led_control, remove_iot_features, start_inventory, pause_resume_inventory, end_inventory, edit_inventory,cancel_inventory,qrcode_action, update_inventory_room_data,get_iot_settings, check_and_update_iot_device, save_iot_device_state 
 from devices.views import NextJSView,DashboardView
@@ -31,6 +31,14 @@ urlpatterns = [
     path('api/devices/edit/', edit_device, name='edit_device'),
     path('api/devices/delete_device/', delete_device, name='delete_device'),
     path('device/<int:pk>/', DeviceDetailView.as_view(), name='device_detail'),
+    
+    # Category based URLs
+    path('devices/category/<int:category_id>/', CategoryDevicesListView.as_view(), name='category_devices'),
+    path('devices/subcategory/<int:subcategory_id>/', SubcategoryDevicesListView.as_view(), name='subcategory_devices'),
+    
+    # Location based URLs
+    path('devices/building/<int:building_id>/', BuildingDevicesListView.as_view(), name='building_devices'),
+    path('devices/room/<int:room_id>/', RoomDevicesListView.as_view(), name='room_devices'),
 
     path('get_floors/', GetFloorsView.as_view(), name='get_floors'),
     path('get_rooms/', GetRoomsView.as_view(), name='get_rooms'),

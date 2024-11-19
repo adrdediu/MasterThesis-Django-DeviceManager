@@ -11,16 +11,32 @@
                     <div class="col-md-6">
                         <label class="form-label">Category</label>
                         <select id="deviceCategory" class="form-select">
-                            <option value="">All Categories</option>
-                            {% for category in categories %}
-                                <option value="{{ category.id }}">{{ category.name }}</option>
-                            {% endfor %}
+                            {% if view_type != 'category' and view_type != 'subcategory' %}
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if current_category and current_category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="{{ current_category.id }}" selected>{{ current_category.name }}</option>
+                            {% endif %}
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Subcategory</label>
                         <select id="deviceSubcategory" class="form-select">
+                            {% if view_type == 'category' %}
                             <option value="">All Subcategories</option>
+                            {% for subcategory in category_subcategories %}
+                                <option value="{{ subcategory.id }}" {% if current_subcategory and current_subcategory.id == subcategory.id %}selected{% endif %}>{{ subcategory.name }}</option>
+                            {% endfor %}
+                            {% elif view_type == 'subcategory' %}
+                                <option value="{{ current_subcategory.id }}" selected>{{ current_subcategory.name }}</option>
+                            {% else %}
+                                <option value="">All Subcategories</option>
+                                {% if current_subcategory %}
+                                    <option value="{{ current_subcategory.id }}" selected>{{ current_subcategory.name }}</option>
+                                {% endif %}
+                            {% endif %}
                         </select>
                     </div>
                     
@@ -28,22 +44,43 @@
                     <div class="col-md-4">
                         <label class="form-label">Building</label>
                         <select id="deviceBuilding" class="form-select">
-                            <option value="">All Buildings</option>
-                            {% for building in buildings %}
-                                <option value="{{ building.id }}">{{ building.acronym }}</option>
-                            {% endfor %}
+                            {% if view_type != 'building' and view_type != 'room' and view_type != 'floor' %}
+                                <option value="">All Buildings</option>
+                                {% for building in buildings %}
+                                    <option value="{{ building.id }}" {% if current_building and current_building.id == building.id %}selected{% endif %}>{{ building.acronym }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="{{ current_building.id }}" selected>{{ current_building.acronym }}</option>
+                            {% endif %}
                         </select>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Floor</label>
                         <select id="deviceFloor" class="form-select">
+                            {% if view_type == 'building' %}
                             <option value="">All Floors</option>
+                            {% for floor in building_floors %}
+                                <option value="{{ floor.id }}" {% if current_floor and current_floor.id == floor.id %}selected{% endif %}>{{ floor.name }}</option>
+                            {% endfor %}
+                        {% elif view_type == 'room' %}
+                            <option value="{{ current_floor.id }}" selected>{{ current_floor.name }}</option>
+                        {% else %}
+                            <option value="">All Floors</option>
+                            {% if current_floor %}
+                                <option value="{{ current_floor.id }}" selected>{{ current_floor.name }}</option>
+                            {% endif %}
+                        {% endif %}
                         </select>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Room</label>
                         <select id="deviceRoom" class="form-select">
-                            <option value="">All Rooms</option>
+                            {% if not view_type or view_type != 'room' %}
+                                <option value="">All Rooms</option>
+                            {% endif %}
+                            {% if current_room %}
+                                <option value="{{ current_room.id }}" selected>{{ current_room.name }}</option>
+                            {% endif %}
                         </select>
                     </div>
                 </div>

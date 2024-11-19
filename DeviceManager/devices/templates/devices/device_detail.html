@@ -472,11 +472,6 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col">
-                                            <button type="button" class="btn btn-sm btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addDeviceModal">
-                                                <i class="bi bi-plugin me-2"></i> Add
-                                            </button>
-                                        </div>
-                                        <div class="col">
                                             <button class="btn btn-warning btn-sm edit-device w-100 {% if not device.is_active %} disabled {% endif %}" data-device-id="{{ device.id }}">
                                                 <i class="bi bi-pencil-fill"></i> Edit
                                             </button>

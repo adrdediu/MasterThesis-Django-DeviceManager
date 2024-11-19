@@ -1,0 +1,163 @@
+  <!-- Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      <div class="modal-header card-shadow dev-man-bg-center">
+        <h5 class="modal-title" id="logoutModalLabel">Log Out</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to log out?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">Logout</button>
+      </form>
+      </div>
+      </div>
+    </div>
+    </div>
+  
+    <!-- Profile Information Modal -->
+  <div class="modal fade" id="profileInfoModal" tabindex="-1" aria-labelledby="profileInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header border-bottom-0 card-shadow dev-man-bg-center">
+          <h5 class="modal-title text-white" id="profileInfoModalLabel">Profile Information</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="profileUpdateForm">
+            {% csrf_token %}
+            <div class="row">
+              <!-- Personal Information -->
+              <div class="col-md-6 mb-3">
+                <div class="bg-black p-3 rounded">
+                  <h6 class="text-white mb-3">Personal Information</h6>
+                  <div class="mb-3">
+                    <label for="username" class="form-label text-light">Username</label>
+                    <input type="text" class="form-control bg-dark text-light" id="username" name="username" value="{{ user.username }}" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label text-light">Email</label>
+                    <input type="email" class="form-control bg-dark text-light" id="email" name="email" value="{{ user.email }}">
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col">
+                      <label for="first_name" class="form-label text-light">First Name</label>
+                      <input type="text" class="form-control bg-dark text-light" id="first_name" name="first_name" value="{{ user.first_name }}">  
+                    </div>
+                    <div class="col">
+                      <label for="last_name" class="form-label text-light">Last Name</label>
+                      <input type="text" class="form-control bg-dark text-light" id="last_name" name="last_name" value="{{ user.last_name }}">  
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Academic Information -->
+              <div class="col-md-6 mb-3">
+                <div class="bg-black p-3 rounded">
+                  <h6 class="text-white mb-3">Academic Information</h6>
+                  <div class="mb-3">
+                    <label for="admin_rank" class="form-label text-light">Academic Rank</label>
+                    <select class="form-select bg-dark text-light" id="admin_rank" name="admin_rank">
+                      {% for rank_code, rank_name in user.extended_user.ADMIN_RANK_CHOICES %}
+                        <option value="{{ rank_code }}" {% if user.extended_user.admin_rank == rank_code %}selected{% endif %}>{{ rank_name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="rank" class="form-label text-light">Rank</label>
+                    <select class="form-select bg-dark text-light" id="rank" name="rank">
+                      {% for rank_code, rank_name in user.extended_user.RANK_CHOICES %}
+                        <option value="{{ rank_code }}" {% if user.extended_user.rank == rank_code %}selected{% endif %}>{{ rank_name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="faculty" class="form-label text-light">Faculty</label>
+                    <select class="form-select bg-dark text-light" id="faculty" name="faculty">
+                      {% for faculty_code, faculty_name in user.extended_user.FACULTY_CHOICES %}
+                        <option value="{{ faculty_code }}" {% if user.extended_user.faculty == faculty_code %}selected{% endif %}>{{ faculty_name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Password Confirmation -->
+            <div class="bg-black p-3 rounded mt-3">
+              <h6 class="text-white mb-3">Confirm Changes</h6>
+              <div class="mb-3">
+                <label for="password" class="form-label text-light">Enter Password to Confirm Changes</label>
+                <input type="password" class="form-control bg-dark text-light" id="password" name="password" required>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer border-top-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-warning" id="resetProfileBtn">Reset</button>
+          <button type="button" class="btn btn-primary" id="updateProfileBtn">Update Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <!-- Password Change Modal -->
+  <div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header border-bottom-0 card-shadow dev-man-bg-center">
+          <h5 class="modal-title text-white" id="passwordChangeModalLabel">Change Password</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="passwordChangeForm">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="current_password" class="form-label">Current Password</label>
+              <input type="password" class="form-control" id="current_password" name="current_password" required>
+            </div>
+            <div class="mb-3">
+              <label for="new_password1" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="new_password1" name="new_password1" required>
+            </div>
+            <div class="mb-3">
+              <label for="new_password2" class="form-label">Confirm New Password</label>
+              <input type="password" class="form-control" id="new_password2" name="new_password2" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer border-top-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="changePasswordBtn">Change Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Do you want to view the added device details? Otherwise you will be redirected to device list.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="cancelRedirect" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="confirmRedirect">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>

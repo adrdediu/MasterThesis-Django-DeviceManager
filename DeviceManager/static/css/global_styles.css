@@ -86,6 +86,11 @@ background: linear-gradient(to right, #4b6cb7, #182848);
   font-size: 1.2em;
 }
 
+
+.list-group-item-sidebar{ 
+  padding-right: 0px;
+}
+
 /* -- CSS Effects - Generic Hover */
 .hover-red:hover {
     color: red !important; /* Use !important to override other styles if needed */

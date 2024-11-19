@@ -17,6 +17,15 @@ def is_inventory_manager(user):
         return True
     else:
         return False
+    
+def is_device_owner(user,device_id):
+    """
+    Check if the user is the owner of the device.
+    """
+    if user.is_authenticated and user == Device.objects.get(id=device_id).owner:
+        return True
+    else:
+        return False
 
 @require_POST
 @login_required(login_url='login')
@@ -86,6 +95,7 @@ def edit_inventory(request):
 
 @require_POST
 @login_required(login_url='login')
+@user_passes_test(is_inventory_manager)
 def pause_resume_inventory(request):
 
     if not is_inventory_manager(request.user):
@@ -114,26 +124,33 @@ def pause_resume_inventory(request):
 
 @require_POST
 @login_required
+@user_passes_test(is_inventory_manager)
 def end_inventory(request):
     data = json.loads(request.body)
     inventory_id = data.get('inventory_id')
     inventorization = get_object_or_404(InventorizationList, id=inventory_id)
     
-    if inventorization.status in ['ACTIVE', 'PAUSED']:
+    if inventorization.status in ['ACTIVE', 'PAUSED'] and inventorization.total_devices == inventorization.total_scanned: 
         inventorization.end_inventory_list()
         return JsonResponse({
             'status': 'success',
             'message': 'Inventory completed successfully',
             'file_url': inventorization.inventory_data_file.url
         })
-    else:
+    elif inventorization.status in ['COMPLETED','CANCELLED']:
         return JsonResponse({
             'status': 'error',
             'message': 'This inventory is already completed or canceled'
         }, status=400)
+    else:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Inventory is not yet complete. Please ensure all devices have been scanned.'
+        }, status=400)
 
 @require_POST
 @login_required(login_url='login')
+@user_passes_test(is_inventory_manager)
 def cancel_inventory(request):
     data = json.loads(request.body)
     inventory_id = data.get('inventory_id')
@@ -204,6 +221,10 @@ def remove_iot_features(request):
 
     try:
         device = Device.objects.get(id=device_id)
+
+        if not is_device_owner(request.user, device):
+            return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
+        
         iot_device = IoTDevice.objects.get(device=device)
         
         IoTDeviceEndpoint.objects.filter(device=iot_device).delete()
@@ -224,6 +245,9 @@ def activate_iot_features(request):
     try:
         device = Device.objects.get(id=device_id)
         
+        if not is_device_owner(request.user, device):
+            return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
+
         # Check if the IP address is already in use
         if IoTDevice.objects.filter(ip_address=ip_address).exists():
             return JsonResponse({'success': False, 'error': 'This IP address is already in use by another IoT device'}, status=400)
@@ -257,10 +281,12 @@ def check_and_update_iot_device(request):
     ip_address = data.get('ipAddress')
     token = data.get('token')
 
-
-    
     try:
         device = Device.objects.get(id=device_id)
+
+        if not is_device_owner(request.user, device):
+            return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
+
         iot_device = IoTDevice.objects.get(device=device)
         status_endpoint = iot_device.endpoints.filter(name='status').first().url
     except IoTDevice.DoesNotExist:
@@ -289,8 +315,12 @@ def check_and_update_iot_device(request):
 @require_http_methods(["POST"])
 def led_control(request, device_id):
 
-
     try :
+        device = Device.objects.get(id=device_id)
+
+        if not is_device_owner(request.user, device):
+            return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
+
         iotDevice = IoTDevice.objects.get(id=device_id)
         data = json.loads(request.body)
 
@@ -317,6 +347,11 @@ def led_control(request, device_id):
 @require_POST
 def save_iot_device_state(request, device_id):
     try:
+
+        device = Device.objects.get(id=device_id)
+        if not is_device_owner(request.user, device):
+            return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
+
         iot_device = IoTDevice.objects.get(id=device_id)
         
         url=f"http://{iot_device.ip_address}/api/save_state"
