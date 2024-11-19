@@ -18,11 +18,11 @@ def is_inventory_manager(user):
     else:
         return False
     
-def is_device_owner(user,device_id):
+def is_device_owner(user,device):
     """
     Check if the user is the owner of the device.
     """
-    if user.is_authenticated and user == Device.objects.get(id=device_id).owner:
+    if user.is_authenticated and user == device.owner:
         return True
     else:
         return False
@@ -220,7 +220,8 @@ def remove_iot_features(request):
     device_id = data.get('deviceId')
 
     try:
-        device = Device.objects.get(id=device_id)
+        iotDevice = IoTDevice.objects.get(id=device_id)
+        device = iotDevice.device
 
         if not is_device_owner(request.user, device):
             return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
@@ -243,7 +244,8 @@ def activate_iot_features(request):
     token = data.get('token')
 
     try:
-        device = Device.objects.get(id=device_id)
+        iotDevice = IoTDevice.objects.get(id=device_id)
+        device = iotDevice.device
         
         if not is_device_owner(request.user, device):
             return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
@@ -282,7 +284,8 @@ def check_and_update_iot_device(request):
     token = data.get('token')
 
     try:
-        device = Device.objects.get(id=device_id)
+        iotDevice = IoTDevice.objects.get(id=device_id)
+        device = iotDevice.device
 
         if not is_device_owner(request.user, device):
             return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
@@ -316,12 +319,12 @@ def check_and_update_iot_device(request):
 def led_control(request, device_id):
 
     try :
-        device = Device.objects.get(id=device_id)
-
+        iotDevice = IoTDevice.objects.get(id=device_id)
+        device = iotDevice.device
+        print(request.user, device)
         if not is_device_owner(request.user, device):
             return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
 
-        iotDevice = IoTDevice.objects.get(id=device_id)
         data = json.loads(request.body)
 
         url = f"http://{iotDevice.ip_address}/api/leds"
@@ -348,7 +351,8 @@ def led_control(request, device_id):
 def save_iot_device_state(request, device_id):
     try:
 
-        device = Device.objects.get(id=device_id)
+        iotDevice = IoTDevice.objects.get(id=device_id)
+        device = iotDevice.device
         if not is_device_owner(request.user, device):
             return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
 

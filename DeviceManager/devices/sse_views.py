@@ -33,7 +33,7 @@ class SSEDeviceUpdateView(View):
 
                 if last_successful_response == latest_response:
                     time_elapsed = (now() - last_successful_response.last_checked).total_seconds()
-                    is_online = 1 if time_elapsed < 30 else 0
+                    is_online = 1 if time_elapsed < 90 else 0
 
                 else:
                     if last_unauthorised_response == latest_response:

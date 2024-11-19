@@ -10,3 +10,5 @@ DeviceManager/iot_device_checker.log
 /DeviceManager/media/*
 DeviceManager/logs/*
 DeviceManager/media/qrcodes/
+DeviceManager/DeviceManager/.env
+DeviceManager/DeviceManager/DeviceManagerNetwork.txt
