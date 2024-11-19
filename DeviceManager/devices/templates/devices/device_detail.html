@@ -11,12 +11,11 @@
             {% else %}
                 <li class="breadcrumb-item"><a href="{% url 'device_list' %}" class="text-decoration-none"><i class="bi bi-lightning-charge"></i> Devices</a></li>
             {% endif %}
-            <li class="breadcrumb-item active" aria-current="page">Device #{{ device.id }} - {{ device.name }}</li>
+            <li class="breadcrumb-item active" aria-current="page">{{ device.name }}</li>
         </ol>
     </nav>
     <div class="row p-1 mb-4">
         <div class="col">
-            <h3 class="mb-3">Device #{{ device.id }} - {{ device.name }}</h3>
             <div class="row">
                 <!-- First Column: General Information and Location -->
                 <div class="col-md-7">
@@ -25,7 +24,7 @@
                     <!-- General Information Card -->
                     <div id="generalInfoCard" class="card card-shadow-light mb-3" >
                         <div class="card-header  {% if not device.is_active %} bg-danger {% else %} bg-success{% endif %} text-white card-shadow d-flex justify-content-between align-items-center">
-                            <h2 class="h5 mb-0">General Information</h2>
+                            <h2 class="h5 mb-0">Summary</h2>
                             <div>
                                 {% if iot_device %} 
                                 <button id="changeToIoTUI" class="btn btn-sm btn-dark me-1">
@@ -125,7 +124,7 @@
                     </div>
                     
                     {% if iot_device %}
-                    <div id="skeletonLoader" class="skeleton-loader">
+                    <div id="skeletonLoader" class="skeleton-loader mb-3">
                         <div class="skeleton-header"></div>
                         <div class="skeleton-content">
                             <div class="skeleton-item short"></div>
@@ -284,22 +283,16 @@
                                                   <button type="button" class="btn btn-sm btn-outline-danger w-100 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g0','static')" disabled>All Off</button>
                                                 </div>
                                               </div>
-                                              
-                                              
-                                              
-                                              
                                         </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
                         </div>
                     </div>
                     {% endif %}
-        
                 </div>
-        
+
                 <!-- Second Column: Device Actions and QR Code -->
                 <div class="col-md-5">
                     <!-- Device Actions Card -->
@@ -441,15 +434,15 @@
                                                         
                                                         <div class="col">
 
-                                                            <button id="connectionSettingsBtn" class="btn btn-secondary btn-secondary btn-sm w-100 " data-bs-toggle="modal" data-bs-target="#connectionSettingsModal" style="display: {% if iot_device %}block{% else %}none{% endif %};">
+                                                            <button id="connectionSettingsBtn" class="btn btn-secondary bg-gradient btn-secondary btn-sm w-100 " data-bs-toggle="modal" data-bs-target="#connectionSettingsModal" style="display: {% if iot_device %}block{% else %}none{% endif %};">
                                                                 <i class="bi bi-gear"></i> Connection
                                                             </button>
                                                             
 
                                                         </div>
                                                         <div class="col">
-                                                            <button id="removeIoTBtn" class="btn btn-danger btn-sm w-100" style="display: {% if iot_device %}block{% else %}none{% endif %};">
-                                                                <i class="bi bi-trash"></i> Remove Features
+                                                            <button id="removeIoTBtn" class="btn btn-danger bg-gradient btn-sm w-100">
+                                                                <i class="bi bi-wifi-off"></i> Disable
                                                             </button>
                                                         </div>
 

@@ -29,15 +29,17 @@ document.addEventListener('DOMContentLoaded', function() {
         columnDefs: [
             { width: '40px', targets: 0 },   // ID
             { 
-                width: '170px',
+                width: '100%',
                 targets: 1,
                 render: function(data, type, row) {
                     if (type === 'display') {
-                        return '<div style="word-break: break-all; max-width: 170px;">' + data + '</div>';
+                        return '<div style="word-break: break-all; min-width: 170px;">' + data + '</div>';
                     }
                     return data;
                 }
             },  // Name
+            { width: '110px', targets: 2 },  // Creator
+            { width: '110px', targets: 3 },  // Status
             { width: '110px', targets: 4 },  // Description
             { width: '110px', targets: 5 },  // Location
             { width: '150px',  targets: 6, orderable: false }  // Actions

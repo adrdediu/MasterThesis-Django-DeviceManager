@@ -28,22 +28,22 @@ document.addEventListener('DOMContentLoaded', function() {
         columnDefs: [
             { width: '40px', targets: 0 },
             { 
-                width: '100px',
+                width: '100%',
                 targets: 1,
                 render: function(data, type, row) {
                     if (type === 'display') {
-                        return '<div style="word-break: break-all; max-width: 100px;">' + data + '</div>';
+                        return '<div style="word-break: break-all; min-width: 100px;">' + data + '</div>';
                     }
                     return data;
                 }
 
             },   // ID
             { 
-                width: '120px',
+                width: '100%',
                 targets: 2, // Assuming S/N is the 3rd column (index 2)
                 render: function(data, type, row) {
                     if (type === 'display') {
-                        return '<div style="word-break: break-all; max-width: 120px;">' + data + '</div>';
+                        return '<div style="word-break: break-all; min-width: 120px;">' + data + '</div>';
                     }
                     return data;
                 }

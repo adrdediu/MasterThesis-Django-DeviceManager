@@ -5,15 +5,13 @@
 <div class="container-fluid h-100 overflow-auto mt-2">
     <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;" aria-label="breadcrumb" class="sticky-top rounded" data-bs-theme="dark">
         <ol class="breadcrumb p-2 card-shadow rounded">
-            <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Inventory Management - {{ inventory.building.acronym}}</li>
+            <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><i class="bi bi-clipboard-data"></i> Inventory Management - {{ inventory.building.acronym}}</li>
         </ol>
     </nav>
 
     <div class="row p-1">
         <div class="col-12">
-            <h3 class="mb-3">Inventory Management</h3>
-
             <div class="row mb-3">
                 <div class="col-12">
                     <div class="card card-shadow" data-bs-theme="dark" >
@@ -139,6 +137,9 @@
 
         </div>
     </div>
+    <div class="d-lg-none" style="padding-bottom:120px;">
+
+    </div>
 </div>
 
 
@@ -158,21 +159,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="confirmStartInventory" data-inventory-id="{{inventory.id}}">Start Inventory</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Inventory Details Modal -->
-<div class="modal fade" id="inventoryDetailsModal" tabindex="-1" aria-labelledby="inventoryDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="inventoryDetailsModalLabel">Inventory Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="inventoryDetailsContent">
-                <!-- Inventory details will be loaded here -->
             </div>
         </div>
     </div>

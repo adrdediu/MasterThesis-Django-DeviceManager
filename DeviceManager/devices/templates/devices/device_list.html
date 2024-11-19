@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container-fluid h-100 overflow-auto">
 
-    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="d-none d-lg-block sticky-top rounded mt-2" data-bs-theme="dark">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="sticky-top rounded mt-2" data-bs-theme="dark">
         <ol class="breadcrumb p-2 rounded card-shadow" style="background-color: #343a40;">
             <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">
@@ -19,12 +19,6 @@
         </ol>
     </nav>
 
-    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="d-block d-lg-none rounded pt-2" data-bs-theme="dark">
-        <ol class="breadcrumb  p-2 rounded card-shadow" style="background-color: #343a40;">
-          <li class="breadcrumb-item"><a href="{% url 'homepage' %}" class="text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page"><i class="bi bi-lightning-charge me-2"></i>{% if deleted_devices %}Deleted {% elif user_devices%}My {%endif%}Devices</li>
-        </ol>
-    </nav>
     <div id="skeletonLoader" class="skeleton-loader">
         <div class="skeleton-header"></div>
         <div class="skeleton-content">
