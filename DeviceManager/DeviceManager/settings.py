@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Timezone settings
 TIME_ZONE = 'Europe/Bucharest'
@@ -26,13 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-u9gl0p-!@rtc#&q_ihmpbml6lj$0r^mrlc-833z5)*8vte)l!x'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['192.168.0.100','127.0.0.1','192.168.214.7','192.168.80.132', 'localhost','192.168.0.141','192.168.220.7','192.168.199.7','192.168.193.7','192.168.50.7']
-
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 SITE_ID = 1  # You can choose any positive integer as the site ID
 
@@ -100,11 +102,11 @@ WSGI_APPLICATION = 'DeviceManager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'device_manager',     # Replace with your desired database name
-        'USER': 'device_manager_admin',        # Replace with your MySQL username
-        'PASSWORD': 'i9@6W^j1',  # Replace with your MySQL password
-        'HOST': 'localhost',              # Replace with your MySQL host, usually 'localhost' for local development
-        'PORT': '3306',                   # Replace with your MySQL port, usually '3306'
+        'NAME': os.getenv('DB_NAME'),     # Replace with your desired database name
+        'USER': os.getenv('DB_USER'),        # Replace with your MySQL username
+        'PASSWORD': os.getenv('DB_PASSWORD'),  # Replace with your MySQL password
+        'HOST': os.getenv('DB_HOST'),              # Replace with your MySQL host, usually 'localhost' for local development
+        'PORT': os.getenv('DB_PORT'),                   # Replace with your MySQL port, usually '3306'
         'OPTIONS': {
 		'charset': 'utf8mb4',
 	}
