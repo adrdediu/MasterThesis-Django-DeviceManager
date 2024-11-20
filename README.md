@@ -1,1 +1,1 @@
-# Master-Degree---Thesis---Device-Manager
+# MasterThesis-Django-DeviceManager
