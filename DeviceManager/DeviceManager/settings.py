@@ -169,21 +169,23 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
+            'format': '{asctime} - {name} - {levelname} - {message}',
             'style': '{',
         },
     },
     'handlers': {
-        'file': {
+        'iot_device_file': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR,'logs/iot_device_checks.log'),
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/iot_device_checker.log',
+            'maxBytes': 10 * 1024 * 1024,  # 10 MB
+            'backupCount': 5,
             'formatter': 'verbose',
         },
     },
     'loggers': {
         'iot_device_checker': {
-            'handlers': ['file'],
+            'handlers': ['iot_device_file'],
             'level': 'INFO',
             'propagate': True,
         },

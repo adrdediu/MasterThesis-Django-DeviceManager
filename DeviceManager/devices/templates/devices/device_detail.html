@@ -202,22 +202,22 @@
                                                     </div>
                                                     <div class="row g-2">
                                                         <div class="col-6 col-md-3">
-                                                            <button onclick="sendLedCommand('{{iot_device.id}}','out_to_in')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
+                                                            <button onclick="sendLedCommand('{{device.id}}','out_to_in')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
                                                                 <i class="bi bi-box-arrow-in-right me-2"></i>Out to In
                                                             </button>
                                                         </div>
                                                         <div class="col-6 col-md-3">
-                                                            <button onclick="sendLedCommand('{{iot_device.id}}','in_to_out')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
+                                                            <button onclick="sendLedCommand('{{device.id}}','in_to_out')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
                                                                 <i class="bi bi-box-arrow-in-left me-2"></i>In to Out
                                                             </button>
                                                         </div>
                                                         <div class="col-6 col-md-3">
-                                                            <button onclick="sendLedCommand('{{iot_device.id}}','left_to_right')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
+                                                            <button onclick="sendLedCommand('{{device.id}}','left_to_right')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
                                                                 <i class="bi bi-arrow-right me-2"></i>Left to Right
                                                             </button>
                                                         </div>
                                                         <div class="col-6 col-md-3">
-                                                            <button onclick="sendLedCommand('{{iot_device.id}}','right_to_left')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
+                                                            <button onclick="sendLedCommand('{{device.id}}','right_to_left')" class="btn btn-dark border-primary btn-sm led-control-btn w-100" disabled>
                                                                 <i class="bi bi-arrow-left me-2"></i>Right to Left
                                                             </button>
                                                         </div>
@@ -254,33 +254,33 @@
                                             
                                             <div class="row text-center g-1">
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-light  w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g1','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-light  w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g1','static')" disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g2','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g2','static')" disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g3','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g3','static')" disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-primary w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g4','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-primary w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g4','static')" disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g5','static')"disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g5','static')"disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g6','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g6','static')" disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-light w-75 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g7','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-light w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g7','static')" disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                               </div>
                                               <div class="row mt-2">
                                                 <div class="col-6">
-                                                  <button type="button" class="btn btn-sm btn-outline-success w-100 led-control-btn " onclick="sendLedCommand('{{iot_device.id}}','g8','static')" disabled>All On</button>
+                                                  <button type="button" class="btn btn-sm btn-outline-success w-100 led-control-btn " onclick="sendLedCommand('{{device.id}}','g8','static')" disabled>All On</button>
                                                 </div>
                                                 <div class="col-6">
-                                                  <button type="button" class="btn btn-sm btn-outline-danger w-100 led-control-btn" onclick="sendLedCommand('{{iot_device.id}}','g0','static')" disabled>All Off</button>
+                                                  <button type="button" class="btn btn-sm btn-outline-danger w-100 led-control-btn" onclick="sendLedCommand('{{device.id}}','g0','static')" disabled>All Off</button>
                                                 </div>
                                               </div>
                                         </div>
