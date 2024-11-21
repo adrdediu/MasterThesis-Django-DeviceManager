@@ -265,7 +265,7 @@ def activate_iot_features(request):
         IoTDeviceEndpoint.objects.get_or_create(
             device=iot_device,
             name='status',
-            defaults={'url': f'http://{ip_address}/api/status'}
+            defaults={'url': f'api/status'}
         )
 
         return JsonResponse({'success': True})
