@@ -51,7 +51,7 @@ def check_device(iotDevice, endpoint):
         }
         response = requests.request(
             method=endpoint.method,
-            url=f"{endpoint.url}?token={iotDevice.token}",
+            url=f"{iotDevice.ip_address}/{endpoint.url}?token={iotDevice.token}",
             headers=headers,
             timeout=5
         )
