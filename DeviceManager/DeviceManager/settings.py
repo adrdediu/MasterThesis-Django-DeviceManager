@@ -177,7 +177,7 @@ LOGGING = {
         'iot_device_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/iot_device_checker.log',
+            'filename': os.path.join(BASE_DIR,'logs/iot_device_checks.log'),
             'maxBytes': 10 * 1024 * 1024,  # 10 MB
             'backupCount': 5,
             'formatter': 'verbose',
