@@ -10,7 +10,7 @@ from devices.views import  DeviceDetailView, add_device,edit_device, delete_devi
 from devices.views import GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView,DeletedDevicesListView, UserDevicesListView, CategoryDevicesListView, SubcategoryDevicesListView, BuildingDevicesListView, RoomDevicesListView
 from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
-from devices.api_views import activate_iot_features,led_control, remove_iot_features, start_inventory, pause_resume_inventory, end_inventory, edit_inventory,cancel_inventory,qrcode_action, update_inventory_room_data,get_iot_settings, check_and_update_iot_device, save_iot_device_state 
+from devices.api_views import activate_iot_features,led_control, remove_iot_features, start_inventory, pause_resume_inventory, end_inventory, edit_inventory,cancel_inventory,qrcode_action, update_inventory_room_data,get_iot_settings, check_and_update_iot_device, save_iot_device_state, identify 
 from devices.views import NextJSView,DashboardView
 from django.views.static import serve
 
@@ -70,8 +70,9 @@ urlpatterns = [
     path('nextjs/dashboard/', DashboardView.as_view(), name='dashboard'),
 
     # SSE
-     path('sse/<int:device_id>/', SSEDeviceUpdateView.as_view(), name='sse_device_updates'),
+    path('sse/<int:device_id>/', SSEDeviceUpdateView.as_view(), name='sse_device_updates'),
     
+    path('api/identify',identify, name='identify'),
 ]
 
 # Serve media files during development

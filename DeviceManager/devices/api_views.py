@@ -9,6 +9,14 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 import json
 
+
+def identify(request):
+    return JsonResponse({
+        'server': 'device_manager',
+        'identifier': 'dm_server_v1', 
+        'status': 'active'
+    })
+
 def is_inventory_manager(user):
     """
     Check if the user belongs to the 'inventory-managers' group.
