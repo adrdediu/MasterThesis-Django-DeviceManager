@@ -489,8 +489,8 @@
                                     <div class="row">
                                         <div class="col-5  col-sm-5">
                                             <div class="card card-shadow bg-white p-1 rounded" style="display: inline-block;">
-                                                <img src="{{ device.qrcode_url }}" class="img-fluid" alt="QR Code">
-                                            </div>
+                                                <img src="{{ device.qrcode_url }}?nocache={{ timestamp }}" class="img-fluid" alt="QR Code">
+                                          </div>
                                         </div>
                                         <div class="col-7 col-sm-7">
                                             <hr>

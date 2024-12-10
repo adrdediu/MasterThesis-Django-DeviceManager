@@ -79,7 +79,7 @@ logger = logging.getLogger(__name__)
 
 def generate_inventory_excel_report(inventory):
     try:
-        json_file_path = os.path.join(inventory.inventory_data_file.name)
+        json_file_path = os.path.join(inventory.inventory_data_file.path)
         with open(json_file_path, 'r') as f:
             data = json.load(f)
 

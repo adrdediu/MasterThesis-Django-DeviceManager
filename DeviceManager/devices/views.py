@@ -3,6 +3,7 @@ import requests
 import json
 import os
 import datetime
+from django.utils.timezone import now
 from django.db.models import Max
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden, FileResponse,HttpResponseBadRequest,HttpResponseServerError
 from django.shortcuts import render, redirect, get_object_or_404
@@ -589,6 +590,7 @@ class DeviceDetailView(BaseContextMixin,LoginRequiredMixin, DetailView):
             iot_device = IoTDevice.objects.filter(device=self.object).first()
             context['iot_device'] = iot_device
             context['user_device'] = self.request.user == self.object.owner
+            context['timestamp'] = now().timestamp()
         except:
             pass
         
