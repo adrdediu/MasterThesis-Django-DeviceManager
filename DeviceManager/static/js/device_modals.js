@@ -290,20 +290,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-
-
-    async function clearCacheAndHardRefresh() {
-        if ('caches' in window) {
-            const cacheNames = await caches.keys();
-            for (let cacheName of cacheNames) {
-                await caches.delete(cacheName); 
-            }
-        }
-        window.location.href = `${window.location.origin}${window.location.pathname}?nocache=${new Date().getTime()}`;
-    }
-
-
-
     //////////////// QR Code Generation //////////////
         // QR Code regeneration
         var regenerateButton = document.getElementById('regenerateQRCode');
@@ -319,10 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showAlert('QR code successfully '+ action + 'd!','success');
-                    setTimeout(() => {
-                        clearCacheAndHardRefresh();
-                    }, 2000); 
+                    showAlertAndReload('QR code successfully '+ action + 'd!','success');
                 } else {
                     showAlert('Failed to ' + action + ' QR code: ' + data.message, 'error');
                 }
