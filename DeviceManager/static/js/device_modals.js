@@ -292,6 +292,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+    function hardRefresh() {
+        const url = window.location.href.split('?')[0]; // Get the base URL
+        const newUrl = `${url}?nocache=${new Date().getTime()}`; // Add a unique query parameter
+        window.location.href = newUrl; // Navigate to the new URL
+    }
 
     //////////////// QR Code Generation //////////////
         // QR Code regeneration
@@ -308,7 +313,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showAlertAndReload('QR code successfully '+ action + 'd!','success');
+                    showAlert('QR code successfully '+ action + 'd!','success');
+                    hardRefresh();
                 } else {
                     showAlert('Failed to ' + action + ' QR code: ' + data.message, 'error');
                 }
