@@ -12,3 +12,4 @@ DeviceManager/logs/*
 DeviceManager/media/qrcodes/
 DeviceManager/DeviceManager/.env
 DeviceManager/DeviceManager/DeviceManagerNetwork.txt
+DeviceManager/static/admin/*
