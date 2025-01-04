@@ -11,7 +11,6 @@ from devices.views import GetFloorsView, GetRoomsView, GetSubcategoriesView,Inve
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView,DeletedDevicesListView, UserDevicesListView, CategoryDevicesListView, SubcategoryDevicesListView, BuildingDevicesListView, RoomDevicesListView
 from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
 from devices.api_views import activate_iot_features,led_control, remove_iot_features, start_inventory, pause_resume_inventory, end_inventory, edit_inventory,cancel_inventory,qrcode_action, update_inventory_room_data,get_iot_settings, check_and_update_iot_device, save_iot_device_state, identify 
-from devices.views import NextJSView,DashboardView
 from django.views.static import serve
 
 
@@ -64,10 +63,6 @@ urlpatterns = [
     path('api/remove_iot_features/', remove_iot_features, name='remove_iot_features'),
     path('api/iot_device/<int:device_id>/setleds/',led_control, name='led_control'),
     path('api/iot_device/<int:device_id>/save_state/', save_iot_device_state, name='save_iot_device_state'),
-
-
-    path('nextjs/', NextJSView.as_view(), name='nextjs'),
-    path('nextjs/dashboard/', DashboardView.as_view(), name='dashboard'),
 
     # SSE
     path('sse/<int:device_id>/', SSEDeviceUpdateView.as_view(), name='sse_device_updates'),
