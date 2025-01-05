@@ -309,13 +309,13 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col">
-                                            <button class="btn btn-warning btn-sm edit-device w-100 {% if not device.is_active %} disabled {% endif %}" data-device-id="{{ device.id }}">
+                                            <button class="btn btn-warning btn-sm edit-device w-100 {% if not device.is_active or not user_device %} disabled {% endif %}" data-device-id="{{ device.id }}">
                                                 <i class="bi bi-pencil-fill"></i> Edit
                                             </button>
                                         </div>
                                         <div class="col">
                                             
-                                            <button class="btn btn-danger btn-sm delete-device w-100 {% if not device.is_active %} disabled {% endif %} " data-device-id="{{ device.id }}">
+                                            <button class="btn btn-danger btn-sm delete-device w-100 {% if not device.is_active or not user_device %} disabled {% endif %} " data-device-id="{{ device.id }}">
                                                 <i class="bi bi-trash-fill"></i> Delete
                                             </button>
                                         </div>
@@ -434,14 +434,14 @@
                                                         
                                                         <div class="col">
 
-                                                            <button id="connectionSettingsBtn" class="btn btn-secondary bg-gradient btn-secondary btn-sm w-100 " data-bs-toggle="modal" data-bs-target="#connectionSettingsModal" style="display: {% if iot_device %}block{% else %}none{% endif %};">
+                                                            <button id="connectionSettingsBtn" class="btn btn-secondary bg-gradient btn-secondary btn-sm w-100 {% if not user_device %} disabled {% endif %} " data-bs-toggle="modal" data-bs-target="#connectionSettingsModal" style="display: {% if iot_device %}block{% else %}none{% endif %};">
                                                                 <i class="bi bi-gear"></i> Connection
                                                             </button>
                                                             
 
                                                         </div>
                                                         <div class="col">
-                                                            <button id="removeIoTBtn" class="btn btn-danger bg-gradient btn-sm w-100">
+                                                            <button id="removeIoTBtn" class="btn btn-danger bg-gradient btn-sm w-100 {% if not user_device %} disabled {% endif %}">
                                                                 <i class="bi bi-wifi-off"></i> Disable
                                                             </button>
                                                         </div>
@@ -465,13 +465,13 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col">
-                                            <button class="btn btn-warning btn-sm edit-device w-100 {% if not device.is_active %} disabled {% endif %}" data-device-id="{{ device.id }}">
+                                            <button class="btn btn-warning btn-sm edit-device w-100 {% if not device.is_active or not user_device %} disabled {% endif %}" data-device-id="{{ device.id }}">
                                                 <i class="bi bi-pencil-fill"></i> Edit
                                             </button>
                                         </div>
                                         <div class="col">
                                             
-                                            <button class="btn btn-danger btn-sm delete-device w-100 {% if not device.is_active %} disabled {% endif %} " data-device-id="{{ device.id }}">
+                                            <button class="btn btn-danger btn-sm delete-device w-100 {% if not device.is_active or not user_device %} disabled {% endif %} " data-device-id="{{ device.id }}">
                                                 <i class="bi bi-trash-fill"></i> Delete
                                             </button>
                                         </div>
@@ -526,8 +526,9 @@
 </div>
 
 <!-- Edit Device Modal -->
- 
-{% include 'devices/modals/device_edit_modal.html' %}
+ {% if user_device  %}
+    {% include 'devices/modals/device_edit_modal.html' %}
+{% endif %}
 
 {% include 'devices/iot_device_modals.html' %}
 

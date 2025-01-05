@@ -17,14 +17,14 @@ from .models import Device,Floor, Inventory, InventoryChange, IoTDevice,Room,Bui
 from django.contrib import messages
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from .utils import generate_inventory_excel_report,generate_inventory_pdf_report
 from django.conf import settings
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from .api_views import is_inventory_manager
+from .api_views import is_inventory_manager, is_device_owner
 
 
 class LoginView(View):
@@ -406,6 +406,7 @@ def add_device(request):
 
 @require_http_methods(["GET", "POST"])
 @login_required(login_url='login')
+@user_passes_test(is_device_owner)
 def edit_device(request):
     if request.method == 'GET':
         device_id = request.GET.get('device_id')
@@ -459,6 +460,7 @@ def edit_device(request):
     return JsonResponse({'success': False, 'message': 'Invalid request method'})
 @require_POST
 @login_required(login_url='login')
+@user_passes_test(is_device_owner)
 def delete_device(request):
     try:
         data = json.loads(request.body)
