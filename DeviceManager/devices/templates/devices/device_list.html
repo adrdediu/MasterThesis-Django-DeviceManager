@@ -105,15 +105,14 @@
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'css/dataTables.bootstrap5.min.css' %}">
 {% endblock %}
 
 {% block extra_js %}
 {{ block.super }}
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<!-- DataTables -->
-<script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/dataTables.min.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
 <script src="{% static 'js/device_table_no_search.js' %}"></script>
 <script src="{% static 'js/device_views.js' %}"></script>
 <script src="{% static 'js/device_cards.js' %}"></script>

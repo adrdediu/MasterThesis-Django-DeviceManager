@@ -183,7 +183,7 @@
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" type="text/css" href="{% static 'css/dataTables.bootstrap5.min.css' %}">
 {% endblock %}
 
 {% block extra_js %}
@@ -208,9 +208,9 @@ if (buildingSelect) {
 }
 });
 </script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.min.js"></script>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/dataTables.min.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
 <script src="{% static 'js/inventory_management.js' %}"></script>
 <script src="{% static 'js/inventorization_list_table.js' %}"></script>
 <script src="{% static 'js/device_modals.js' %}"></script>
