@@ -170,10 +170,11 @@ def cancel_inventory(request):
     
 @login_required(login_url='login')
 @require_POST
-@user_passes_test(is_device_owner)
 def qrcode_action(request, device_id, action):
     try:
         device = Device.objects.get(pk=device_id)
+        if not request.user == device.owner:
+            return JsonResponse({'success': False, 'message': 'You do not have permission to regenerate the QR code for this device.'})
         if action == 'regenerate':
             device.regenerate_qr_code()
         elif action == 'generate':
@@ -218,7 +219,6 @@ def get_iot_settings(request, device_id):
 
 @login_required(login_url='login')
 @require_http_methods(["POST"])
-@user_passes_test(is_device_owner)
 def remove_iot_features(request):
     data = json.loads(request.body)
     device_id = data.get('deviceId')
@@ -240,7 +240,6 @@ def remove_iot_features(request):
     
 @login_required
 @require_http_methods(["POST"])
-@user_passes_test(is_device_owner)
 def activate_iot_features(request):
     data = json.loads(request.body)
     device_id = data.get('deviceId')
@@ -280,7 +279,6 @@ def activate_iot_features(request):
 
 @login_required
 @require_http_methods(["POST"])
-@user_passes_test(is_device_owner)
 def check_and_update_iot_device(request):
     data = json.loads(request.body)
     device_id = data.get('deviceId')
@@ -319,7 +317,6 @@ def check_and_update_iot_device(request):
 
 @login_required
 @require_http_methods(["POST"])
-@user_passes_test(is_device_owner)
 def led_control(request, device_id):
 
     try :
@@ -352,7 +349,6 @@ def led_control(request, device_id):
 
 @login_required
 @require_POST
-@user_passes_test(is_device_owner)
 def save_iot_device_state(request, device_id):
     try:
         device = Device.objects.get(id=device_id)

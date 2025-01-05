@@ -405,9 +405,14 @@ def add_device(request):
 
 
 @require_http_methods(["GET", "POST"])
-@login_required(login_url='login')
-@user_passes_test(is_device_owner)
+@login_required(login_url='login'))
 def edit_device(request):
+    device_id = request.GET.get('device_id')
+    device = get_object_or_404(Device, id=device_id)
+
+    if not request.user == device.owner:
+        return JsonResponse({'success': False, 'message': 'You do not have permission to edit this device.'})
+    
     if request.method == 'GET':
         device_id = request.GET.get('device_id')
         device = get_object_or_404(Device, id=device_id)
@@ -460,7 +465,6 @@ def edit_device(request):
     return JsonResponse({'success': False, 'message': 'Invalid request method'})
 @require_POST
 @login_required(login_url='login')
-@user_passes_test(is_device_owner)
 def delete_device(request):
     try:
         data = json.loads(request.body)
@@ -470,6 +474,9 @@ def delete_device(request):
             return JsonResponse({'success': False, 'message': 'Device ID not provided'}, status=400)
         
         device = get_object_or_404(Device, pk=device_id)
+
+        if not request.user == device.owner:
+            return JsonResponse({'success': False, 'message': 'You do not have permission to delete this device.'})
 
         device.delete()
         
