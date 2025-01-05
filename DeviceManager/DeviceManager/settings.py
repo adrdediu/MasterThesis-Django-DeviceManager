@@ -103,11 +103,11 @@ WSGI_APPLICATION = 'DeviceManager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),     # Replace with your desired database name
-        'USER': os.getenv('DB_USER'),        # Replace with your MySQL username
-        'PASSWORD': os.getenv('DB_PASSWORD'),  # Replace with your MySQL password
-        'HOST': os.getenv('DB_HOST'),              # Replace with your MySQL host, usually 'localhost' for local development
-        'PORT': os.getenv('DB_PORT'),                   # Replace with your MySQL port, usually '3306'
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
         'OPTIONS': {
 		'charset': 'utf8mb4',
 	}

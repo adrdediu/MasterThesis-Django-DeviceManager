@@ -53,7 +53,6 @@ urlpatterns = [
     path('inventory/update_inventory_room_data/<int:inventory_id>/', update_inventory_room_data, name='update_inventory_room_data'),
     path('inventory/pause-resume/', pause_resume_inventory, name='api_pause_resume_inventory'),
     path('inventory/end/', end_inventory, name='api_end_inventory'),
-    path('inventory/edit/', edit_inventory, name='api_edit_inventory'),
     path('inventory/<int:pk>/', InventorizationListDetailView.as_view(), name='inventory_detail'),
 
     # IoT View
