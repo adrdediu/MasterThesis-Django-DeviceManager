@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // Edit Device - Add reset functionality
-    document.getElementById('resetEditForm').addEventListener('click', function() {
+    document.getElementById('resetEditForm')?.addEventListener('click', function() {
         if (window.editingDevice) {
             populateEditForm(window.editingDevice);
         }
@@ -183,19 +183,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Edit Device Function - Update Form Options - Listener
-    document.getElementById('editDeviceCategoryModal').addEventListener('change', function() {
+    document.getElementById('editDeviceCategoryModal')?.addEventListener('change', function() {
         updateOptions('editDeviceSubcategoryModal', 'category', this.value);
         document.getElementById('editDeviceSubcategoryModal').value = '';
     });
 
-    document.getElementById('editDeviceBuildingModal').addEventListener('change', function() {
+    document.getElementById('editDeviceBuildingModal')?.addEventListener('change', function() {
         updateOptions('editDeviceFloorModal', 'building', this.value);
         document.getElementById('editDeviceFloorModal').value = '';
         document.getElementById('editDeviceRoomModal').value = '';
         document.getElementById('editDeviceRoomModal').options[0].text = 'Select a Floor first...';
     });
 
-    document.getElementById('editDeviceFloorModal').addEventListener('change', function() {
+    document.getElementById('editDeviceFloorModal')?.addEventListener('change', function() {
         updateOptions('editDeviceRoomModal', 'floor', this.value);
         document.getElementById('editDeviceRoomModal').value = '';
         document.getElementById('editDeviceRoomModal').options[0].text = 'Select a Room';

@@ -85,23 +85,23 @@ document.addEventListener('DOMContentLoaded', function() {
 const profileForm = document.getElementById('profileUpdateForm');
 const updateProfileBtn = document.getElementById('updateProfileBtn');
 const resetProfileBtn = document.getElementById('resetProfileBtn');
-
 updateProfileBtn.addEventListener('click', function(e) {
-e.preventDefault();
-if (validateForm()) {
-  submitForm();
-}
+  e.preventDefault();
+
+  const valid = validateForm();
+  if (valid) {
+    submitForm();
+  }
 });
 
-resetProfileBtn.addEventListener('click', function() {
-// Reset form fields to their original values
-document.getElementById('email').value = "{{ user.email }}";
-document.getElementById('first_name').value = "{{ user.first_name }}";
-document.getElementById('last_name').value = "{{ user.last_name }}";
-document.getElementById('rank').value = "{{ user.extended_user.rank }}";
-document.getElementById('faculty').value = "{{ user.extended_user.faculty }}";
-document.getElementById('admin_rank').value = "{{ user.extended_user.admin_rank }}";
 
+resetProfileBtn.addEventListener('click', function() {
+  console.log(profileForm)
+// Reset form fields to their original values
+document.getElementById('email').value = profileForm.querySelector('#email').defaultValue;
+console.log(profileForm.querySelector('#email').defaultValue)
+document.getElementById('first_name').value =profileForm.querySelector('#first_name').defaultValue;
+document.getElementById('last_name').value = profileForm.querySelector('#last_name').defaultValue;
 
 // Clear the password field
 document.getElementById('password').value = "";
@@ -116,44 +116,44 @@ inputs.forEach(input => input.classList.remove('is-invalid'));
 });
 
 function validateForm() {
-let isValid = true;
+  let isValid = true;
 
-// Email validation
-const emailInput = document.getElementById('email');
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-if (!emailRegex.test(emailInput.value)) {
-  showError(emailInput, 'Please enter a valid email address');
-  isValid = false;
-} else {
-  clearError(emailInput);
-}
+  // Email validation
+  const emailInput = document.getElementById('email');
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(emailInput.value)) {
+    showError(emailInput, 'Please enter a valid email address');
+    isValid = false;
+  } else {
+    clearError(emailInput);
+  }
 
-// Name validation
-const firstNameInput = document.getElementById('first_name');
-const lastNameInput = document.getElementById('last_name');
-if (firstNameInput.value.trim() === '') {
-  showError(firstNameInput, 'First name is required');
-  isValid = false;
-} else {
-  clearError(firstNameInput);
-}
-if (lastNameInput.value.trim() === '') {
-  showError(lastNameInput, 'Last name is required');
-  isValid = false;
-} else {
-  clearError(lastNameInput);
-}
+  // Name validation
+  const firstNameInput = document.getElementById('first_name');
+  const lastNameInput = document.getElementById('last_name');
+  if (firstNameInput.value.trim() === '') {
+    showError(firstNameInput, 'First name is required');
+    isValid = false;
+  } else {
+    clearError(firstNameInput);
+  }
+  if (lastNameInput.value.trim() === '') {
+    showError(lastNameInput, 'Last name is required');
+    isValid = false;
+  } else {
+    clearError(lastNameInput);
+  }
 
-// Password validation
-const passwordInput = document.getElementById('password');
-if (passwordInput.value.trim() === '') {
-  showError(passwordInput, 'Password is required to confirm changes');
-  isValid = false;
-} else {
-  clearError(passwordInput);
-}
+  // Password validation
+  const passwordInput = document.getElementById('password');
+  if (passwordInput.value.trim() === '') {
+    showError(passwordInput, 'Password is required to confirm changes');
+    isValid = false;
+  } else {
+    clearError(passwordInput);
+  }
 
-return isValid;
+  return isValid;
 }
 
 function showError(input, message) {
@@ -177,6 +177,7 @@ input.classList.remove('is-invalid');
 }
 
 function submitForm() {
+
 const formData = new FormData(profileForm);
 console.log("Form data entries:", Array.from(formData.entries()));
 fetch('/update_profile/', {

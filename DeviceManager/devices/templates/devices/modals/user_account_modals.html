@@ -63,7 +63,7 @@
                   <h6 class="text-white mb-3">Academic Information</h6>
                   <div class="mb-3">
                     <label for="admin_rank" class="form-label text-light">Academic Rank</label>
-                    <select class="form-select bg-dark text-light" id="admin_rank" name="admin_rank">
+                    <select class="form-select text-muted" id="admin_rank" name="admin_rank" disabled>
                       {% for rank_code, rank_name in user.extended_user.ADMIN_RANK_CHOICES %}
                         <option value="{{ rank_code }}" {% if user.extended_user.admin_rank == rank_code %}selected{% endif %}>{{ rank_name }}</option>
                       {% endfor %}
@@ -71,7 +71,7 @@
                   </div>
                   <div class="mb-3">
                     <label for="rank" class="form-label text-light">Rank</label>
-                    <select class="form-select bg-dark text-light" id="rank" name="rank">
+                    <select class="form-select text-muted" id="rank" name="rank" disabled>
                       {% for rank_code, rank_name in user.extended_user.RANK_CHOICES %}
                         <option value="{{ rank_code }}" {% if user.extended_user.rank == rank_code %}selected{% endif %}>{{ rank_name }}</option>
                       {% endfor %}
@@ -79,7 +79,7 @@
                   </div>
                   <div class="mb-3">
                     <label for="faculty" class="form-label text-light">Faculty</label>
-                    <select class="form-select bg-dark text-light" id="faculty" name="faculty">
+                    <select class="form-select text-muted" id="faculty" name="faculty" disabled>
                       {% for faculty_code, faculty_name in user.extended_user.FACULTY_CHOICES %}
                         <option value="{{ faculty_code }}" {% if user.extended_user.faculty == faculty_code %}selected{% endif %}>{{ faculty_name }}</option>
                       {% endfor %}
@@ -100,6 +100,7 @@
           </form>
         </div>
         <div class="modal-footer border-top-0">
+          
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-warning" id="resetProfileBtn">Reset</button>
           <button type="button" class="btn btn-primary" id="updateProfileBtn">Update Profile</button>

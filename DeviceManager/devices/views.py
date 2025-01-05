@@ -300,12 +300,15 @@ def update_profile(request):
         return JsonResponse({'success': False, 'message': 'First name and last name are required'})
 
     # Validate rank and faculty
-    rank = request.POST.get('rank')
-    faculty = request.POST.get('faculty')
-    if rank not in dict(user.extended_user.RANK_CHOICES):
-        return JsonResponse({'success': False, 'message': 'Invalid rank selected'})
-    if faculty not in dict(user.extended_user.FACULTY_CHOICES):
-        return JsonResponse({'success': False, 'message': 'Invalid faculty selected'})
+    # admin_rank = request.POST.get('admin_rank')
+    # rank = request.POST.get('rank')
+    # faculty = request.POST.get('faculty')
+    # if rank not in dict(user.extended_user.RANK_CHOICES):
+    #     return JsonResponse({'success': False, 'message': 'Invalid rank selected'})
+    # if admin_rank not in dict(user.extended_user.ADMIN_RANK_CHOICES):
+    #     return JsonResponse({'success': False, 'message': 'Invalid admin rank selected'})
+    # if faculty not in dict(user.extended_user.FACULTY_CHOICES):
+    #     return JsonResponse({'success': False, 'message': 'Invalid faculty selected'})
 
     # Update user information
     user.email = email
@@ -315,8 +318,9 @@ def update_profile(request):
     
     # Update extended user information
     extended_user = user.extended_user
-    extended_user.rank = rank
-    extended_user.faculty = faculty
+    # extended_user.admin_rank = admin_rank
+    # extended_user.rank = rank
+    # extended_user.faculty = faculty
     extended_user.building = request.POST.get('building')
     extended_user.save()
     

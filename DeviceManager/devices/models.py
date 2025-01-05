@@ -14,36 +14,36 @@ from django.db.models import JSONField
 from django.contrib.auth.models import AbstractUser,User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+import pytz
 class ExtendedUser(models.Model):
 
     RANK_CHOICES = [
+        ('None' , 'None'),
         ('PROF', 'Profesor (Professor)'),
         ('CONF', 'Conferentiar (Associate Professor)'),
         ('LECTOR', 'Șef lucrări (Lecturer)'),
         ('ASIST', 'Asistent universitar (Assistant)'),
         ('ENG', 'Engineer'),
-        ('None' , 'None'),
     ]
 
     ACRONYM_RANK_CHOICES = [
+        ('None' , 'None'),
         ('PROF', 'Prof.dr.ing.'),
         ('CONF', 'Conf.dr.ing.'),
         ('LECTOR', 'Șef lucrări dr.ing.'),
         ('ASIST', 'Asist.dr.ing.'),
         ('ENG', 'Eng.'),
-        ('None' , 'None'),
     ]
     
 
     ADMIN_RANK_CHOICES = [
+        ('None' , 'None'),
         ('RECTOR', 'Rector'),
         ('PRORECTOR', 'Vice-rector'),
         ('DECAN', 'Decan (Dean)'),
         ('PRODECAN', 'Prodecan (Vice-dean)'),
         ('DIR_DEPT', 'Director de departament (Head of department)'),
         ('SEF_DISC', 'Șef de disciplină (Head of a subject)'),
-        ('None' , 'None'),
     ]
     FACULTY_CHOICES = [
         ('AC', 'Faculty of Automatic Control & Computer Engineering'),
@@ -65,7 +65,11 @@ class ExtendedUser(models.Model):
     acronym_rank = models.CharField(max_length=20, choices=ACRONYM_RANK_CHOICES, blank=True)
     admin_rank = models.CharField(max_length=20, choices=ADMIN_RANK_CHOICES, blank=True)
     faculty = models.CharField(max_length=4, choices=FACULTY_CHOICES, blank=True)
-
+    timezone = models.CharField(
+        max_length=50,
+        choices=[(tz, tz) for tz in pytz.all_timezones],
+        default='UTC'
+    )
     def __str__(self):
         return self.user.username
     
