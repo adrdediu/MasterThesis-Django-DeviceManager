@@ -405,7 +405,7 @@ def add_device(request):
 
 
 @require_http_methods(["GET", "POST"])
-@login_required(login_url='login'))
+@login_required(login_url='login')
 def edit_device(request):
     device_id = request.GET.get('device_id')
     device = get_object_or_404(Device, id=device_id)
