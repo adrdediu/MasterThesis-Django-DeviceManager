@@ -151,7 +151,6 @@ function sendLedCommand(iotDeviceId, pattern, static = false) {
         }
     }
 
-    console.log(url,data)
     fetch(url, {
         method: 'POST',
         headers: {
