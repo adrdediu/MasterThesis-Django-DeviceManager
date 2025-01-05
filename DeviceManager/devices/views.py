@@ -407,15 +407,14 @@ def add_device(request):
 @require_http_methods(["GET", "POST"])
 @login_required(login_url='login')
 def edit_device(request):
-    device_id = request.GET.get('device_id')
-    device = get_object_or_404(Device, id=device_id)
-
-    if not request.user == device.owner:
-        return JsonResponse({'success': False, 'message': 'You do not have permission to edit this device.'})
     
     if request.method == 'GET':
         device_id = request.GET.get('device_id')
         device = get_object_or_404(Device, id=device_id)
+
+        if not request.user == device.owner:
+            return JsonResponse({'success': False, 'message': 'You do not have permission to edit this device.'})
+
         data = {
             'success': True,
             'device': {
@@ -436,6 +435,10 @@ def edit_device(request):
     elif request.method == 'POST':
         device_id = request.POST.get('device_id')
         device = get_object_or_404(Device, id=device_id)
+
+        if not request.user == device.owner:
+            return JsonResponse({'success': False, 'message': 'You do not have permission to edit this device.'})
+
         try:
             device.name = request.POST.get('name')
             device.description = request.POST.get('description')
