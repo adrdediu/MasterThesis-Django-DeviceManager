@@ -183,6 +183,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    {% if user_device %}
                                                     <hr>
                                                     <div class="row align-items-center">
                                                         <div class="col-sm-6 mb-2">
@@ -190,7 +191,6 @@
                                                         </div>
 
                                                     </div>
-                                                    {% if user_device %}
                                                     <div class="row mb-2">
                                                         <div class="col-sm-6">
                                                             <div class="input-group input-group-sm ">
@@ -253,31 +253,30 @@
                                                     <span id="badge-G7" class="badge bg-secondary">G7</span>
                                                 </div>
                                             </div>
-                                            {% if user_device %}
                                               <div class="row text-center g-1">
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-light  w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g1','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-light  w-75 led-control-btn" {% if user_device %} onclick="sendLedCommand('{{device.id}}','g1','static')" {% endif %} disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g2','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" {% if user_device %} onclick="sendLedCommand('{{device.id}}','g2','static')" {% endif %} disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g3','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" {% if user_device %} onclick="sendLedCommand('{{device.id}}','g3','static')" {% endif %} disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-primary w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g4','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-primary w-75 led-control-btn" {% if user_device %} onclick="sendLedCommand('{{device.id}}','g4','static')" {% endif %} disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g5','static')"disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-warning w-75 led-control-btn" {% if user_device %} onclick="sendLedCommand('{{device.id}}','g5','static')" {% endif %} disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g6','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-danger w-75 led-control-btn" {% if user_device %} onclick="sendLedCommand('{{device.id}}','g6','static')" {% endif %} disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                                 <div class="col mb-2">
-                                                  <button type="button" class="btn btn-sm btn-light w-75 led-control-btn" onclick="sendLedCommand('{{device.id}}','g7','static')" disabled><i class="bi bi-lightbulb"></i></button>
+                                                  <button type="button" class="btn btn-sm btn-light w-75 led-control-btn" {% if user_device %} onclick="sendLedCommand('{{device.id}}','g7','static')" {% endif %} disabled><i class="bi bi-lightbulb"></i></button>
                                                 </div>
                                               </div>
-
+                                              {% if user_device %}
                                               <div class="row mt-2">
                                                 <div class="col-6">
                                                   <button type="button" class="btn btn-sm btn-outline-success w-100 led-control-btn " onclick="sendLedCommand('{{device.id}}','g8','static')" disabled>All On</button>
