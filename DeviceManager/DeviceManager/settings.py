@@ -18,8 +18,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Timezone settings
-TIME_ZONE = 'Europe/Bucharest'
 USE_TZ = True
+TIME_ZONE = 'Etc/GMT-2'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
