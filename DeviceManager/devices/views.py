@@ -24,6 +24,7 @@ from .utils import generate_inventory_excel_report,generate_inventory_pdf_report
 from django.conf import settings
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from .api_views import is_inventory_manager
 
 
 class LoginView(View):
@@ -488,37 +489,40 @@ class InventoryManagementView(BaseContextMixin,LoginRequiredMixin, TemplateView)
     template_name = 'devices/inventory_management.html'
 
     def get_context_data(self, **kwargs):
-        inventory_id = self.kwargs.get('pk')
-        inventory = Inventory.objects.get(id=inventory_id)
-        inventory_device_list = Device.objects.filter(inventory__id=inventory_id,is_active=True)
+        if is_inventory_manager(self.request.user) :
+            inventory_id = self.kwargs.get('pk')
+            inventory = Inventory.objects.get(id=inventory_id)
+            inventory_device_list = Device.objects.filter(inventory__id=inventory_id,is_active=True)
 
-        # Get statistics for inventorization lists
-        total_lists = InventorizationList.objects.filter(inventory=inventory).count()
-        completed_lists = InventorizationList.objects.filter(inventory=inventory, status='COMPLETED').count()
-        
-        # Get the latest inventory_change timestamp for the current inventory
-        last_updated = InventoryChange.objects.filter(inventory_id=inventory_id).aggregate(Max('timestamp'))['timestamp__max']
+            # Get statistics for inventorization lists
+            total_lists = InventorizationList.objects.filter(inventory=inventory).count()
+            completed_lists = InventorizationList.objects.filter(inventory=inventory, status='COMPLETED').count()
+            
+            # Get the latest inventory_change timestamp for the current inventory
+            last_updated = InventoryChange.objects.filter(inventory_id=inventory_id).aggregate(Max('timestamp'))['timestamp__max']
 
-        # Calculate total devices and total rooms
-        total_devices = inventory_device_list.count()
-        rooms = Room.objects.filter(building__id=inventory_id)
-        total_rooms = rooms.count()
+            # Calculate total devices and total rooms
+            total_devices = inventory_device_list.count()
+            rooms = Room.objects.filter(building__id=inventory_id)
+            total_rooms = rooms.count()
 
-        context = self.get_base_context()
-        context.update({
-            'inventory': inventory,
-            'inventorization_lists': InventorizationList.objects.filter(inventory=inventory).order_by('-start_date'),
-            'total_lists': total_lists,
-            'completed_lists': completed_lists,
-            'devices': inventory_device_list,
-            'total_devices': total_devices,
-            'rooms': rooms,
-            'total_rooms': total_rooms,
-            'last_updated': last_updated,
-            # 'recent_activities': RecentActivity.objects.all().order_by('-timestamp')[:10],  # Adjust as needed
-            # 'history_entries': HistoryEntry.objects.all().order_by('-timestamp'),  # Adjust as needed
-        })
-        return context
+            context = self.get_base_context()
+            context.update({
+                'inventory': inventory,
+                'inventorization_lists': InventorizationList.objects.filter(inventory=inventory).order_by('-start_date'),
+                'total_lists': total_lists,
+                'completed_lists': completed_lists,
+                'devices': inventory_device_list,
+                'total_devices': total_devices,
+                'rooms': rooms,
+                'total_rooms': total_rooms,
+                'last_updated': last_updated,
+                # 'recent_activities': RecentActivity.objects.all().order_by('-timestamp')[:10],  # Adjust as needed
+                # 'history_entries': HistoryEntry.objects.all().order_by('-timestamp'),  # Adjust as needed
+            })
+            return context
+        else:
+            return redirect('homepage')
 
 from django.views.generic import DetailView
 from django.db.models import Count
@@ -532,47 +536,50 @@ class InventorizationListDetailView(BaseContextMixin,LoginRequiredMixin,DetailVi
     context_object_name = 'inventory_list'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(self.get_base_context())
+        if is_inventory_manager(self.request.user) :
+            context = super().get_context_data(**kwargs)
+            context.update(self.get_base_context())
 
-        # Get the inventory list object from the URL
-        inventory_list = self.object
-        inventory = inventory_list.inventory
+            # Get the inventory list object from the URL
+            inventory_list = self.object
+            inventory = inventory_list.inventory
 
-        # Define Context Variables
-        devices = {}
-        scanned_devices_set = {}
-        
-        # Get the devices associated with the inventory
-        if inventory_list.status == 'COMPLETED':
-            # Load data from the JSON file
-            with open(inventory_list.inventory_data_file.path, 'r') as f:
-                inventory_data = json.load(f)
-            devices = inventory_data['devices']
-            changes = inventory_data['changes']
-            device_scans = inventory_data['device_scans']
-            scanned_devices_set = set(scan['device_id'] for scan in device_scans)
+            # Define Context Variables
+            devices = {}
+            scanned_devices_set = {}
+            
+            # Get the devices associated with the inventory
+            if inventory_list.status == 'COMPLETED':
+                # Load data from the JSON file
+                with open(inventory_list.inventory_data_file.path, 'r') as f:
+                    inventory_data = json.load(f)
+                devices = inventory_data['devices']
+                changes = inventory_data['changes']
+                device_scans = inventory_data['device_scans']
+                scanned_devices_set = set(scan['device_id'] for scan in device_scans)
 
+            else:
+                # Check for message in session
+                if 'qr_scan_message' in self.request.session:
+                    context['qr_scan_message'] = self.request.session.pop('qr_scan_message')
+                
+                # Get devices and scanned devices based on the extracted device IDs
+                devices = Device.objects.filter(inventory=inventory,is_active=True)
+                
+                scanned_devices = DeviceScan.objects.filter(inventory_list=inventory_list, device__in=devices)
+                scanned_devices_set = set(scanned_devices.values_list('device_id', flat=True))
+
+            # Update the context with the calculated values
+            context['inventory'] = inventory
+            context['inventory_list'] = inventory_list
+            context['devices'] = devices
+            context['scanned_devices'] = scanned_devices_set
+            context['total_devices'] = inventory_list.total_devices
+            context['total_scanned'] = inventory_list.total_scanned
+
+            return context
         else:
-            # Check for message in session
-            if 'qr_scan_message' in self.request.session:
-                context['qr_scan_message'] = self.request.session.pop('qr_scan_message')
-            
-            # Get devices and scanned devices based on the extracted device IDs
-            devices = Device.objects.filter(inventory=inventory,is_active=True)
-            
-            scanned_devices = DeviceScan.objects.filter(inventory_list=inventory_list, device__in=devices)
-            scanned_devices_set = set(scanned_devices.values_list('device_id', flat=True))
-
-        # Update the context with the calculated values
-        context['inventory'] = inventory
-        context['inventory_list'] = inventory_list
-        context['devices'] = devices
-        context['scanned_devices'] = scanned_devices_set
-        context['total_devices'] = inventory_list.total_devices
-        context['total_scanned'] = inventory_list.total_scanned
-
-        return context
+            return redirect('homepage')
     
   
 

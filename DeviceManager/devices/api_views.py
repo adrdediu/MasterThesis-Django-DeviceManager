@@ -93,14 +93,6 @@ def update_inventory_room_data(request, inventory_id):
         return JsonResponse({'success': False, 'message': 'Inventory is not active or paused'})
 
 
-@login_required
-@user_passes_test(is_inventory_manager)
-def edit_inventory(request):
-    # This view should render a page or form for editing the current inventory
-    # It's not an API endpoint, so it should return a rendered HTML page
-    context = {}  # Replace with your actual context data
-    return render(request, 'devices/edit_inventory.html', context)
-
 @require_POST
 @login_required(login_url='login')
 @user_passes_test(is_inventory_manager)

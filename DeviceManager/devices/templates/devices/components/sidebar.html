@@ -220,7 +220,7 @@
               </li>
           </ul>
         </li>
-      
+        {% if is_inventory_manager %}
         <li class="list-group-item bg-transparent ps-2 border-0">
           <a href="#inventoryManagement" class="text-light text-decoration-none hover-red" data-bs-toggle="collapse">
             <i class="bi bi-clipboard me-2"></i>Inventory Management
@@ -235,10 +235,8 @@
             {% endfor %}
           </ul>
         </li>
-        
+        {% endif %}
       </ul>
-      <!-- ... (additional content) ... -->
-      
     </div>
 
     <!-- User Profile -->
