@@ -1,3 +1,4 @@
+{% load tz %}
 <div class="table-responsive">
     <table id="inventorizationTable" class="table table-hover table-bordered table-striped">
         <thead>
@@ -51,8 +52,8 @@
                     <span class="badge bg-secondary">{{ inventory.get_status_display }}</span>
                 {% endif %}
             </td>
-            <td>{{ inventory.start_date|date:"Y-m-d H:i" }}</td>
-            <td>{{ inventory.end_date|date:"Y-m-d H:i"|default:"-" }}</td>
+            <td>{{ inventory.start_date|timezone:"Europe/Bucharest"|date:"M d, Y H:i:s" }}</td>
+            <td>{{ inventory.end_date|timezone:"Europe/Bucharest"|date:"M d, Y H:i:s" }}</td>
             <td>
                 <div class="container-fluid p-0">
                     <div class="row g-1">

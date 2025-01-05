@@ -1,6 +1,6 @@
 {% extends "devices/home.html" %}
 {% load static %}
-
+{% load tz %}
 {% block content %}
 <div class="container-fluid h-100 overflow-auto mt-2" style="overflow-y: auto;">
     <nav style="--bs-breadcrumb-divider: '>';background-color: #343a40;;" aria-label="breadcrumb" class="sticky-top  rounded" data-bs-theme="dark">
@@ -28,8 +28,8 @@
                                     <p><strong>ID:</strong> {{ inventory_list.id }}</p>
                                     <p><strong>Creator:</strong> {{ inventory_list.creator.username }}</p>
                                     <p><strong>Building:</strong> {{ inventory_list.building.name }}</p>
-                                    <p><strong>Start Date:</strong> {{ inventory_list.start_date }}</p>
-                                    <p><strong>End Date:</strong> {{ inventory_list.end_date|default:"Not ended" }}</p>
+                                    <p><strong>Start Date:</strong> {{ inventory_list.start_date|timezone:"Europe/Bucharest"|date:"M d, Y H:i:s" }}</p>
+                                    <p><strong>End Date:</strong> {{ inventory_list.end_date|timezone:"Europe/Bucharest"|date:"M d, Y H:i:s"|default:"Not ended" }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p><strong>Status:</strong> 
@@ -137,7 +137,7 @@
                                     <th>Scanned</th>
                                 </tr>
                                 <tr class="search-row">
-                                    <th><input type="text" placeholder="Search ID" class="form-control form-control-sm"></th>
+                                    <th><input type="text" placeholder="&#128269 ID" class="form-control form-control-sm"></th>
                                     <th><input type="text" placeholder="Search Name" class="form-control form-control-sm"></th>
                                     <th><input type="text" placeholder="Search S/N" class="form-control form-control-sm"></th>
                                     <th>
@@ -259,18 +259,18 @@ document.addEventListener('DOMContentLoaded', function() {
         scrollX: true,
         autoWidth: true,
         columnDefs: [
-            { width: '40px', targets: 0 },
+            { width: '50px', targets: 0 },
             { 
-                width: '100px',
+                width: '100%',
                 targets: 1,
                 render: function(data, type, row) {
                     if (type === 'display') {
-                        return '<div style="word-break: break-all; max-width: 100px;">' + data + '</div>';
+                        return '<div style="word-break: break-all;min-width:150px; max-width: 100%;">' + data + '</div>';
                     }
                     return data;
                 }
 
-            },   // ID
+            }, 
             { 
                 width: '120px',
                 targets: 2, // Assuming S/N is the 3rd column (index 2)
@@ -281,8 +281,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     return data;
                 }
             },
-            { width: '50px', targets: 3 },
-            { width: '50px', targets: 4 },
+            { width: '100px', targets: 3 },
+            { width: '75px', targets: 4 },
             { width: '100px', targets: 5 },
             { width: '75px', targets: 6 },
             { width: '50px', targets: 7 },

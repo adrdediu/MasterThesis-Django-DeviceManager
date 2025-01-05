@@ -462,7 +462,7 @@ def edit_device(request):
             device.floor = get_object_or_404(Floor, id=floor_id)
             device.room = get_object_or_404(Room, id=room_id)
 
-            device.updated_at = timezone.now() + datetime.timedelta(hours=3)
+            device.updated_at = timezone.now()
             device.save()
 
             return JsonResponse({'success': True, 'message': 'Device updated successfully'})

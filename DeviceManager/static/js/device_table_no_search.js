@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 targets: 1,
                 render: function(data, type, row) {
                     if (type === 'display') {
-                        return '<div style="word-break: break-all; max-width: 100%">' + data + '</div>';
+                        return '<div style="word-break: break-all;min-width: 150px; max-width: 100%">' + data + '</div>';
                     }
                     return data;
                 }

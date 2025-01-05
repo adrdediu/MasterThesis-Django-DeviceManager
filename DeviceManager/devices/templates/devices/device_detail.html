@@ -1,5 +1,6 @@
 {% extends 'devices/home.html' %}
 {% load static %}
+{% load tz %}
 
 {% block content %}
 <div class="container-fluid h-100 overflow-auto mt-2">
@@ -108,13 +109,13 @@
                                 <div class="col-12 col-sm-6">
                                     <div class="bg-black p-3 rounded h-100">
                                         <h6 class="text-white mb-3">Updated At</h6>
-                                        <p class="text-white mb-0">{{ device.updated_at }}</p>
+                                        <p class="text-white mb-0">{{ device.updated_at|timezone:"Europe/Bucharest"|date:"M d, Y H:i:s" }}</p>
                                     </div>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <div class="bg-black p-3 rounded h-100">
                                         <h6 class="text-white mb-3">Created At</h6>
-                                        <p class="text-white mb-0">{{ device.created_at }}</p>
+                                        <p class="text-white mb-0">{{ device.created_at|timezone:"Europe/Bucharest"|date:"M d, Y H:i:s" }}</p>
                                     </div>
                                 </div>
                             </div>
