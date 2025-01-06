@@ -252,9 +252,17 @@ def activate_iot_features(request):
         if not is_device_owner(request.user, device):
             return JsonResponse({'success': False, 'error': 'You do not have permission to activate IoT features for this device'}, status=403)
 
-        # Check if the IP address is already in use
         if IoTDevice.objects.filter(ip_address=ip_address).exists():
             return JsonResponse({'success': False, 'error': 'This IP address is already in use by another IoT device'}, status=400)
+
+        try:
+            response = requests.get(f"http://{ip_address}/api/status?token={token}", 
+                                    headers={'Authorization': f'Token {token}', 'X-IoTDeviceToken': token},
+                                    timeout=5)
+            
+            response.raise_for_status()
+        except requests.RequestException as e:
+            return JsonResponse({'success': False, 'error': f'Failed to connect to device: {str(e)}'}, status=400)
 
         iot_device, created = IoTDevice.objects.get_or_create(
             device=device,
@@ -265,7 +273,6 @@ def activate_iot_features(request):
             iot_device.token = token
             iot_device.save()
 
-        # Create default 'status' endpoint
         IoTDeviceEndpoint.objects.get_or_create(
             device=iot_device,
             name='status',
