@@ -38,7 +38,8 @@ def save_response_to_json(device_id, endpoint_name, status, response_data):
     with open(filepath, 'w') as f:
         json.dump(data, f)
     
-    return filepath
+    short_filepath = f"iot_device_responses/{device_id}_{endpoint_name}_{status}.json"
+    return short_filepath
 
 
 def check_device(iotDevice, endpoint):
