@@ -60,7 +60,7 @@ class Command(BaseCommand):
             {'id': 61, 'name': 'Smart Lamp', 'category': Category.objects.get(id=6)},
             
             # Other
-            {'id': 71, 'name': 'Smart Lamp', 'category': Category.objects.get(id=7)},
+            {'id': 71, 'name': 'Other', 'category': Category.objects.get(id=7)},
 
         ]
 
