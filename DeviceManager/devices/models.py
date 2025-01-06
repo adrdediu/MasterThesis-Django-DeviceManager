@@ -112,6 +112,7 @@ class Building(models.Model):
 
     class Meta:
         ordering = ['id']
+        verbose_name_plural = 'Buildings'
 
 class Floor(models.Model):
     building = models.ForeignKey(Building, on_delete=models.CASCADE)
@@ -123,6 +124,7 @@ class Floor(models.Model):
 
     class Meta:
         ordering = ['id']
+        verbose_name_plural = 'Floors'
 
 class Room(models.Model):
     building = models.ForeignKey(Building, on_delete=models.CASCADE)
@@ -134,12 +136,17 @@ class Room(models.Model):
     
     class Meta:
         ordering = ['id']
+        verbose_name_plural = 'Rooms'
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
         return f'{self.pk} - {self.name}'
+    
+    class Meta:
+        ordering = ['id']
+        verbose_name_plural = 'Categories'
 
 class Subcategory(models.Model):
     name = models.CharField(max_length=100)
@@ -147,6 +154,10 @@ class Subcategory(models.Model):
 
     def __str__(self):
         return f'{self.pk} - {self.category} - {self.name}'
+    
+    class Meta:
+        ordering = ['id']
+        verbose_name_plural = 'Subcategories'
 
 class Inventory(models.Model):
     building = models.ForeignKey(Building, on_delete=models.CASCADE)
@@ -154,6 +165,10 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f'{self.name} - {self.building.name}'
+    
+    class Meta:
+        ordering = ['id']
+        verbose_name_plural = 'Inventories'
 
 
 
@@ -497,6 +512,10 @@ class IoTDevice(models.Model):
 
     def __str__(self):
         return f"IoT Device: {self.device.name}"
+    
+    class Meta:
+        verbose_name = 'IoT Device'
+        verbose_name_plural = 'IoT Devices'
 
 
 class IoTDeviceEndpoint(models.Model):
@@ -510,6 +529,8 @@ class IoTDeviceEndpoint(models.Model):
 
     class Meta:
         unique_together = ['device', 'name']
+        verbose_name = 'IoT Device Endpoint'
+        verbose_name_plural = 'IoT Device Endpoints'
 
 class IoTDeviceResponse(models.Model):
     device = models.ForeignKey(IoTDevice, on_delete=models.CASCADE, related_name='responses')
@@ -526,3 +547,5 @@ class IoTDeviceResponse(models.Model):
 
     class Meta:
         unique_together = ['device', 'endpoint', 'last_status_code']
+        verbose_name = 'IoT Device Response'
+        verbose_name_plural = 'IoT Device Responses'
