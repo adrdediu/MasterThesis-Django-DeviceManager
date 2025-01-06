@@ -12,7 +12,7 @@ from devices.models import IoTDevice, IoTDeviceEndpoint, IoTDeviceResponse
 logger = logging.getLogger('iot_device_checker')
 
 def save_response_to_json(device_id, endpoint_name, status, response_data):
-    directory = os.path.join(settings.BASE_DIR,f"media/iot_responses")
+    directory = os.path.join(settings.MEDIA_ROOT,'iot_device_responses')
     os.makedirs(directory, exist_ok=True)
     
     filepath = os.path.join(directory,f"{device_id}_{endpoint_name}_{status}.json")
