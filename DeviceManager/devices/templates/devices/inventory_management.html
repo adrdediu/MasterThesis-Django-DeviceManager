@@ -172,10 +172,6 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <button class="btn btn-primary generate-report-type" data-type="pdf">PDF</button>
-          <button class="btn btn-success generate-report-type" data-type="excel">Excel</button>
-          <!-- In your inventorization_list_detail.html template -->
-
             {% if inventory_list.status == 'COMPLETED' %}
                 {% if pdf_report_url %}
                     <a href="{{ pdf_report_url }}" class="btn btn-primary" download>
@@ -189,8 +185,6 @@
                     </a>
                 {% endif %}
             {% endif %}
-
-
         </div>
       </div>
     </div>

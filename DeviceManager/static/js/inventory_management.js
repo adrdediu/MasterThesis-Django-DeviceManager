@@ -42,13 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Add event listeners for the new Generate Report buttons
-    document.querySelectorAll('.generate-report').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const inventoryId = this.getAttribute('data-inventory-id');
-            generateReport(inventoryId);
-        });
-    });
 
     // Cancel
     document.querySelectorAll('.cancel').forEach(btn => {
@@ -57,10 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
             cancelInventory(inventoryId);
         });
     });
-
-
-    
-
 
 
     // Start Inventory
@@ -193,38 +182,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-
-    function generateReport(inventoryId) {
-        const modal = new bootstrap.Modal(document.getElementById('reportTypeModal'));
-        modal.show();
-    
-        document.querySelectorAll('.generate-report-type').forEach(btn => {
-            btn.onclick = function() {
-                const reportType = this.getAttribute('data-type');
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/api/inventory/${inventoryId}/generate-report/`;
-                
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = 'csrfmiddlewaretoken';
-                csrfInput.value = getCookie('csrftoken');
-                form.appendChild(csrfInput);
-    
-                const typeInput = document.createElement('input');
-                typeInput.type = 'hidden';
-                typeInput.name = 'report_type';
-                typeInput.value = reportType;
-                form.appendChild(typeInput);
-    
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-                modal.hide();
-            };
-        });
-    }
-    
 
 });

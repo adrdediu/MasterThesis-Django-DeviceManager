@@ -220,8 +220,19 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <button class="btn btn-primary generate-report-type" data-type="pdf">PDF</button>
-          <button class="btn btn-success generate-report-type" data-type="excel">Excel</button>
+            {% if inventory_list.status == 'COMPLETED' %}
+                {% if pdf_report_url %}
+                    <a href="{{ pdf_report_url }}" class="btn btn-primary" download>
+                        PDF
+                    </a>
+                {% endif %}
+                
+                {% if excel_report_url %}
+                    <a href="{{ excel_report_url }}" class="btn btn-success" download>
+                        Excel
+                    </a>
+                {% endif %}
+            {% endif %}
         </div>
       </div>
     </div>
