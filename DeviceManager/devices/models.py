@@ -15,6 +15,8 @@ from django.contrib.auth.models import AbstractUser,User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import pytz
+from .utils import generate_inventory_pdf_report, generate_inventory_excel_report
+
 class ExtendedUser(models.Model):
 
     RANK_CHOICES = [
@@ -354,6 +356,8 @@ class InventorizationList(models.Model):
     total_scanned = models.IntegerField(default=0)
 
     inventory_data_file = models.FileField(upload_to='inventorization_data/', null=True, blank=True)
+    pdf_report = models.FileField(upload_to='inventory_reports/pdf/', null=True, blank=True)
+    excel_report = models.FileField(upload_to='inventory_reports/excel/', null=True, blank=True)
 
     def __str__(self):
         return f"Inventorization {self.id} by {self.creator.username}"
@@ -382,6 +386,29 @@ class InventorizationList(models.Model):
             self.total_scanned += 1
             self.save(update_fields=['total_scanned'])
 
+    def generate_reports(self):
+        """Generate and save both PDF and Excel reports"""
+        # Generate PDF report
+        pdf_file = generate_inventory_pdf_report(self)
+        pdf_filename = f'inventory_report_{self.id}.pdf'
+        pdf_path = os.path.join('inventory_reports/pdf/', pdf_filename)
+        self.pdf_report.save(pdf_filename, pdf_file)
+
+        # Generate Excel report
+        excel_file = generate_inventory_excel_report(self)
+        excel_filename = f'inventory_report_{self.id}.xlsx'
+        excel_path = os.path.join('inventory_reports/excel/', excel_filename)
+        self.excel_report.save(excel_filename, excel_file)
+
+        self.save()
+
+    def get_report_url(self, report_type):
+        """Get URL for a specific report type"""
+        if report_type == 'pdf' and self.pdf_report:
+            return self.pdf_report.url
+        elif report_type == 'excel' and self.excel_report:
+            return self.excel_report.url
+        return None
 
     def end_inventory_list(self):
         self.status = 'COMPLETED'
@@ -436,6 +463,7 @@ class InventorizationList(models.Model):
             json.dump(inventory_data, f, indent=4)
 
         self.inventory_data_file.name = f'inventorization_data/{file_name}'
+        self.generate_reports()
         self.save()
 
     @staticmethod

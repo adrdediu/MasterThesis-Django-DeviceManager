@@ -26,7 +26,6 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .api_views import is_inventory_manager, is_device_owner
 
-
 class LoginView(View):
     template_name = 'devices/login.html'
 
@@ -573,6 +572,8 @@ class InventorizationListDetailView(BaseContextMixin,LoginRequiredMixin,DetailVi
                 changes = inventory_data['changes']
                 device_scans = inventory_data['device_scans']
                 scanned_devices_set = set(scan['device_id'] for scan in device_scans)
+                context['pdf_report_url'] = inventory_list.pdf_report.url if inventory_list.pdf_report else None
+                context['excel_report_url'] = inventory_list.excel_report.url if inventory_list.excel_report else None
 
             else:
                 # Check for message in session
@@ -701,32 +702,4 @@ class DownloadQRCodeView(LoginRequiredMixin, View):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
-@login_required
-@require_POST
-def generate_inventory_report_view(request, inventory_id):
-    inventory = get_object_or_404(InventorizationList, id=inventory_id)
-    
-    if request.method == 'POST':
-        report_type = request.POST.get('report_type')
-        
-        if report_type == 'pdf':
-            report_file = generate_inventory_pdf_report(inventory)
-            filename = f'inventory_report_{inventory_id}.pdf'
-            content_type = 'application/pdf'
-        elif report_type == 'excel':
-            report_file = generate_inventory_excel_report(inventory)
-            filename = f'inventory_report_{inventory_id}.xlsx'
-            content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        else:
-            return HttpResponseBadRequest("Invalid report type")
-
-        if report_file:
-            response = FileResponse(report_file, content_type=content_type)
-            response['Content-Disposition'] = f'attachment; filename="{filename}"'
-            response['Content-Security-Policy'] = "upgrade-insecure-requests"
-            return response
-        else:
-            return HttpResponseServerError("Failed to generate report")
-
-    return HttpResponseBadRequest("Invalid request method")
 

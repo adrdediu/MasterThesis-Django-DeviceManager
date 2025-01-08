@@ -9,7 +9,7 @@ from devices.sse_views import SSEDeviceUpdateView
 from devices.views import  DeviceDetailView, add_device,edit_device, delete_device, update_profile, change_password
 from devices.views import GetFloorsView, GetRoomsView, GetSubcategoriesView,InventorizationListDetailView
 from devices.views import DownloadQRCodeView, HomePageView, DeviceListView,DeletedDevicesListView, UserDevicesListView, CategoryDevicesListView, SubcategoryDevicesListView, BuildingDevicesListView, RoomDevicesListView
-from devices.views import LoginView, LogoutView,InventoryManagementView, generate_inventory_report_view
+from devices.views import LoginView, LogoutView,InventoryManagementView
 from devices.api_views import activate_iot_features,led_control, remove_iot_features, start_inventory, pause_resume_inventory, end_inventory,cancel_inventory,qrcode_action, update_inventory_room_data,get_iot_settings, check_and_update_iot_device, save_iot_device_state, identify 
 from django.views.static import serve
 
@@ -45,7 +45,6 @@ urlpatterns = [
     path('download_qrcode/<int:device_id>/', DownloadQRCodeView.as_view(), name='download_qrcode'),
 
     path('api/device/<int:device_id>/qrcode/<str:action>/', qrcode_action, name='qrcode_action'),
-    path('api/inventory/<int:inventory_id>/generate-report/', generate_inventory_report_view, name='generate_inventory_report'),
     
     path('inventory/management/<int:pk>/', InventoryManagementView.as_view(), name='inventory_management'),
     path('inventory/cancel/', cancel_inventory, name='api_cancel_inventory'),

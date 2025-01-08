@@ -8,7 +8,6 @@ from xhtml2pdf import pisa
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
 from openpyxl.utils import get_column_letter
-from .models import Room, Device, DeviceScan
 
 def generate_inventory_pdf_report(inventory):
     # Get the template
