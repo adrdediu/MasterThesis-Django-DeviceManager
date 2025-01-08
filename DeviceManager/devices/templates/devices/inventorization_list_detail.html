@@ -70,42 +70,44 @@
                             <h5 class="card-title">Status: Active/Paused</h5>
                             {% if inventory_list.status == 'COMPLETED' or inventory_list.status == 'CANCELED' %}
                                 <button class="btn btn-warning mb-2 disabled">
-                                    <i class="bi bi-pause-fill"></i> Pause Inventory
+                                    <i class="bi bi-pause-fill me-1"></i> Pause Inventory
                                 </button>
+                                <button class="btn btn-light disabled">
+                                    <i class="bi bi-flag-fill me-1"></i> End Inventory
+                                </button>
+                                <hr>
                                 <button class="btn btn-danger mb-2 disabled">
-                                    <i class="bi bi-stop-circle-fill"></i> End Inventory
-                                </button>
-                                <button class="btn btn-secondary mb-2 disabled">
-                                    <i class="bi bi-x-circle-fill"></i> Cancel Inventory
+                                    <i class="bi bi-x-circle-fill me-1"></i> Cancel Inventory
                                 </button>
                             {% else %}
                                 {% if inventory_list.status == 'ACTIVE' %}
                                     <button class="btn btn-warning mb-2 pause-resume" data-inventory-id="{{ inventory_list.id }}" data-action="pause">
-                                        <i class="bi bi-pause-fill"></i> Pause Inventory
+                                        <i class="bi bi-pause-fill me-1"></i> Pause Inventory
                                     </button>
                                 {% elif inventory_list.status == 'PAUSED' %}
                                     <button class="btn btn-success mb-2 pause-resume" data-inventory-id="{{ inventory_list.id }}" data-action="resume">
-                                        <i class="bi bi-play-fill"></i> Resume Inventory
+                                        <i class="bi bi-play-fill me-1"></i> Resume Inventory
                                     </button>
                                 {% endif %}
                                 {% if inventory_list.status == 'ACTIVE' or inventory_list.status == 'PAUSED' %}
-                                    <button class="btn btn-danger mb-2 end-inventory" data-inventory-id="{{ inventory_list.id }}">
-                                        <i class="bi bi-stop-circle-fill"></i> End Inventory
+                                    <button class="btn btn-light mb-2 end-inventory" data-inventory-id="{{ inventory_list.id }}">
+                                        <i class="bi bi-flag-fill me-1"></i> End Inventory
                                     </button>
-                                    <button class="btn btn-secondary mb-2 cancel" data-inventory-id="{{ inventory_list.id }}">
-                                        <i class="bi bi-x-circle-fill"></i> Cancel Inventory
+                                    <hr>
+                                    <button class="btn btn-danger mb-2 cancel" data-inventory-id="{{ inventory_list.id }}">
+                                        <i class="bi bi-x-circle-fill me-1"></i> Cancel Inventory
                                     </button>
                                 {% endif %}
                             {% endif %}
 
-                                <h5 class="card-title mt-3">Status: Complete/Canceled</h5>
+                                <h5 class="card-title mt-3">Status: Complete</h5>
                                 {% if inventory_list.status == 'COMPLETED' %}
                                 <button class="btn btn-primary mb-2 generate-report" data-inventory-id="{{ inventory_list.id }}">
-                                    <i class="bi bi-file-earmark-text"></i> Generate Report
+                                    <i class="bi bi-file-earmark-text me-1"></i> Generate Report
                                 </button>
                                 {% else %} 
                                 <button class="btn btn-primary mb-2 disabled">
-                                    <i class="bi bi-file-earmark-text"></i> Generate Report
+                                    <i class="bi bi-file-earmark-text me-1"></i> Generate Report
                                 </button>
                                 {% endif %}
                             

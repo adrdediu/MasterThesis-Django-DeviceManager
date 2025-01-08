@@ -723,6 +723,7 @@ def generate_inventory_report_view(request, inventory_id):
         if report_file:
             response = FileResponse(report_file, content_type=content_type)
             response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            response['Content-Security-Policy'] = "upgrade-insecure-requests"
             return response
         else:
             return HttpResponseServerError("Failed to generate report")
