@@ -277,7 +277,7 @@ class Device(models.Model):
         qr.add_data(self.qrcode_target_url)
         qr.make(fit=True)
 
-        img_path = f'qrcodes/{self.pk}.png'
+        img_path = f'qrcodes/{self.name}_{self.pk}.png'
         full_path = os.path.join(settings.MEDIA_ROOT, img_path)
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
 
