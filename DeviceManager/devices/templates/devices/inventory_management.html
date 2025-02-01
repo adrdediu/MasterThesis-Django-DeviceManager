@@ -229,5 +229,21 @@ if (buildingSelect) {
     document.addEventListener('DOMContentLoaded', function () {
         hideColumns(DeviceTable.table,[6,7]);
     });
+    
+    document.querySelectorAll('.generate-report').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const inventoryId = this.getAttribute('data-inventory-id');
+        const modal = new bootstrap.Modal(document.getElementById('reportTypeModal'));
+        modal.show();
+
+        document.querySelectorAll('.generate-report-type').forEach(typeBtn => {
+            typeBtn.onclick = function() {
+                const reportType = this.getAttribute('data-type');
+                generateReport(inventoryId, reportType);
+                modal.hide();
+            };
+        });
+    });
+    });
 </script>
 {% endblock %}
