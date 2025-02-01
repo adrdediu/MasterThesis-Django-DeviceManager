@@ -173,17 +173,12 @@
         </div>
         <div class="modal-body">
             {% if inventory_list.status == 'COMPLETED' %}
-                {% if pdf_report_url %}
-                    <a href="{{ pdf_report_url }}" class="btn btn-primary" download>
-                        PDF
-                    </a>
-                {% endif %}
-                
-                {% if excel_report_url %}
-                    <a href="{{ excel_report_url }}" class="btn btn-success" download>
-                        Excel
-                    </a>
-                {% endif %}
+                <a id="pdfReportLink" href="#" class="btn btn-primary" download style="display: none;">
+                    PDF
+                </a>
+                <a id="excelReportLink" href="#" class="btn btn-success" download style="display: none;">
+                    Excel
+                </a>
             {% endif %}
         </div>
       </div>
@@ -233,16 +228,29 @@ if (buildingSelect) {
     document.querySelectorAll('.generate-report').forEach(btn => {
     btn.addEventListener('click', function() {
         const inventoryId = this.getAttribute('data-inventory-id');
+
+        const pdfReportUrl = this.getAttribute('data-pdf-url');
+        const excelReportUrl = this.getAttribute('data-excel-url');
+        
+        const pdfLink = document.getElementById('pdfReportLink');
+        const excelLink = document.getElementById('excelReportLink');
+        
+        if (pdfReportUrl) {
+            pdfLink.href = pdfReportUrl;
+            pdfLink.style.display = 'inline-block'; 
+        } else {
+            pdfLink.style.display = 'none';
+        }
+
+        if (excelReportUrl) {
+            excelLink.href = excelReportUrl;
+            excelLink.style.display = 'inline-block';
+        } else {
+            excelLink.style.display = 'none';
+        }
+        
         const modal = new bootstrap.Modal(document.getElementById('reportTypeModal'));
         modal.show();
-
-        document.querySelectorAll('.generate-report-type').forEach(typeBtn => {
-            typeBtn.onclick = function() {
-                const reportType = this.getAttribute('data-type');
-                generateReport(inventoryId, reportType);
-                modal.hide();
-            };
-        });
     });
     });
 </script>
