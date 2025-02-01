@@ -16,7 +16,7 @@ class Command(BaseCommand):
             self.stdout.write(f'Found {lists_to_generate.count()} items without reports. Generating reports...')
             for item in lists_to_generate:
                 try:
-                    item.generate_report()
+                    item.generate_reports()
                     self.stdout.write(f'Successfully generated report for InventorizationList with ID: {item.id}')
                 except Exception as e:
                     self.stderr.write(f'Error generating report for InventorizationList with ID: {item.id}: {str(e)}')
