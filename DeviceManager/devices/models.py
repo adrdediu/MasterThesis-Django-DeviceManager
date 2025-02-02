@@ -257,11 +257,15 @@ class Device(models.Model):
         )
         self.soft_delete(inventory_change)
 
-        # Update associated InventorizationList
-        InventorizationList.objects.filter(
-            inventory=inventory, 
+        inv_list = InventorizationList.objects.filter(
+            inventory=inventory,
             status__in=['ACTIVE', 'PAUSED']
-        ).update(total_devices=models.F('total_devices') - 1,total_scanned=models.F('total_scanned') - 1)
+        )
+        
+        inv_list.update(total_devices=models.F('total_devices') - 1)
+
+        if DeviceScan.objects.filter(device=self).exists():
+            inv_list.update(total_scanned=models.F('total_scanned') - 1)
         
     def generate_qr_code(self):
         qr = qrcode.QRCode(
