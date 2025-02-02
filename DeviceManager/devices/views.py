@@ -649,7 +649,7 @@ class DeviceDetailView(BaseContextMixin,LoginRequiredMixin, DetailView):
                 # Check if the device's room is part of the inventory
                 if device.inventory == active_inventory.inventory:
                     # Record the scan
-                    active_inventory.scan_device(device.id)
+                    active_inventory.scan_device(device.id,user)
 
                     request.session['qr_scan_message'] = {
                         'type': 'success',

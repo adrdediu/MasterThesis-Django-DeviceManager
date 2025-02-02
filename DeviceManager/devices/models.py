@@ -382,10 +382,9 @@ class InventorizationList(models.Model):
             self.total_devices = Device.objects.filter(inventory=self.inventory).count()
             self.save(update_fields=['total_devices'])
 
-    def scan_device(self, device_id):
+    def scan_device(self, device_id,user):
         device = Device.objects.get(id=device_id)
-        scan, created = DeviceScan.objects.get_or_create(inventory_list=self, device=device)
-        print(device,scan,created)
+        scan, created = DeviceScan.objects.get_or_create(inventory_list=self, device=device,user=user)
         if created:
             self.total_scanned += 1
             self.save(update_fields=['total_scanned'])
